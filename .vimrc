@@ -13,3 +13,6 @@ colorscheme molokai
 syntax on
 filetype plugin indent on
 execute pathogen#infect()
+
+au BufWrite * %s/\s\+$//ge
+
