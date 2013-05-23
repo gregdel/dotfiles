@@ -10,9 +10,14 @@ termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
 defbce "on"
 
 # Visible bell
-vbell_msg "beep"
+# vbell_msg "beep"
+
+# Caption
+caption always "%{= ck} %= %-w%{+b W}%50>%n %t%{= ck}%+w %="
+
 
 # Hardstatus
-caption string "%?%F%{= Bk}%? %C%A %D %d-%m-%Y %{= kB} %t%= %?%F%{= Bk}%:%{= wk}%? %n "
-hardstatus alwayslastline
-hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?     %{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %d/%m %{W}%c %{g}]'
+hardstatus alwayslastline "%{= kg}[ %H ]%{= kc}[ %l | %h%=]%{= kY}[ %c:%s  %d.%m.%Y ]"
+
+# Colorize the "messages" and "text marking":
+sorendition wr

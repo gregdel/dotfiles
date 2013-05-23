@@ -53,3 +53,5 @@ function mcd() {
   mkdir -p "$1" && cd "$1";
 }
 
+PS1="\[\e]0;\w\a\]$PS1"
+
