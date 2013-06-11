@@ -17,4 +17,4 @@ execute pathogen#infect()
 set backupdir=~/tmp
 
 au BufWrite * %s/\s\+$//ge
-
+au BufRead,BufNewFile *.md set filetype=markdown
