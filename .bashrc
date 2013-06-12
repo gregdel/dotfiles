@@ -14,7 +14,7 @@ export TERM=xterm-256color
 export NODE_PATH='/usr/local/lib/node_modules'
 
 # PS1 colored for git
-source ~/linux-configs/.git-prompt.sh
+source ~/.git-prompt.sh
 export LS_OPTIONS='--color=auto'
 PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[31m\]$(__git_ps1)\[\033[00m\]\$ '
 
