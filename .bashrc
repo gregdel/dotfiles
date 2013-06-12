@@ -13,6 +13,17 @@ export TERM=xterm-256color
 # Node path
 export NODE_PATH='/usr/local/lib/node_modules'
 
+# Add perso bin path
+if [ -d ~/.local/bin ]; then
+    #On l'ajoute à la variable PATH
+    export PATH=$PATH:~/.local/bin
+fi
+
+# Import personnal conf
+if [ -f ~/.bashrc_local ]; then
+    source ~/.bashrc_local
+fi
+
 # PS1 colored for git
 source ~/.git-prompt.sh
 export LS_OPTIONS='--color=auto'
