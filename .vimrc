@@ -8,6 +8,8 @@ set ai
 set si
 set wrap
 set t_Co=256
+set ignorecase
+set smartcase
 
 colorscheme molokai
 syntax on
