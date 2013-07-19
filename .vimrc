@@ -11,6 +11,11 @@ set t_Co=256
 set ignorecase
 set smartcase
 
+set term=xterm-256color
+nnoremap tk    :tabnext<CR>
+nnoremap tj    :tabprev<CR>
+nnoremap tt    :tabedit<Space>
+
 colorscheme molokai
 syntax on
 filetype plugin indent on
