@@ -12,14 +12,27 @@ set ignorecase
 set smartcase
 
 set term=xterm-256color
+
+" Navigate through tabs
 nnoremap tk    :tabnext<CR>
 nnoremap tj    :tabprev<CR>
+
+" Open a new tab the easy way
 nnoremap tt    :tabedit<Space>
 
+" Open NERDTree with Ctrl+D
+nmap <silent> <C-D> :NERDTreeToggle<CR>
+
+" Color scheme
 colorscheme molokai
 syntax on
 filetype plugin indent on
+
+" Run pathogen
 execute pathogen#infect()
 
+" Delete spaces at the end of files
 au BufWrite * %s/\s\+$//ge
+
+" Set markdown syntax for .md files
 au BufRead,BufNewFile *.md set filetype=markdown
