@@ -11,7 +11,11 @@ set t_Co=256
 set ignorecase
 set smartcase
 
+" Set term
 set term=xterm-256color
+
+" Set encoding
+set encoding=utf-8
 
 " Navigate through tabs
 nnoremap tk    :tabnext<CR>
