@@ -38,5 +38,7 @@ execute pathogen#infect()
 " Delete spaces at the end of files
 au BufWrite * %s/\s\+$//ge
 
-" Set markdown syntax for .md files
+" Markdown
 au BufRead,BufNewFile *.md set filetype=markdown
+" JSON
+au BufRead,BufNewFile *.json set ft=json syntax=javascript
