@@ -21,6 +21,9 @@ set encoding=utf-8
 nnoremap tk    :tabnext<CR>
 nnoremap tj    :tabprev<CR>
 
+" Insert mode paste toogle
+set pastetoggle=<F9>
+
 " Open a new tab the easy way
 nnoremap tt    :tabedit<Space>
 
