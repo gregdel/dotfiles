@@ -33,3 +33,5 @@
     ls = ls-files
 [push]
     default = tracking
+[core]
+	editor = vim
