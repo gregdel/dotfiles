@@ -104,7 +104,8 @@ PS1+="${BBlue}\w"
 
 # Print bash state
 if [[ "$USER" == "root" ]]; then
-    PS1+=" ${BYellow}$(parse_git_branch)"
+    PS1+="${BYellow}"
+    PS1+=' $(parse_git_branch)'
     PS1+="${BIRed} #"
 else
     PS1+="${BRed}"
@@ -114,3 +115,6 @@ fi
 
 # Disable colors
 PS1+="${Color_Off} "
+
+# Print path on screen
+PS1="\[\e]0;\w\a\]$PS1"
