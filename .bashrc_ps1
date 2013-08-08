@@ -86,39 +86,30 @@ PathFull="\W"
 NewLine="\n"
 Jobs="\j"
 
-# Replace current PS1 by custom
-PS1='\n'
-
-# Add time
-PS1+="${White}[\d \A] "
-
-# Open [
-PS1+="${White}["
+# Replace current PS1 by a custom one
+PS1=''
 
 # Print username@host
-if [[ "$USER" == "root" ]]; then
+if [[ "$USER" == "root" ]]
+then
     PS1+="${BRed}\u@\h:"
 else
     PS1+="${BGreen}\u@\h:"
 fi
 
 # Print full path
-PS1+="${BYellow}\w"
-
-# Close ]
-PS1+="${White}]"
+PS1+="${BBlue}\w"
 
 # Display git branch
-PS1+="${BBlue}$(__git_ps1)"
-
 
 # Print bash state
 if [[ "$USER" == "root" ]]; then
-    PS1+=" \n${BRed}[\u] #"
+    PS1+=" ${BYellow}$(parse_git_branch)"
+    PS1+="${BIRed} #"
 else
-    PS1+="\n${BGreen}[\u] $"
+    PS1+=" ${BRed}$(parse_git_branch)"
+    PS1+="${BIGreen} $"
 fi
 
 # Disable colors
 PS1+="${Color_Off} "
-
