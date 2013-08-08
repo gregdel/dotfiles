@@ -21,9 +21,11 @@ set smartcase
 set hlsearch
 
 " Backup / Undo
-set backupdir=~/.vim/backup
-set directory=~/.vim/backup
-set undodir=~/.vim/backup//
+if has('persistent_undo')
+    set backupdir=~/.vim/backup
+    set directory=~/.vim/backup
+    set undodir=~/.vim/backup//
+endif
 
 " Set term
 set term=xterm-256color
