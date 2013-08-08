@@ -1,10 +1,6 @@
 " Run pathogen
 execute pathogen#infect()
 
-" No backup files
-set nobackup
-set noswapfile
-
 " History
 set history=1000 " much more history than base
 set undolevels=1000 " much more undo
@@ -23,6 +19,11 @@ set t_Co=256
 set ignorecase
 set smartcase
 set hlsearch
+
+" Backup / Undo
+set backupdir=~/.vim/backup
+set directory=~/.vim/backup
+set undodir=~/.vim/backup//
 
 " Set term
 set term=xterm-256color
