@@ -45,3 +45,8 @@ au BufWrite * %s/\s\+$//ge
 au BufRead,BufNewFile *.md set filetype=markdown
 " JSON
 au BufRead,BufNewFile *.json set ft=json syntax=javascript
+
+"Options for the NERDTree
+let NERDTreeChDirMode=1
+let NERDTreeShowHidden=1
+let NERDTreeDirArrows=0

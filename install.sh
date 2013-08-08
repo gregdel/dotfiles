@@ -1,5 +1,9 @@
 #!/bin/bash
 
+RM_COLORS='\033[0m'
+GREEN='\033[0;32m'
+ORANGE='\033[0;33m'
+
 # Find current script dir
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
@@ -20,7 +24,7 @@ case ${choice} in
         FILES=(
             .bashrc
             .bashrc_ps1
-            .git-prompt.sh
+            .bashrc_functions
             .gitconfig
             .inputrc
             .screenrc
