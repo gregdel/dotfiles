@@ -107,7 +107,8 @@ if [[ "$USER" == "root" ]]; then
     PS1+=" ${BYellow}$(parse_git_branch)"
     PS1+="${BIRed} #"
 else
-    PS1+=" ${BRed}$(parse_git_branch)"
+    PS1+="${BRed}"
+    PS1+=' $(parse_git_branch)'
     PS1+="${BIGreen} $"
 fi
 

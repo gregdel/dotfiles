@@ -1,3 +1,15 @@
+" Run pathogen
+execute pathogen#infect()
+
+" No backup files
+set nobackup
+set noswapfile
+
+" History
+set history=1000 " much more history than base
+set undolevels=1000 " much more undo
+set title " Set the terminal title's
+
 set expandtab
 set smarttab
 set shiftwidth=4
@@ -10,6 +22,7 @@ set wrap
 set t_Co=256
 set ignorecase
 set smartcase
+set hlsearch
 
 " Set term
 set term=xterm-256color
@@ -27,16 +40,10 @@ set pastetoggle=<F9>
 " Open a new tab the easy way
 nnoremap tt    :tabedit<Space>
 
-" Open NERDTree with Ctrl+D
-nmap <silent> <C-D> :NERDTreeToggle<CR>
-
 " Color scheme
 colorscheme molokai
 syntax on
 filetype plugin indent on
-
-" Run pathogen
-execute pathogen#infect()
 
 " Delete spaces at the end of files
 au BufWrite * %s/\s\+$//ge
@@ -45,6 +52,9 @@ au BufWrite * %s/\s\+$//ge
 au BufRead,BufNewFile *.md set filetype=markdown
 " JSON
 au BufRead,BufNewFile *.json set ft=json syntax=javascript
+
+" Open NERDTree with Ctrl+D
+nmap <silent> <C-D> :NERDTreeToggle<CR>
 
 "Options for the NERDTree
 let NERDTreeChDirMode=1
