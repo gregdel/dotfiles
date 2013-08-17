@@ -22,6 +22,7 @@ set hlsearch
 
 " Backup / Undo
 if has('persistent_undo')
+    silent !mkdir ~/.vim/backup > /dev/null 2>&1
     set backupdir=~/.vim/backup
     set directory=~/.vim/backup
     set undodir=~/.vim/backup//
