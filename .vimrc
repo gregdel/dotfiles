@@ -44,6 +44,9 @@ set pastetoggle=<F9>
 " Open a new tab the easy way
 nnoremap tt    :tabedit<Space>
 
+" Use ii to enter and quit edit mode
+:imap ii <Esc>
+
 " Color scheme
 colorscheme molokai
 syntax on
