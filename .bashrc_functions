@@ -20,6 +20,8 @@ alias ..='cd ..'
 alias ...='cd ../../'
 alias ....='cd ../../../'
 alias c='clear'
+alias tar-folder='tar -zcvf archive.tar.gz'
+alias compress-folder='tar -zcvf archive.tar.gz'
 
 # System functions
 extract () {
