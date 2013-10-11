@@ -13,6 +13,12 @@ export TERM=xterm-256color
 # vim as editor
 export EDITOR=vim
 
+# allow utf8
+stty cs8 -istrip -parenb
+bind 'set convert-meta off'
+bind 'set meta-flag on'
+bind 'set output-meta on'
+
 # Add perso bin path
 if [ -d ~/.local/bin ]; then
     export PATH=$PATH:~/.local/bin
