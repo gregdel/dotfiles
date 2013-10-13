@@ -45,9 +45,6 @@ nnoremap <F10> :set nonumber!<CR>
 " Open a new tab the easy way
 nnoremap tt    :tabedit<Space>
 
-" Use ii to enter and quit edit mode
-:imap ii <Esc>
-
 " Color scheme
 colorscheme molokai
 syntax on
@@ -62,7 +59,7 @@ au BufRead,BufNewFile *.md set filetype=markdown
 au BufRead,BufNewFile *.json set ft=json syntax=javascript
 
 " Open NERDTree with Ctrl+D
-nmap <silent> <C-D> :NERDTreeToggle<CR>
+" nmap <silent> <C-D> :NERDTreeToggle<CR>
 
 "Options for the NERDTree
 let NERDTreeChDirMode=1
