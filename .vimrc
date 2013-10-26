@@ -58,8 +58,8 @@ au BufRead,BufNewFile *.md set filetype=markdown
 " JSON
 au BufRead,BufNewFile *.json set ft=json syntax=javascript
 
-" Open NERDTree with Ctrl+D
-" nmap <silent> <C-D> :NERDTreeToggle<CR>
+" Open NERDTree with F8
+nmap <silent> <F8> :NERDTreeToggle<CR>
 
 "Options for the NERDTree
 let NERDTreeChDirMode=1
