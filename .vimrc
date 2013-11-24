@@ -50,6 +50,9 @@ colorscheme molokai
 syntax on
 filetype plugin indent on
 
+" Indent properly
+autocmd Filetype javascript setlocal ts=2 sts=2 sw=2
+
 " Delete spaces at the end of files
 au BufWrite * %s/\s\+$//ge
 
