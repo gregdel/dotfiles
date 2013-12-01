@@ -1,3 +1,6 @@
+" Make vim more useful
+set nocompatible
+
 " Run pathogen
 execute pathogen#infect()
 
@@ -6,7 +9,7 @@ set history=1000 " much more history than base
 set undolevels=1000 " much more undo
 set title " Set the terminal title's
 
-set expandtab
+set expandtab       "Tabs to spaces
 set smarttab
 set shiftwidth=4
 set tabstop=4
@@ -20,6 +23,9 @@ set ignorecase
 set smartcase
 set hlsearch
 
+" Press enter after search to clean highlighting
+nnoremap <cr> :noh<CR><CR>:<backspace>
+
 " Backup / Undo
 if has('persistent_undo')
     silent !mkdir ~/.vim/backup > /dev/null 2>&1
@@ -32,7 +38,7 @@ endif
 set term=xterm-256color
 
 " Set encoding
-set encoding=utf-8
+set encoding=utf-8 nobomb
 
 " Navigate through tabs
 nnoremap tk    :tabnext<CR>
@@ -68,3 +74,12 @@ nmap <silent> <F8> :NERDTreeToggle<CR>
 let NERDTreeChDirMode=1
 let NERDTreeShowHidden=1
 let NERDTreeDirArrows=0
+
+" CtrlP
+let g:ctrlp_match_window_bottom = 0 " Show at top of window
+let g:ctrlp_working_path_mode = 2 " Smart path mode
+let g:ctrlp_mru_files = 1 " Enable Most Recently Used files feature
+let g:ctrlp_jump_to_buffer = 2 " Jump to tab AND buffer if already open
+let g:ctrlp_split_window = 1 " <CR> = New Tab
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
