@@ -26,6 +26,12 @@ set hlsearch
 " Press enter after search to clean highlighting
 nnoremap <cr> :noh<CR><CR>:<backspace>
 
+" Moves between splits the easy way
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
+
 " Backup / Undo
 if has('persistent_undo')
     silent !mkdir ~/.vim/backup > /dev/null 2>&1
