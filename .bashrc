@@ -38,3 +38,7 @@ fi
 if [ -f ~/.bashrc_ps1 ]; then
     source ~/.bashrc_ps1
 fi
+
+# Homebrew
+export PATH="/usr/local/bin:$PATH"
+export PATH="/usr/local/sbin:$PATH"

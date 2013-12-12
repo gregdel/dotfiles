@@ -4,6 +4,9 @@ set nocompatible
 " Run pathogen
 execute pathogen#infect()
 
+" Change mapleader
+let mapleader=","
+
 " History
 set history=1000 " much more history than base
 set undolevels=1000 " much more undo
