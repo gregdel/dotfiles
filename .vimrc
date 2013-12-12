@@ -78,8 +78,13 @@ au BufRead,BufNewFile *.json set ft=json syntax=javascript
 
 " Open NERDTree with F8
 nmap <silent> <F8> :NERDTreeToggle<CR>
+nmap <leader>n :NERDTreeTabsToggle<CR>
 
 "Options for the NERDTree
 let NERDTreeChDirMode=1
 let NERDTreeShowHidden=1
 let NERDTreeDirArrows=0
+
+" Start interactive EasyAlign in visual mode
+vmap <Enter> <Plug>(EasyAlign)
+nmap <Leader>a <Plug>(EasyAlign)
