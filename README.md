@@ -1,4 +1,4 @@
-linux-configs
+dotfiles
 =============
 
-My linux configurations for easy deployment 
+My dotfiles for easy deployment 
