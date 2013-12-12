@@ -50,15 +50,15 @@ set term=xterm-256color
 set encoding=utf-8 nobomb
 
 " Navigate through tabs
-nnoremap tk    :tabnext<CR>
-nnoremap tj    :tabprev<CR>
+nnoremap gk    :tabnext<CR>
+nnoremap gj    :tabprev<CR>
 
 " Insert mode paste toogle
 set pastetoggle=<F9>
 nnoremap <F10> :set nonumber!<CR>
 
 " Open a new tab the easy way
-nnoremap tt    :tabedit<Space>
+nnoremap <leader>t :tabedit<Space>
 
 " Color scheme
 colorscheme molokai
@@ -84,6 +84,7 @@ nmap <leader>n :NERDTreeTabsToggle<CR>
 let NERDTreeChDirMode=1
 let NERDTreeShowHidden=1
 let NERDTreeDirArrows=0
+let NERDTreeShowBookmarks=1
 
 " Start interactive EasyAlign in visual mode
 vmap <Enter> <Plug>(EasyAlign)
