@@ -88,4 +88,3 @@ let NERDTreeShowBookmarks=1
 
 " Start interactive EasyAlign in visual mode
 vmap <Enter> <Plug>(EasyAlign)
-nmap <Leader>a <Plug>(EasyAlign)
