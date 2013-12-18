@@ -8,6 +8,9 @@ set completion-ignore-case on
 # VI mode !!!
 set editing-mode vi
 
+# Source me :)
+"\C-x\C-r": re-read-init-file
+
 # Search through previous commands
 "\e[A": history-search-backward
 "\e[B": history-search-forward

@@ -1,4 +1,4 @@
-" Make vim more useful
+
 set nocompatible
 
 " Run pathogen
@@ -200,25 +200,3 @@ let NERDTreeShowBookmarks=1
 
 " Start interactive EasyAlign in visual mode
 vmap <Enter> <Plug>(EasyAlign)
-
-" Markdown syntax
-au BufRead,BufNewFile *.md set filetype=markdown
-" JSON
-au BufRead,BufNewFile *.json set ft=json syntax=javascript
-
-" Open NERDTree Tabs quick toogle
-nmap <leader>n :NERDTreeTabsToggle<CR>
-
-"Options for the NERDTree
-let NERDTreeChDirMode=1
-let NERDTreeShowHidden=1
-let NERDTreeDirArrows=0
-let NERDTreeShowBookmarks=1
-
-" Start interactive EasyAlign in visual mode
-vmap <Enter> <Plug>(EasyAlign)
-
-" Vim airline config
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#branch#enabled = 1
-let g:airline#extensions#syntastic#enabled = 1
