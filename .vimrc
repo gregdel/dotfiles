@@ -25,6 +25,9 @@ set wrap
 " Set encoding
 set encoding=utf-8 nobomb
 
+" statusline
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+
 " Show all kinds of stuff
 set ruler           " Show the cursor position
 set shortmess=atI   " Don’t show the intro message when starting Vim
@@ -76,6 +79,9 @@ nnoremap <F10> :set nonumber!<CR>
 
 " Open a new tab the easy way
 nnoremap <leader>t :tabedit<Space>
+
+" vsplit
+nnoremap <leader>v :vsplit<Space>
 
 " Set term
 set term=xterm-256color
