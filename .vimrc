@@ -86,6 +86,12 @@ nnoremap <leader>v :vsplit<Space>
 " Redraw screen on demand
 nnoremap <leader>r :redraw! <CR>
 
+" Shortcut to rapidly toggle `set list`
+nmap <leader>l :set list!<CR>
+
+" Use the same symbols as TextMate for tabstops and EOLs
+set listchars=tab:▸\ ,eol:¬,trail:·
+
 " Set term
 set term=xterm-256color
 
