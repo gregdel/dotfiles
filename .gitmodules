@@ -34,3 +34,6 @@
 [submodule ".vim/bundle/vim-easy-align"]
 	path = .vim/bundle/vim-easy-align
 	url = https://github.com/junegunn/vim-easy-align.git
+[submodule ".vim/bundle/vim-multiple-cursors"]
+	path = .vim/bundle/vim-multiple-cursors
+	url = https://github.com/terryma/vim-multiple-cursors.git
