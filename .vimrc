@@ -26,7 +26,7 @@ set wrap
 set encoding=utf-8 nobomb
 
 " statusline
-set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%{virtualenv#statusline()}%=%-14.(%l,%c%V%)\ %P
 
 " Show all kinds of stuff
 set ruler           " Show the cursor position
@@ -118,6 +118,9 @@ let NERDTreeChDirMode=1
 let NERDTreeShowHidden=1
 let NERDTreeDirArrows=0
 let NERDTreeShowBookmarks=1
+
+" Virtualenvwrapper format
+let g:virtualenv_stl_format = '[%n]'
 
 " Start interactive EasyAlign in visual mode
 vmap <Enter> <Plug>(EasyAlign)

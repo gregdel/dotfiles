@@ -37,3 +37,6 @@
 [submodule ".vim/bundle/vim-multiple-cursors"]
 	path = .vim/bundle/vim-multiple-cursors
 	url = https://github.com/terryma/vim-multiple-cursors.git
+[submodule ".vim/bundle/vim-virtualenv"]
+	path = .vim/bundle/vim-virtualenv
+	url = https://github.com/jmcantrell/vim-virtualenv.git

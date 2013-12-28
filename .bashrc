@@ -39,6 +39,11 @@ if [ -f ~/.bashrc_ps1 ]; then
     source ~/.bashrc_ps1
 fi
 
+# Import virtualenwrapper
+if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
+    source /usr/local/bin/virtualenvwrapper.sh
+fi
+
 # Homebrew
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"

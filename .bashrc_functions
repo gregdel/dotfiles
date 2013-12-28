@@ -23,6 +23,9 @@ alias c='clear'
 alias tar-folder='tar -zcvf archive.tar.gz'
 alias compress-folder='tar -zcvf archive.tar.gz'
 
+# start screen with unicode enabled
+alias screen='screen -U'
+
 # System functions
 extract () {
 	if [ -f $1 ] ; then
