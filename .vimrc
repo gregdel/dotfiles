@@ -110,6 +110,9 @@ au BufRead,BufNewFile *.md set filetype=markdown
 " JSON
 au BufRead,BufNewFile *.json set ft=json syntax=javascript
 
+" Python
+au Filetype python setl et ts=4 sw=4
+
 " Open NERDTree Tabs quick toogle
 nmap <leader>n :NERDTreeTabsToggle<CR>
 
