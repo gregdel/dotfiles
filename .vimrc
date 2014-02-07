@@ -7,6 +7,9 @@ execute pathogen#infect()
 " Change mapleader
 let mapleader=","
 
+" Easy qwerty
+nmap ; :
+
 " History
 set history=1000    " much more history than base
 set undolevels=1000 " much more undo
@@ -25,7 +28,7 @@ set wrap
 " Set encoding
 set encoding=utf-8 nobomb
 
-" statusline
+" statusline (fugtive + virtualenv)
 set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%{virtualenv#statusline()}%=%-14.(%l,%c%V%)\ %P
 
 " Show all kinds of stuff
@@ -92,35 +95,34 @@ nmap <leader>l :set list!<CR>
 " Use the same symbols as TextMate for tabstops and EOLs
 set listchars=tab:▸\ ,eol:¬,trail:·
 
-" Set term
-set term=xterm-256color
+" Colors
+if $TERM == "xterm-256color" || $TERM == "screen-256color" || $COLORTERM == "gnome-terminal"
+	set t_Co=256
+endif
 
-" Color scheme
-set t_Co=256
 syntax on
 colorscheme molokai
 filetype plugin indent on
-
-" Indent properly
-autocmd Filetype javascript setlocal ts=2 sts=2 sw=2
 
 " Markdown
 au BufRead,BufNewFile *.md set filetype=markdown
 
 " JSON
 au BufRead,BufNewFile *.json set ft=json syntax=javascript
+au BufRead,BufNewFile *.html set ft=html
 
 " Python
 au Filetype python setl et ts=4 sw=4
 
 " Open NERDTree Tabs quick toogle
 nmap <leader>n :NERDTreeTabsToggle<CR>
+nmap <leader>b :TagbarToggle<CR>
 
 "Options for the NERDTree
-let NERDTreeChDirMode=1
-let NERDTreeShowHidden=1
-let NERDTreeDirArrows=0
-let NERDTreeShowBookmarks=1
+let g:NERDTreeChDirMode=1
+let g:NERDTreeShowHidden=1
+let g:NERDTreeDirArrows=0
+let g:NERDTreeShowBookmarks=1
 
 " Virtualenvwrapper format
 let g:virtualenv_stl_format = '[%n]'

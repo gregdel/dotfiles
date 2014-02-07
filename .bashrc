@@ -4,9 +4,6 @@
 #
 ########################################
 
-# Fix locals issue
-export LC_ALL=C
-
 # Set colors to match iTerm2 Terminal Colors
 export TERM=xterm-256color
 
