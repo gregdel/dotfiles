@@ -18,11 +18,10 @@ set undolevels=1000 " much more undo
 set expandtab       "Tabs to spaces
 set smarttab
 set shiftwidth=4
-set tabstop=4
-set lbr
-set tw=500
-set ai
-set si
+set softtabstop=4
+set linebreak
+set textwidth=500
+set autoindent
 set wrap
 
 " Set encoding
@@ -110,9 +109,6 @@ au BufRead,BufNewFile *.md set filetype=markdown
 " JSON
 au BufRead,BufNewFile *.json set ft=json syntax=javascript
 au BufRead,BufNewFile *.html set ft=html
-
-" Python
-au Filetype python setl et ts=4 sw=4
 
 " Open NERDTree Tabs quick toogle
 nmap <leader>n :NERDTreeTabsToggle<CR>
