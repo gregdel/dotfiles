@@ -112,6 +112,11 @@ au BufRead,BufNewFile *.html set ft=html
 
 " Open NERDTree Tabs quick toogle
 nmap <leader>n :NERDTreeTabsToggle<CR>
+
+" Open NERTree if vim start with no file
+autocmd vimenter * if !argc() | let g:nerdtree_tabs_open_on_console_startup=1 | endif
+
+" Open tagbar with a shortcut
 nmap <leader>b :TagbarToggle<CR>
 
 "Options for the NERDTree
