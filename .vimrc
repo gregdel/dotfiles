@@ -44,7 +44,6 @@ set smartcase       " Search with case only if needed
 set hlsearch        " Highlight search while typing
 
 " Don’t add empty newlines at the end of files
-set binary
 set noeol
 
 " jk or kj to quit insert mode
@@ -124,6 +123,7 @@ let g:NERDTreeChDirMode=1
 let g:NERDTreeShowHidden=1
 let g:NERDTreeDirArrows=0
 let g:NERDTreeShowBookmarks=1
+let g:NERDChristmasTree=1
 
 " Virtualenvwrapper format
 let g:virtualenv_stl_format = '[%n]'
