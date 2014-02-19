@@ -7,6 +7,11 @@ set completion-ignore-case on
 
 # VI mode !!!
 set editing-mode vi
+set bell-style none
+$if mode=vi
+    set keymap vi-insert       #notice how the "jj" movement is
+    "jk": vi-movement-mode     #after 'set keymap vi-insert'?
+$endif
 
 # Source me :)
 "\C-x\C-r": re-read-init-file
