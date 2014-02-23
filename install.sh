@@ -24,7 +24,9 @@ case ${choice} in
         FILES=(
             .bashrc
             .bashrc_ps1
-            .bashrc_functions
+            .zshrc
+            .oh-my-zsh
+            .shell_functions
             .gitconfig
             .inputrc
             .screenrc

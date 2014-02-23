@@ -1,14 +1,4 @@
-########################################
-#
-#        SHARED CONFIG FILE
-#
-########################################
-
-# Set colors to match iTerm2 Terminal Colors
-export TERM=xterm-256color
-
-# vim as editor
-export EDITOR=vim
+# Bash configuration
 
 # allow utf8
 stty cs8 -istrip -parenb
@@ -16,19 +6,14 @@ bind 'set convert-meta off'
 bind 'set meta-flag on'
 bind 'set output-meta on'
 
-# Add perso bin path
-if [ -d ~/.local/bin ]; then
-    export PATH=$PATH:~/.local/bin
-fi
-
 # Import personnal conf
 if [ -f ~/.bashrc_local ]; then
     source ~/.bashrc_local
 fi
 
 # Import functions
-if [ -f ~/.bashrc_functions ]; then
-    source ~/.bashrc_functions
+if [ -f ~/.shell_functions ]; then
+    source ~/.shell_functions
 fi
 
 # Import PS1
@@ -36,11 +21,31 @@ if [ -f ~/.bashrc_ps1 ]; then
     source ~/.bashrc_ps1
 fi
 
-# Import virtualenwrapper
-if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
-    source /usr/local/bin/virtualenvwrapper.sh
-fi
+# Set appropriate ls alias
+case $(uname -s) in
+    Darwin|FreeBSD)
+        alias ls="ls -FG"
+        ;;
+    Linux)
+        alias ls="ls --color=always -F"
+        ;;
+esac
+alias l='ls'
+alias ll='ls -lh'
+alias la='ls -lah'
 
-# Homebrew
-export PATH="/usr/local/bin:$PATH"
-export PATH="/usr/local/sbin:$PATH"
+# cd aliases
+alias cd..='cd ..'
+alias ..='cd ..'
+alias ...='cd ../../'
+alias ....='cd ../../../'
+
+# Reload bash configuration
+function reload_bash {
+    source ~/.bashrc
+}
+
+# parse to get the current branch
+function parse_git_branch {
+    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
