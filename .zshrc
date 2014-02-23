@@ -15,7 +15,8 @@ source $ZSH/oh-my-zsh.sh
 # / oh-my-zsh
 ################
 
-alias zshconfig="vim ~/.zshrc"
+# Bind jk keys to escape insert mode
+bindkey -M viins 'jk' vi-cmd-mode
 
 # Import functions
 if [ -f ~/.shell_functions ]; then
