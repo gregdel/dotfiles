@@ -1,0 +1,36 @@
+# PS1
+PS1=""
+# Print username@host
+if [[ "$USER" == "root" ]]
+then
+    PS1+="%{$fg_bold[red]%}%n@%M:"
+else
+    PS1+="%{$fg_bold[green]%}%n@%M:"
+fi
+
+# Print path
+PS1+="%{$reset_color%}"
+PS1+="%{$fg_bold[blue]%}%~"
+PS1+="%{$reset_color%}"
+
+# Display git branch
+# Print bash state
+if [[ "$USER" == "root" ]]; then
+    PS1+="%{$fg_bold[red]%}#"
+else
+    PS1+="%{$fg_bold[green]%}$"
+fi
+
+# Disable colors
+PS1+="%{$reset_color%} "
+
+# Git RPS1
+RPS1=""
+if [[ "$USER" == "root" ]]; then
+    RPS1+='%{$fg_bold[yellow]%}$(parse_git_branch)'
+    RPS1+="%{$reset_color%}"
+else
+    RPS1+='%{$fg_bold[red]%}$(parse_git_branch)'
+    RPS1+="%{$reset_color%}"
+fi
+

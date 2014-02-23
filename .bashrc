@@ -11,11 +11,6 @@ if [ -f ~/.bashrc_local ]; then
     source ~/.bashrc_local
 fi
 
-# Import functions
-if [ -f ~/.shell_functions ]; then
-    source ~/.shell_functions
-fi
-
 # Import PS1
 if [ -f ~/.bashrc_ps1 ]; then
     source ~/.bashrc_ps1
@@ -43,9 +38,4 @@ alias ....='cd ../../../'
 # Reload bash configuration
 function reload_bash {
     source ~/.bashrc
-}
-
-# parse to get the current branch
-function parse_git_branch {
-    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }

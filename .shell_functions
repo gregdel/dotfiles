@@ -6,6 +6,11 @@ export TERM=xterm-256color
 # vim as editor
 export EDITOR=vim
 
+# Add local aliases
+if [ -f ~/.shell_local ]; then
+    source ~/.shell_local
+fi
+
 # Add perso bin path
 if [ -d ~/.local/bin ]; then
     export PATH=$PATH:~/.local/bin
@@ -58,4 +63,9 @@ extract () {
 # Create dir and jump into it
 function mcd() {
     mkdir -p "$1" && cd "$1";
+}
+
+# parse to get the current branch
+function parse_git_branch {
+    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\[\1\]/'
 }

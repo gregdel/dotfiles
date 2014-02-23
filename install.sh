@@ -25,6 +25,7 @@ case ${choice} in
             .bashrc
             .bashrc_ps1
             .zshrc
+            .zshrc_ps1
             .oh-my-zsh
             .shell_functions
             .gitconfig
