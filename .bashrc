@@ -11,6 +11,11 @@ if [ -f ~/.bashrc_local ]; then
     source ~/.bashrc_local
 fi
 
+# Import my global shell functions
+if [ -f ~/.shell_functions ]; then
+    source ~/.shell_functions
+fi
+
 # Import PS1
 if [ -f ~/.bashrc_ps1 ]; then
     source ~/.bashrc_ps1
