@@ -8,11 +8,15 @@ execute pathogen#infect()
 let mapleader=","
 
 " Easy qwerty
-nmap ; :
+nnoremap ; :
+vnoremap ; :
 
 " History
 set history=1000    " much more history than base
 set undolevels=1000 " much more undo
+
+" Command completion
+set wildmenu
 
 " Indentation
 set expandtab       "Tabs to spaces
@@ -23,6 +27,10 @@ set linebreak
 set textwidth=500
 set autoindent
 set wrap
+
+" Better indent
+vmap > >gv
+vmap < <gv
 
 " Set encoding
 set encoding=utf-8 nobomb
@@ -62,6 +70,14 @@ map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
 
+" move the current line up or down with the Ctrl-arrow keys
+nmap <C-Down> :<C-u>move .+1<CR>
+nmap <C-Up>   :<C-u>move .-2<CR>
+imap <C-Down> <C-o>:<C-u>move .+1<CR>
+imap <C-Up>   <C-o>:<C-u>move .-2<CR>
+vmap <C-Down> :move '>+1<CR>gv
+vmap <C-Up> :move '<-2<CR>gv
+
 " Backup / Undo
 if has('persistent_undo')
     silent !mkdir ~/.vim/backup > /dev/null 2>&1
@@ -71,8 +87,8 @@ if has('persistent_undo')
 endif
 
 " Navigate through tabs
-nnoremap gk    :tabnext<CR>
-nnoremap gj    :tabprev<CR>
+nnoremap gl    :tabnext<CR>
+nnoremap gh    :tabprev<CR>
 
 " Insert mode paste toogle
 set pastetoggle=<F9>
@@ -80,9 +96,6 @@ nnoremap <F10> :set nonumber!<CR>
 
 " Open a new tab the easy way
 nnoremap <leader>t :tabedit<Space>
-
-" vsplit
-nnoremap <leader>v :vsplit<Space>
 
 " Redraw screen on demand
 nnoremap <leader>r :redraw! <CR>
@@ -108,6 +121,10 @@ au BufRead,BufNewFile *.md set filetype=markdown
 " JSON
 au BufRead,BufNewFile *.json set ft=json syntax=javascript
 au BufRead,BufNewFile *.html set ft=html
+
+" Vim config file
+autocmd bufwritepost .vimrc source $MYVIMRC
+nmap <leader>v :tabedit $MYVIMRC<CR>
 
 " Open NERDTree Tabs quick toogle
 nmap <leader>n :NERDTreeTabsToggle<CR>
