@@ -31,3 +31,9 @@ fi
 function reload_zsh {
     source ~/.zshrc
 }
+
+# fix backspace on Debian
+bindkey "^?" backward-delete-char
+
+# fix delete key on OSX
+bindkey "\e[3~" delete-char
