@@ -18,6 +18,16 @@ source $ZSH/oh-my-zsh.sh
 # Bind jk keys to escape insert mode
 bindkey -M viins 'jk' vi-cmd-mode
 
+# Fix backspace on Debian
+bindkey "^?" backward-delete-char
+
+# Fix delete key on OSX
+bindkey "\e[3~" delete-char
+
+# Search through previous commands
+bindkey "\e[A" history-search-backward
+bindkey "\e[B" history-search-forward
+
 # Import functions
 if [ -f ~/.shell_functions ]; then
     source ~/.shell_functions
@@ -32,8 +42,3 @@ function reload_zsh {
     source ~/.zshrc
 }
 
-# fix backspace on Debian
-bindkey "^?" backward-delete-char
-
-# fix delete key on OSX
-bindkey "\e[3~" delete-char
