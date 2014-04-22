@@ -118,6 +118,9 @@ filetype plugin indent on
 " Markdown
 au BufRead,BufNewFile *.md set filetype=markdown
 
+" Vagrantfile
+au BufRead,BufNewFile Vagrantfile set filetype=ruby
+
 " JSON
 au BufRead,BufNewFile *.json set ft=json syntax=javascript
 au BufRead,BufNewFile *.html set ft=html
