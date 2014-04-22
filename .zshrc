@@ -4,11 +4,14 @@
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.oh-my-zsh
 
+# Disable auto updates
+DISABLE_AUTO_UPDATE="true"
+
 # Dot when completion in progress
 COMPLETION_WAITING_DOTS="true"
 
 # oh-my-zsh plugins
-plugins=(git brew vi-mode)
+plugins=(bower brew docker git vagrant vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 ################
