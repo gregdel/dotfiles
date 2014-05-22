@@ -103,6 +103,9 @@ nnoremap <leader>r :redraw! <CR>
 " Shortcut to rapidly toggle `set list`
 nmap <leader>l :set list!<CR>
 
+" Toggle spell lang
+nnoremap <leader>s :let &spelllang=( &spelllang == "en" ? "fr" : "en" )<CR>
+
 " Use the same symbols as TextMate for tabstops and EOLs
 set listchars=tab:▸\ ,eol:¬,trail:·
 
@@ -124,6 +127,10 @@ au BufRead,BufNewFile Vagrantfile set filetype=ruby
 " JSON
 au BufRead,BufNewFile *.json set ft=json syntax=javascript
 au BufRead,BufNewFile *.html set ft=html
+
+" Set spell for commit messages in git / svn
+au BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
+au BufNewFile,BufRead svn-commit.tmp setlocal spell
 
 " Vim config file
 autocmd bufwritepost .vimrc source $MYVIMRC
