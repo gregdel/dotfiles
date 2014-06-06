@@ -34,6 +34,11 @@ alias git-pull-sub='git submodule foreach git pull origin master'
 # Clear screen
 alias c='clear'
 
+# List alias
+alias l='ls'
+alias ll='ls -lh'
+alias la='ls -lah'
+
 # start screen with unicode enabled
 alias screen='screen -U'
 
