@@ -11,7 +11,7 @@ DISABLE_AUTO_UPDATE="true"
 COMPLETION_WAITING_DOTS="true"
 
 # oh-my-zsh plugins
-plugins=(bower brew docker git vagrant vi-mode)
+plugins=(bower brew docker git heroku vagrant vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 ################
@@ -44,4 +44,3 @@ fi
 function reload_zsh {
     source ~/.zshrc
 }
-
