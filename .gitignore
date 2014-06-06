@@ -2,3 +2,5 @@
 *~
 .vim/.netrwhist
 .vim/backup/*
+.mutt/cache/*
+.mutt/tmp/*
