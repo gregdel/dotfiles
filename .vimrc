@@ -56,7 +56,6 @@ set noeol
 
 " jk or kj to quit insert mode
 imap jk <Esc>
-imap kj <Esc>
 
 " Delete spaces at the end of the lines on save
 au BufWrite * %s/\s\+$//ge

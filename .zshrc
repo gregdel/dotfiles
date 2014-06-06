@@ -43,4 +43,5 @@ fi
 
 function reload_zsh {
     source ~/.zshrc
+    rehash
 }
