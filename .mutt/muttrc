@@ -1,3 +1,6 @@
+# Source my local vars
+source ~/.local/mutt/vars
+
 # Paths ----------------------------------------------
 set alias_file       = ~/.local/mutt/alias         # where to store aliases
 set header_cache     = ~/.local/mutt/cache/headers # where to store headers
