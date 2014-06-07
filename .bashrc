@@ -30,9 +30,6 @@ case $(uname -s) in
         alias ls="ls --color=always -F"
         ;;
 esac
-alias l='ls'
-alias ll='ls -lh'
-alias la='ls -lah'
 
 # cd aliases
 alias cd..='cd ..'

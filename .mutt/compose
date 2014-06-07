@@ -14,3 +14,5 @@ set reverse_name                     # reply as whomever it was to
 set include                          # include message in replies
 set forward_quote                    # include message in forwards
 
+# Postpone message
+bind compose p postpone-message

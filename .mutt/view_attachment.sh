@@ -121,8 +121,13 @@ fi
 # Otherwise we've been told what to use.  So do an open -a.
 
 if [ -z $open_with ]; then
-    xdg-open $newfile
+    command="$newfile"
 else
-    xdg-open -a "$open_with" $newfile
+    command="-a '$open_with' $newfile"
 fi
 
+if [ "$(uname)" == "Darwin" ]; then
+    open ${command}
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    xdg-open ${command}
+fi

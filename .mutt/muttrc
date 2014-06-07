@@ -1,3 +1,12 @@
+# Paths ----------------------------------------------
+set alias_file       = ~/.local/mutt/alias         # where to store aliases
+set header_cache     = ~/.local/mutt/cache/headers # where to store headers
+set message_cachedir = ~/.local/mutt/cache/bodies  # where to store bodies
+set certificate_file = ~/.local/mutt/certificates  # where to store certs
+set mailcap_path     = ~/.local/mutt/mailcap       # entries for filetypes
+set tmpdir           = ~/.local/mutt/tmp           # where to keep temp files
+set signature        = ~/.local/mutt/sig           # my signature file
+
 # Basic Options --------------------------------------
 set wait_key = no        # shut up, mutt
 set mbox_type = Maildir  # mailbox type
@@ -25,13 +34,14 @@ bind attach <return> view-mailcap
 
 # External files
 set mailcap_path = ~/.mutt/mailcap       # entries for filetypes
-macro pager \Cu "|urlview<enter>" "call urlview to open links"
 
 # Source
 source "~/.mutt/compose"
 source "~/.mutt/index"
 source "~/.mutt/pager"
+source "~/.mutt/macros"
 source "~/.mutt/sidebar"
+source "~/.mutt/crypto"
 source "~/.mutt/colors/mutt-colors-solarized/mutt-colors-solarized-dark-256.muttrc"
 
 # Source local conf
