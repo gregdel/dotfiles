@@ -16,3 +16,6 @@ set forward_quote                    # include message in forwards
 
 # Postpone message
 bind compose p postpone-message
+
+# GPG menu
+bind compose g pgp-menu
