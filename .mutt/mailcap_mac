@@ -13,3 +13,9 @@ text/html; ~/.mutt/view_attachment.sh %s html
 
 # Unidentified files
 application/octet-stream; ~/.mutt/view_attachment.sh %s "-"
+
+# Plain
+text/plain; vim %s
+
+# Diff
+text/x-diff; vim %s
