@@ -24,9 +24,22 @@ set smarttab
 set shiftwidth=4
 set softtabstop=4
 set linebreak
-set textwidth=500
 set autoindent
+
+" Format options no automatic wraping, gq wrap to 80
+set textwidth=0
+set formatoptions=cq
+set wrapmargin=0
 set wrap
+
+" Q => gq
+map Q gq
+
+" Menu completion
+set wildmenu
+
+" Scrolloff
+set scrolloff=5
 
 " Better indent
 vmap > >gv
@@ -56,6 +69,9 @@ set noeol
 
 " jk or kj to quit insert mode
 imap jk <Esc>
+
+" Better yank
+noremap Y y$
 
 " Delete spaces at the end of the lines on save
 au BufWrite * %s/\s\+$//ge
@@ -111,6 +127,10 @@ nnoremap z- 1z=
 " Use the same symbols as TextMate for tabstops and EOLs
 set listchars=tab:▸\ ,eol:¬,trail:·
 
+" Easy folding
+noremap <Space> za
+vnoremap <Space> zf
+
 " Colors
 if $TERM == "xterm-256color" || $TERM == "screen-256color" || $COLORTERM == "gnome-terminal"
 	set t_Co=256
@@ -159,3 +179,27 @@ let g:virtualenv_stl_format = '[%n]'
 
 " Start interactive EasyAlign in visual mode
 vmap <Enter> <Plug>(EasyAlign)
+
+" statusline old one commented / using light line now
+set laststatus=2 "always visible
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%{virtualenv#statusline()}%=%-14.(%l,%c%V%)\ %P
+" lightline
+let g:lightline = {
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component': {
+      \   'fugitive': '%{exists("*fugitive#head")?fugitive#head():""}'
+      \ },
+      \ 'component_visible_condition': {
+      \   'readonly': '(&filetype!="help"&& &readonly)',
+      \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
+      \   'fugitive': '(exists("*fugitive#head") && ""!=fugitive#head())'
+      \ },
+      \ }
+
+" Source local vimrc
+if filereadable(glob("~/.vimrc.local"))
+    source ~/.vimrc.local
+endif
