@@ -1,5 +1,5 @@
 # Index View Options ---------------------------------
-set date_format = "%d/%m/%y %H:%S"
+set date_format = "%d/%m/%y %H:%M"
 set index_format = "[%Z]%4C| %D %?X?(%X)&   ? %-20.20F  %.100s %> %5c%"
 set sort = threads                         # like gmail
 set sort_aux = reverse-last-date-received  # like gmail
