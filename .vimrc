@@ -4,6 +4,9 @@ set nocompatible
 " Run pathogen
 execute pathogen#infect()
 
+" Backspace
+set backspace=indent,eol,start
+
 " Change mapleader
 let mapleader=","
 
