@@ -1,6 +1,11 @@
 # Source my local vars
 source ~/.local/mutt/vars
 
+# No sleep time
+set sleep_time=0
+set header_cache = ~/.local/tmp
+# set header_cache = /run/shm/mutt_header_cache
+
 # Paths ----------------------------------------------
 set alias_file       = ~/.local/mutt/alias         # where to store aliases
 set header_cache     = ~/.local/mutt/cache/headers # where to store headers
