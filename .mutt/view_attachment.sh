@@ -92,7 +92,6 @@ fi
 
 # if the type is empty then try to figure it out.
 if [ -z $type ]; then
-    file  $1
     type=`file -bi $1 | cut -d"/" -f2`
 fi
 
@@ -121,13 +120,7 @@ fi
 # Otherwise we've been told what to use.  So do an open -a.
 
 if [ -z $open_with ]; then
-    command="$newfile"
+    open $newfile
 else
-    command="-a '$open_with' $newfile"
-fi
-
-if [ "$(uname)" == "Darwin" ]; then
-    open ${command}
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-    xdg-open ${command}
+    open -a "$open_with" $newfile
 fi
