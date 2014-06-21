@@ -76,9 +76,6 @@ imap jk <Esc>
 " Better yank
 noremap Y y$
 
-" Delete spaces at the end of the lines on save
-au BufWrite * %s/\s\+$//ge
-
 " Press enter after search to clean highlighting
 nnoremap <cr> :noh<CR><CR>:<backspace>
 
@@ -143,22 +140,41 @@ syntax on
 colorscheme molokai
 filetype plugin indent on
 
-" Markdown
-au BufRead,BufNewFile *.md set filetype=markdown
+" autocmd filetype group
+augroup filetype_set
+    " Clear the autocmd
+    autocmd!
+    " Markdown filetype
+    autocmd BufRead,BufNewFile *.md set filetype=markdown
+    " Vagrantfile
+    autocmd BufRead,BufNewFile Vagrantfile set filetype=ruby
+    " JSON
+    autocmd BufRead,BufNewFile *.json set filetype=json syntax=javascript
+augroup END
 
-" Vagrantfile
-au BufRead,BufNewFile Vagrantfile set filetype=ruby
+" autocmd spell group
+augroup spell_set
+    " Clear the autocmd
+    autocmd!
+    " git
+    autocmd BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
+    " svn
+    autocmd BufNewFile,BufRead svn-commit.tmp setlocal spell
+augroup END
 
-" JSON
-au BufRead,BufNewFile *.json set ft=json syntax=javascript
-au BufRead,BufNewFile *.html set ft=html
+" autocmd config group
+augroup config
+    " Clear the autocmd
+    autocmd!
+    " Source the vimrc on write
+    autocmd bufwritepost .vimrc source $MYVIMRC
+    " Reload message
+    autocmd bufwritepost .vimrc echom 'vimrc reloaded'
+    " Delete spaces at the end of the lines on save
+    autocmd BufWrite * %s/\s\+$//ge
+augroup END
 
-" Set spell for commit messages in git / svn
-au BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
-au BufNewFile,BufRead svn-commit.tmp setlocal spell
-
-" Vim config file
-autocmd bufwritepost .vimrc source $MYVIMRC
+" Edit vimrc
 nmap <leader>v :tabedit $MYVIMRC<CR>
 
 " Open NERDTree Tabs quick toogle
