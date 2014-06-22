@@ -4,6 +4,15 @@ set nocompatible
 " Run pathogen
 execute pathogen#infect()
 
+" Colors
+if $TERM == "xterm-256color" || $TERM == "screen-256color" || $COLORTERM == "gnome-terminal"
+	set t_Co=256
+endif
+
+syntax on
+filetype plugin indent on
+colorscheme molokai
+
 " Backspace
 set backspace=indent,eol,start
 
@@ -131,15 +140,6 @@ set listchars=tab:▸\ ,eol:¬,trail:·
 noremap <Space> za
 vnoremap <Space> zf
 
-" Colors
-if $TERM == "xterm-256color" || $TERM == "screen-256color" || $COLORTERM == "gnome-terminal"
-	set t_Co=256
-endif
-
-syntax on
-colorscheme molokai
-filetype plugin indent on
-
 " autocmd filetype group
 augroup filetype_set
     " Clear the autocmd
@@ -201,12 +201,15 @@ vmap <Enter> <Plug>(EasyAlign)
 
 " statusline old one commented / using light line now
 set laststatus=2 "always visible
-set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%{virtualenv#statusline()}%=%-14.(%l,%c%V%)\ %P
+" set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%{virtualenv#statusline()}%=%-14.(%l,%c%V%)\ %P
 " lightline
 let g:lightline = {
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ]
+      \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ],
+      \   'right': [ [ 'syntastic', 'lineinfo' ],
+      \              ['percent'],
+      \              [ 'fileformat', 'fileencoding', 'filetype', 'spell' ] ]
       \ },
       \ 'component': {
       \   'fugitive': '%{exists("*fugitive#head")?fugitive#head():""}'
