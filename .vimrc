@@ -201,6 +201,7 @@ vmap <Enter> <Plug>(EasyAlign)
 
 " statusline old one commented / using light line now
 set laststatus=2 "always visible
+set noshowmode
 " set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%{virtualenv#statusline()}%=%-14.(%l,%c%V%)\ %P
 " lightline
 let g:lightline = {
