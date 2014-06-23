@@ -1,0 +1,14 @@
+# Images
+image/*;      gthumb %s
+
+# PDFs
+application/pdf; zathura %s
+
+# HTML
+text/html; xdg-open %s
+
+# Plain
+text/plain; vim %s
+
+# Diff
+text/x-diff; vim %s
