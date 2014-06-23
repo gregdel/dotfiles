@@ -4,6 +4,15 @@ set nocompatible
 " Run pathogen
 execute pathogen#infect()
 
+" Colors
+if $TERM == "xterm-256color" || $TERM == "screen-256color" || $COLORTERM == "gnome-terminal"
+	set t_Co=256
+endif
+
+syntax on
+filetype plugin indent on
+colorscheme molokai
+
 " Backspace
 set backspace=indent,eol,start
 
@@ -76,9 +85,6 @@ imap jk <Esc>
 " Better yank
 noremap Y y$
 
-" Delete spaces at the end of the lines on save
-au BufWrite * %s/\s\+$//ge
-
 " Press enter after search to clean highlighting
 nnoremap <cr> :noh<CR><CR>:<backspace>
 
@@ -134,31 +140,41 @@ set listchars=tab:▸\ ,eol:¬,trail:·
 noremap <Space> za
 vnoremap <Space> zf
 
-" Colors
-if $TERM == "xterm-256color" || $TERM == "screen-256color" || $COLORTERM == "gnome-terminal"
-	set t_Co=256
-endif
+" autocmd filetype group
+augroup filetype_set
+    " Clear the autocmd
+    autocmd!
+    " Markdown filetype
+    autocmd BufRead,BufNewFile *.md set filetype=markdown
+    " Vagrantfile
+    autocmd BufRead,BufNewFile Vagrantfile set filetype=ruby
+    " JSON
+    autocmd BufRead,BufNewFile *.json set filetype=json syntax=javascript
+augroup END
 
-syntax on
-colorscheme molokai
-filetype plugin indent on
+" autocmd spell group
+augroup spell_set
+    " Clear the autocmd
+    autocmd!
+    " git
+    autocmd BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
+    " svn
+    autocmd BufNewFile,BufRead svn-commit.tmp setlocal spell
+augroup END
 
-" Markdown
-au BufRead,BufNewFile *.md set filetype=markdown
+" autocmd config group
+augroup config
+    " Clear the autocmd
+    autocmd!
+    " Source the vimrc on write
+    autocmd bufwritepost .vimrc source $MYVIMRC
+    " Reload message
+    autocmd bufwritepost .vimrc echom 'vimrc reloaded'
+    " Delete spaces at the end of the lines on save
+    autocmd BufWrite * %s/\s\+$//ge
+augroup END
 
-" Vagrantfile
-au BufRead,BufNewFile Vagrantfile set filetype=ruby
-
-" JSON
-au BufRead,BufNewFile *.json set ft=json syntax=javascript
-au BufRead,BufNewFile *.html set ft=html
-
-" Set spell for commit messages in git / svn
-au BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
-au BufNewFile,BufRead svn-commit.tmp setlocal spell
-
-" Vim config file
-autocmd bufwritepost .vimrc source $MYVIMRC
+" Edit vimrc
 nmap <leader>v :tabedit $MYVIMRC<CR>
 
 " Open NERDTree Tabs quick toogle
@@ -185,12 +201,15 @@ vmap <Enter> <Plug>(EasyAlign)
 
 " statusline old one commented / using light line now
 set laststatus=2 "always visible
-set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%{virtualenv#statusline()}%=%-14.(%l,%c%V%)\ %P
+" set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%{virtualenv#statusline()}%=%-14.(%l,%c%V%)\ %P
 " lightline
 let g:lightline = {
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ]
+      \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ],
+      \   'right': [ [ 'syntastic', 'lineinfo' ],
+      \              ['percent'],
+      \              [ 'fileformat', 'fileencoding', 'filetype', 'spell' ] ]
       \ },
       \ 'component': {
       \   'fugitive': '%{exists("*fugitive#head")?fugitive#head():""}'
