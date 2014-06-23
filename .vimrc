@@ -128,10 +128,13 @@ nnoremap <leader>r :redraw! <CR>
 nmap <leader>l :set list!<CR>
 
 " Toggle spell lang
-nnoremap <leader>s :let &spelllang=( &spelllang == "en" ? "fr" : "en" )<CR>
+nnoremap <leader>s :let &l:spelllang=( &l:spelllang == "en" ? "fr" : "en" )<CR>
 
 " Choose the first spelling correction
 nnoremap z- 1z=
+
+" Correct the next word
+nnoremap <Leader>c ]s1z=
 
 " Use the same symbols as TextMate for tabstops and EOLs
 set listchars=tab:▸\ ,eol:¬,trail:·
