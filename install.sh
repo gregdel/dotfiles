@@ -33,6 +33,7 @@ case ${choice} in
             .screenrc
             .vim
             .vimrc
+            .tmux.conf
         )
 
         for FILE in  ${FILES[@]}
