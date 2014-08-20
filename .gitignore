@@ -2,5 +2,7 @@
 *~
 .vim/.netrwhist
 .vim/backup/*
+.vim/spell/*.add
+.vim/spell/*.spl
 .mutt/cache/*
 .mutt/tmp/*
