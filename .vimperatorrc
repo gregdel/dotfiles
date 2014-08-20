@@ -1,0 +1,16 @@
+" General configs
+nmap ; :
+let mapleader = ","
+
+" Easy tab navigation
+nnoremap K :tabnext<Return>
+nnoremap J :tabprev<Return>
+
+" Easy tab duplication
+nnoremap <leader>t :tabduplicate <cr>
+
+" Only use selected chars
+set hintchars=hsdfgyuiopqwertnmcv
+
+" Source local config
+source! ~/.vimperatorrc.local

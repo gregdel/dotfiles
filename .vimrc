@@ -159,8 +159,6 @@ augroup END
 augroup spell_set
     " Clear the autocmd
     autocmd!
-    " git
-    autocmd BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
     " svn
     autocmd BufNewFile,BufRead svn-commit.tmp setlocal spell
 augroup END
