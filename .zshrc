@@ -28,8 +28,19 @@ bindkey "^?" backward-delete-char
 bindkey "\e[3~" delete-char
 
 # Search through previous commands
-bindkey "\e[A" history-search-backward
-bindkey "\e[B" history-search-forward
+# bindkey "\e[A" history-search-backward
+# bindkey "\e[B" history-search-forward
+
+autoload up-line-or-beginning-search
+autoload down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+
+bindkey "\e[A"  up-line-or-beginning-search
+bindkey "\e[B"  down-line-or-beginning-search
+
+# Don't share history
+setopt append_history no_inc_append_history no_share_history
 
 # Import functions
 if [ -f ~/.shell_functions ]; then

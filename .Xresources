@@ -14,10 +14,8 @@ URxvt.urgentOnBell: true
 URxvt.iso14755: false
 URxvt.iso14755_52: false
 
-URxvt.selectToClipboard: true
-
 ! Extensions
-URxvt.perl-ext-common: default,matcher,vtwheel
+URxvt.perl-ext-common: default,matcher,custom-clipboard,vtwheel
 
 ! Find urls
 URxvt.urlLauncher: /usr/bin/xdg-open
@@ -27,10 +25,11 @@ URxvt.matcher.button: C1
 URxvt.keysym.C-Delete: perl:matcher:last
 URxvt.keysym.M-Delete: perl:matcher:list
 
-! Molokai theme
+! Theme
+
+! Background
 URxvt.background: #101010
 URxvt.foreground: #d0d0d0
-
 ! Black
 URxvt.color0: #000000
 URxvt.color8: #555753
@@ -55,6 +54,5 @@ URxvt.color14: #34e2e2
 ! White
 URxvt.color7: #d3d7cf
 URxvt.color15: #eeeeec
-
 ! Urls
 URxvt.colorUL: #4682B4
