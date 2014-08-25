@@ -94,6 +94,9 @@ map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
 
+" Open the vsplit on the right side
+set splitright
+
 " move the current line up or down with the Ctrl-arrow keys
 nmap <C-Down> :<C-u>move .+1<CR>
 nmap <C-Up>   :<C-u>move .-2<CR>
