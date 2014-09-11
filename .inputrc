@@ -16,6 +16,9 @@ $endif
 # Source me :)
 "\C-x\C-r": re-read-init-file
 
+# Classic clear screen
+"\C-l": clear-screen
+
 # Search through previous commands
 "\e[A": history-search-backward
 "\e[B": history-search-forward

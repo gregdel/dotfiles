@@ -200,6 +200,12 @@ let g:NERDChristmasTree=1
 " Virtualenvwrapper format
 let g:virtualenv_stl_format = '[%n]'
 
+" Syntastic
+let g:syntastic_error_symbol='✗'
+let g:syntastic_warning_symbol='⚠'
+let g:syntastic_enable_perl_checker = 1
+noremap <leader>e :Errors<CR>
+
 " Start interactive EasyAlign in visual mode
 vmap <Enter> <Plug>(EasyAlign)
 
