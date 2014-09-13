@@ -204,6 +204,7 @@ let g:virtualenv_stl_format = '[%n]'
 let g:syntastic_error_symbol='✗'
 let g:syntastic_warning_symbol='⚠'
 let g:syntastic_enable_perl_checker = 1
+let g:syntastic_ruby_checkers = ['rubocop']
 noremap <leader>e :Errors<CR>
 
 " Start interactive EasyAlign in visual mode
