@@ -12,3 +12,6 @@ text/plain; vim %s
 
 # Diff
 text/x-diff; vim %s
+
+# Office documents
+application/vnd.openxmlformats-officedocument.wordprocessingml.document; libreoffice %s
