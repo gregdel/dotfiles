@@ -13,6 +13,9 @@ syntax on
 filetype plugin indent on
 colorscheme molokai
 
+" Remove bgc
+set t_ut=
+
 " Backspace
 set backspace=indent,eol,start
 
@@ -206,7 +209,11 @@ let g:syntastic_warning_symbol='⚠'
 let g:syntastic_enable_perl_checker = 1
 let g:syntastic_ruby_checkers = ['mri', 'rubocop']
 let g:syntastic_ruby_rubocop_args = "-R"
+let g:syntastic_go_checkers = ['go', 'gofmt', 'golint' , 'govet']
 noremap <leader>e :Errors<CR>
+
+" Go vim
+let g:go_fmt_command = "goimports"
 
 " Start interactive EasyAlign in visual mode
 vmap <Enter> <Plug>(EasyAlign)
