@@ -31,8 +31,9 @@
     lol = log --graph --decorate --pretty=oneline --abbrev-commit
     lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
     ls = ls-files
-	pullall = !git pull && git submodule update --init --recursive
-	cia = commit --amend --reset-author
+    pullall = !git pull && git submodule update --init --recursive
+    cia = commit --amend --reset-author
+    pushbr = !git push origin HEAD
 [push]
     default = tracking
 [core]
