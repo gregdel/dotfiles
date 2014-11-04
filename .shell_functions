@@ -18,6 +18,11 @@ if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
     source /usr/local/bin/virtualenvwrapper.sh
 fi
 
+# Use z
+if [ -f ~/.zscript/z.sh ]; then
+    source ~/.zscript/z.sh
+fi
+
 # Homebrew
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"

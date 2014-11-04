@@ -24,16 +24,17 @@ case ${choice} in
         FILES=(
             .bashrc
             .bashrc_ps1
-            .zshrc
-            .zshrc_ps1
-            .oh-my-zsh
-            .shell_functions
             .gitconfig
             .inputrc
+            .oh-my-zsh
             .screenrc
+            .shell_functions
+            .tmux.conf
             .vim
             .vimrc
-            .tmux.conf
+            .zscript
+            .zshrc
+            .zshrc_ps1
         )
 
         for FILE in  ${FILES[@]}
