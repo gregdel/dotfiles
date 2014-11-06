@@ -9,8 +9,8 @@ if $TERM == "xterm-256color" || $TERM == "screen-256color" || $COLORTERM == "gno
 	set t_Co=256
 endif
 
-syntax on
 filetype plugin indent on
+syntax on
 colorscheme molokai
 
 " Remove bgc
