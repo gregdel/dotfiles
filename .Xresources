@@ -1,4 +1,4 @@
-URxvt.termName: rxvt-unicode
+URxvt.termName: xterm-256color
 
 ! Dont use bold
 URxvt.font:      xft:Monospace:pixelsize=12
