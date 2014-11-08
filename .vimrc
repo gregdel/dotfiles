@@ -202,9 +202,6 @@ let g:NERDTreeDirArrows=0
 let g:NERDTreeShowBookmarks=1
 let g:NERDChristmasTree=1
 
-" Virtualenvwrapper format
-let g:virtualenv_stl_format = '[%n]'
-
 " Syntastic
 let g:syntastic_error_symbol='✗'
 let g:syntastic_warning_symbol='⚠'

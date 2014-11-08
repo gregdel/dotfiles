@@ -33,6 +33,7 @@ case ${choice} in
             .vim
             .vimrc
             .zscript
+            .zsh_plugins
             .zshrc
             .zshrc_ps1
         )

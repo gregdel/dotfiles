@@ -3,11 +3,6 @@
 # vim as editor
 export EDITOR=vim
 
-# Add local aliases
-if [ -f ~/.shell_local ]; then
-    source ~/.shell_local
-fi
-
 # Add perso bin path
 if [ -d ~/.local/bin ]; then
     export PATH=$PATH:~/.local/bin
@@ -22,12 +17,6 @@ fi
 if [ -f ~/.zscript/z.sh ]; then
     source ~/.zscript/z.sh
 fi
-
-# Homebrew
-export PATH="/usr/local/bin:$PATH"
-export PATH="/usr/local/sbin:$PATH"
-export PATH="/usr/local/share/npm/bin:$PATH"
-export PATH="/usr/local/tranquil/bin:$PATH"
 
 # Tmux
 alias ta='tmux attach -t'
@@ -95,3 +84,8 @@ man() {
     LESS_TERMCAP_us=$'\E[01;32m' \
     man "$@"
 }
+
+# Add local configs
+if [ -f ~/.shell_local ]; then
+    source ~/.shell_local
+fi
