@@ -76,6 +76,3 @@
 [submodule ".zscript"]
 	path = .zscript
 	url = https://github.com/rupa/z.git
-[submodule ".zsh_plugins/zsh-syntax-highlighting"]
-	path = .zsh_plugins/zsh-syntax-highlighting
-	url = https://github.com/zsh-users/zsh-syntax-highlighting.git

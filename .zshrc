@@ -42,11 +42,6 @@ bindkey "\e[B"  down-line-or-beginning-search
 # Don't share history
 setopt append_history no_inc_append_history no_share_history
 
-# Syntax highlighting
-if [ -f ~/.zsh_plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-    source ~/.zsh_plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
-
 # Import ps1 / rps1
 if [ -f ~/.zshrc_ps1 ]; then
     source ~/.zshrc_ps1
