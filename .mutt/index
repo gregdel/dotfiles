@@ -11,6 +11,13 @@ set reply_regexp = "^(([Rr][Ee]?(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*"
 bind index gg       first-entry
 bind index G        last-entry
 
+bind index H top-page
+bind index M middle-page
+bind index L bottom-page
+
+bind index \Cd half-down
+bind index \Cu half-up
+
 bind index p        recall-message
 bind index S        sync-mailbox
 bind index R        group-reply
