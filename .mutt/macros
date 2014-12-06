@@ -6,3 +6,6 @@ macro index C "<copy-message>?<toggle-mailboxes>" "copy a message to a mailbox"
 
 # Ctrl-n to mark all as read
 macro index \Cn "T~U<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>" "mark all messages as read"
+
+# Go to inbox
+macro index gi "<change-folder>INBOX<enter>" "Go to inbox"

@@ -47,7 +47,6 @@ set pager_format = "[%b] [%Z] %D  %-20.20F  %.100s %> [%e/%E] %5c%"
 bind attach <return> view-mailcap
 
 # Source
-source "~/.local/mutt/aliases"
 source "~/.mutt/charset"
 source "~/.mutt/compose"
 source "~/.mutt/crypto"
@@ -57,7 +56,9 @@ source "~/.mutt/pager"
 source "~/.mutt/sidebar"
 
 # Colors
-source "~/.mutt/colors/mutt-colors-solarized/mutt-colors-solarized-dark-256.muttrc"
+source "~/.mutt/mutt-colors"
 
 # Source local conf
-source "~/.local/mutt/accounts"
+source `FILE=$HOME/.local/mutt/accounts; if [ ! -s "$FILE" ]; then FILE=/dev/null;fi;echo "$FILE"`
+source `FILE=$HOME/.local/mutt/aliases; if [ ! -s "$FILE" ]; then FILE=/dev/null;fi;echo "$FILE"`
+
