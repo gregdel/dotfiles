@@ -1,6 +1,4 @@
 # Index View Options ---------------------------------
-set date_format = "%d/%m/%y %H:%M"
-set index_format = "[%Z]%4C| %D %?X?(%X)&   ? %-20.20F  %.100s %> %5c%"
 set sort = threads                         # like gmail
 set sort_aux = reverse-last-date-received  # like gmail
 set uncollapse_jump                        # don't collapse on an unread message
@@ -10,6 +8,13 @@ set reply_regexp = "^(([Rr][Ee]?(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*"
 # Index Key Bindings ---------------------------------
 bind index gg       first-entry
 bind index G        last-entry
+
+bind index H top-page
+bind index M middle-page
+bind index L bottom-page
+
+bind index \Cd half-down
+bind index \Cu half-up
 
 bind index p        recall-message
 bind index S        sync-mailbox

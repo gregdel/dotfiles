@@ -26,7 +26,7 @@ set pipe_decode          # strip headers and eval mimes when piping
 set thorough_search      # strip headers and eval mimes before searching
 set editor         = "vim"
 set shell          = "/bin/bash"
-set mark_old = no
+unset mark_old
 
 # Header Options -------------------------------------
 ignore *                                         # ignore all headers
@@ -37,11 +37,16 @@ hdr_order from: to: cc: date: reply-to: subject: # and in this order
 set quote_regexp = "^( {0,4}[>|:#%]| {0,4}[a-z0-9]+[>|]+)+"
 alternative_order text/plain text/enriched text/html
 
+# Folder format -------------------------------------
+set date_format = "%d/%m/%y %H:%M"
+set index_format = "[%Z]%4C| %D %?X?(%X)&   ? %-20.20F  %.100s %> %5c%"
+set folder_format=" %2C %t %N %f %> %d "
+set pager_format = "[%b] [%Z] %D  %-20.20F  %.100s %> [%e/%E] %5c%"
+
 # View attachments properly.
 bind attach <return> view-mailcap
 
 # Source
-source "~/.local/mutt/aliases"
 source "~/.mutt/charset"
 source "~/.mutt/compose"
 source "~/.mutt/crypto"
@@ -51,7 +56,9 @@ source "~/.mutt/pager"
 source "~/.mutt/sidebar"
 
 # Colors
-source "~/.mutt/colors/mutt-colors-solarized/mutt-colors-solarized-dark-256.muttrc"
+source "~/.mutt/mutt-colors"
 
 # Source local conf
-source "~/.local/mutt/accounts"
+source `FILE=$HOME/.local/mutt/accounts; if [ ! -s "$FILE" ]; then FILE=/dev/null;fi;echo "$FILE"`
+source `FILE=$HOME/.local/mutt/aliases; if [ ! -s "$FILE" ]; then FILE=/dev/null;fi;echo "$FILE"`
+

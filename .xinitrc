@@ -1,5 +1,7 @@
 #! /bin/bash
 
+xscreensaver &
+
 # set mapping to qwerty
 setxkbmap us
 # use right alt as compose key

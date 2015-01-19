@@ -46,9 +46,6 @@
 [submodule ".vim/bundle/Dockerfile.vim"]
 	path = .vim/bundle/Dockerfile.vim
 	url = https://github.com/ekalinin/Dockerfile.vim.git
-[submodule ".mutt/colors/mutt-colors-solarized"]
-	path = .mutt/colors/mutt-colors-solarized
-	url = https://github.com/altercation/mutt-colors-solarized.git
 [submodule ".vim/bundle/lightline.vim"]
 	path = .vim/bundle/lightline.vim
 	url = https://github.com/itchyny/lightline.vim.git

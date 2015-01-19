@@ -27,17 +27,17 @@ bindkey "^?" backward-delete-char
 # Fix delete key on OSX
 bindkey "\e[3~" delete-char
 
+# Ctrl-R
+bindkey '^R' history-incremental-search-backward
+
 # Search through previous commands
-# bindkey "\e[A" history-search-backward
-# bindkey "\e[B" history-search-forward
+bindkey "\e[A"  up-line-or-beginning-search
+bindkey "\e[B"  down-line-or-beginning-search
 
 autoload up-line-or-beginning-search
 autoload down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
-
-bindkey "\e[A"  up-line-or-beginning-search
-bindkey "\e[B"  down-line-or-beginning-search
 
 # Don't share history
 setopt append_history no_inc_append_history no_share_history

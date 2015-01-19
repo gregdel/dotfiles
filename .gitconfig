@@ -33,7 +33,7 @@
     ls = ls-files
     pullall = !git pull && git submodule update --init --recursive
     cia = commit --amend --reset-author
-    pushbr = !git push origin HEAD
+    pushbr = !git push --set-upstream origin `git rev-parse --abbrev-ref HEAD`
 [push]
     default = tracking
 [core]
