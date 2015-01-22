@@ -211,8 +211,13 @@ let g:syntastic_ruby_rubocop_args = "-R"
 let g:syntastic_go_checkers = ['go', 'gofmt', 'golint' , 'govet']
 noremap <leader>e :Errors<CR>
 
-" Go vim
+" Go vim - :help go-settings
 let g:go_fmt_command = "goimports"
+let g:go_play_open_browser = 0
+let g:go_fmt_fail_silently = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
 
 " Start interactive EasyAlign in visual mode
 vmap <Enter> <Plug>(EasyAlign)
