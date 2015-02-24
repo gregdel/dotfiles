@@ -1,3 +1,3 @@
-set spell
-set textwidth=72
-set formatoptions=tcq
+setlocal spell
+setlocal textwidth=72
+setlocal formatoptions=tcq

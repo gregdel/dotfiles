@@ -1,5 +1,5 @@
-set spell
-set textwidth=80
-set spelllang=fr
+setlocal spell
+setlocal textwidth=80
+setlocal spelllang=fr
 
 noremap <leader>e }yy2pi
