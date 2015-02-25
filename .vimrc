@@ -1,10 +1,41 @@
 " Make vim more capable
 set nocompatible
 
-" Run pathogen
-execute pathogen#infect()
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+call vundle#begin('~/.vim/bundle/vundle')
 
-" Colors
+" let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
+
+" Plugins
+Plugin 'tomtom/tcomment_vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'jistr/vim-nerdtree-tabs'
+Plugin 'scrooloose/syntastic'
+Plugin 'tpope/vim-markdown'
+Plugin 'tpope/vim-fugitive'
+Plugin 'msanders/snipmate.vim'
+Plugin 'tpope/vim-surround'
+Plugin 'pangloss/vim-javascript'
+Plugin 'junegunn/vim-easy-align'
+Plugin 'majutsushi/tagbar'
+Plugin 'tpope/vim-unimpaired'
+Plugin 'kien/ctrlp.vim'
+Plugin 'ekalinin/Dockerfile.vim'
+Plugin 'itchyny/lightline.vim'
+Plugin 'tpope/vim-rails'
+Plugin 'kchmck/vim-coffee-script'
+Plugin 'tmhedberg/matchit'
+Plugin 'tpope/vim-endwise'
+Plugin 'fatih/vim-go'
+Plugin 'fatih/molokai'
+
+" Done with vundle
+call vundle#end()
+
+" colors
 if $TERM == "xterm-256color" || $TERM == "screen-256color" || $COLORTERM == "gnome-terminal"
 	set t_Co=256
 endif
@@ -64,7 +95,7 @@ vmap < <gv
 set encoding=utf-8 nobomb
 
 " statusline (fugtive + virtualenv)
-set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%{virtualenv#statusline()}%=%-14.(%l,%c%V%)\ %P
+" set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%{virtualenv#statusline()}%=%-14.(%l,%c%V%)\ %P
 
 " Show all kinds of stuff
 set ruler           " Show the cursor position
@@ -176,9 +207,7 @@ augroup config
     " Clear the autocmd
     autocmd!
     " Source the vimrc on write
-    autocmd bufwritepost .vimrc source $MYVIMRC
-    " Reload message
-    autocmd bufwritepost .vimrc echom 'vimrc reloaded'
+    autocmd bufwritepost .vimrc call Vimrc_update()
     " Delete spaces at the end of the lines on save
     autocmd BufWrite * %s/\s\+$//ge
 augroup END
@@ -244,6 +273,17 @@ let g:lightline = {
       \   'fugitive': '(exists("*fugitive#head") && ""!=fugitive#head())'
       \ },
       \ }
+
+" Reload conf
+if !exists("*Vimrc_update()")
+    function! Vimrc_update()
+        source $MYVIMRC
+        echom 'vimrc reloaded'
+        call lightline#init()
+        call lightline#colorscheme()
+        call lightline#update()
+    endfunction
+endif
 
 " Source local vimrc
 if filereadable(glob("~/.vimrc.local"))
