@@ -10,6 +10,7 @@ call vundle#begin('~/.vim/bundle/vundle')
 Plugin 'gmarik/Vundle.vim'
 
 " Plugins
+Plugin 'vim-scripts/AutoComplPop'
 Plugin 'tomtom/tcomment_vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'jistr/vim-nerdtree-tabs'
