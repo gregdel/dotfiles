@@ -16,16 +16,17 @@ Plugin 'fatih/molokai'
 Plugin 'fatih/vim-go'
 Plugin 'itchyny/lightline.vim'
 Plugin 'jistr/vim-nerdtree-tabs'
-Plugin 'junegunn/vim-easy-align'
+Plugin 'godlygeek/tabular'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'kien/ctrlp.vim'
 Plugin 'majutsushi/tagbar'
 Plugin 'msanders/snipmate.vim'
+Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'pangloss/vim-javascript'
 Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/syntastic'
 Plugin 'tmhedberg/matchit'
-Plugin 'tomtom/tcomment_vim'
+Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-endwise'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-markdown'
@@ -251,8 +252,11 @@ let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
 
+" Delimate
+let delimitMate_expand_cr = 2
+
 " Start interactive EasyAlign in visual mode
-vmap <Enter> <Plug>(EasyAlign)
+vmap <Enter> :Tabularize /
 
 " statusline old one commented / using light line now
 set laststatus=2 "always visible
