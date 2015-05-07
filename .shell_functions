@@ -42,6 +42,9 @@ alias compress-folder='tar -zcvf archive.tar.gz'
 # Download with aria2c
 alias dl='aria2c -x 10'
 
+# Go tool cover
+alias go-cover="go test -coverprofile=/tmp/coverage.out && go tool cover -html /tmp/coverage.out -o /tmp/coverage.html"
+
 # System functions
 extract () {
     if [ -f $1 ] ; then
