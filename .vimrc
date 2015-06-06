@@ -46,7 +46,14 @@ endif
 
 filetype plugin indent on
 syntax on
-colorscheme molokai
+
+" Load the molokai theme if vundle has installed the bundle
+if filereadable( expand("$HOME/.vim/bundle/vundle/molokai/colors/molokai.vim") )
+    colorscheme molokai
+else
+    " Fallback to the desert colorscheme
+    colorscheme desert
+endif
 
 " Remove bgc
 set t_ut=
