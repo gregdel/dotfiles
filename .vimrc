@@ -6,9 +6,6 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 call vundle#begin('~/.vim/bundle/vundle')
 
-" let Vundle manage Vundle, required
-Plugin 'gmarik/Vundle.vim'
-
 " Plugins
 Plugin 'Raimondi/delimitMate'
 Plugin 'ekalinin/Dockerfile.vim'
@@ -72,6 +69,9 @@ vnoremap ; :
 set history=1000    " much more history than base
 set undolevels=1000 " much more undo
 
+" Don't try to highlight lines longer than 800 characters.
+set synmaxcol=800
+
 " Command completion
 set wildmenu
 
@@ -102,8 +102,14 @@ set scrolloff=5
 vmap > >gv
 vmap < <gv
 
+" Insert mode file name completion
+inoremap <c-f> <c-x><c-f>
+
 " Set encoding
 set encoding=utf-8 nobomb
+
+" Highlight VCS conflict markers
+match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 
 " statusline (fugtive + virtualenv)
 " set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%{virtualenv#statusline()}%=%-14.(%l,%c%V%)\ %P
@@ -129,6 +135,8 @@ imap jk <Esc>
 
 " Better yank
 noremap Y y$
+vnoremap Y "zy
+vnoremap P "zp
 
 " Press enter after search to clean highlighting
 nnoremap <cr> :noh<CR><CR>:<backspace>
@@ -153,20 +161,32 @@ vmap <C-Down> :move '>+1<CR>gv
 vmap <C-Up> :move '<-2<CR>gv
 
 " Backup / Undo
-if has('persistent_undo')
-    silent !mkdir ~/.vim/backup > /dev/null 2>&1
-    set backupdir=~/.vim/backup
-    set directory=~/.vim/backup
-    set undodir=~/.vim/backup//
+set backup
+set noswapfile
+set undodir=~/.vim/tmp/undo//     " undo files
+set backupdir=~/.vim/tmp/backup// " backups
+set directory=~/.vim/tmp/swap//   " swap files
+
+" Make those folders automatically if they don't already exist.
+if !isdirectory(expand(&undodir))
+    call mkdir(expand(&undodir), "p")
 endif
+if !isdirectory(expand(&backupdir))
+    call mkdir(expand(&backupdir), "p")
+endif
+if !isdirectory(expand(&directory))
+    call mkdir(expand(&directory), "p")
+endif"
 
 " Navigate through tabs
 nnoremap gl    :tabnext<CR>
 nnoremap gh    :tabprev<CR>
 
-" Insert mode paste toogle
+" Insert mode paste toggle
 set pastetoggle=<F9>
 nnoremap <F10> :set nonumber!<CR>
+nnoremap <F12> :set paste<CR>i
+nnoremap <leader>i :set paste<CR>i
 
 " Open a new tab the easy way
 nnoremap <leader>t :tabedit<Space>
@@ -205,12 +225,28 @@ augroup filetype_set
     autocmd BufRead,BufNewFile *.json set filetype=json syntax=javascript
 augroup END
 
+" autocmd paste mode
+augroup paste_helper
+    " Clear the autocmd
+    autocmd!
+    " set not paste in normal mode
+    autocmd InsertLeave * set nopaste
+augroup END
+
 " autocmd spell group
 augroup spell_set
     " Clear the autocmd
     autocmd!
     " svn
     autocmd BufNewFile,BufRead svn-commit.tmp setlocal spell
+augroup END
+
+" autocmd vim help
+augroup vim_help
+    " Clear the autocmd
+    autocmd!
+    " open vim help in a right split
+    au BufWinEnter *.txt if &ft == 'help' | wincmd L | endif
 augroup END
 
 " autocmd config group
@@ -235,14 +271,28 @@ autocmd vimenter * if !argc() | let g:nerdtree_tabs_open_on_console_startup=1 | 
 " Open tagbar with a shortcut
 nmap <leader>b :TagbarToggle<CR>
 
+" Visual Mode */# from Scrooloose
+function! s:VSetSearch()
+  let temp = @@
+  norm! gvy
+  let @/ = '\V' . substitute(escape(@@, '\'), '\n', '\\n', 'g')
+  let @@ = temp
+endfunction
+
+vnoremap * :<C-u>call <SID>VSetSearch()<CR>//<CR><c-o>
+vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR><c-o>
+
 "Options for the NERDTree
-let g:NERDTreeChDirMode=1
-let g:NERDTreeShowHidden=1
-let g:NERDTreeDirArrows=0
-let g:NERDTreeShowBookmarks=1
 let g:NERDChristmasTree=1
+let g:NERDTreeAutoDeleteBuffer=1
+let g:NERDTreeChDirMode=2
+let g:NERDTreeDirArrows=0
+let g:NERDTreeMinimalUI=1
+let g:NERDTreeShowBookmarks=1
+let g:NERDTreeShowHidden=1
 
 " Syntastic
+let g:syntastic_check_on_wq=0
 let g:syntastic_error_symbol='✗'
 let g:syntastic_warning_symbol='⚠'
 let g:syntastic_enable_perl_checker = 1
@@ -257,7 +307,8 @@ let g:go_play_open_browser = 0
 let g:go_fmt_fail_silently = 1
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
-let g:go_highlight_structs = 1
+let g:go_doc_command = "godoc"
+let g:go_doc_keywordprg_enabled = 0 " handled by .vim/ftplugin/go.vim
 
 " Delimate
 let delimitMate_expand_cr = 2

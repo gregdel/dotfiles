@@ -42,6 +42,19 @@ zle -N down-line-or-beginning-search
 # Don't share history
 setopt append_history no_inc_append_history no_share_history
 
+# Ctrl-z to go back to vi after Ctrl-z
+fancy-ctrl-z () {
+  if [[ $#BUFFER -eq 0 ]]; then
+    BUFFER="fg"
+    zle accept-line
+  else
+    zle push-input
+    zle clear-screen
+  fi
+}
+zle -N fancy-ctrl-z
+bindkey '^Z' fancy-ctrl-z
+
 # Import ps1 / rps1
 if [ -f ~/.zshrc_ps1 ]; then
     source ~/.zshrc_ps1
