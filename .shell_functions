@@ -21,10 +21,6 @@ fi
 # Tmux
 alias ta='tmux attach -t'
 
-# Git alias
-alias gl="git log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
-alias git-pull-sub='git submodule foreach git pull origin master'
-
 # Clear screen
 alias c='clear'
 
@@ -70,11 +66,6 @@ extract () {
 # Create dir and jump into it
 function mcd() {
     mkdir -p "$1" && cd "$1";
-}
-
-# parse to get the current branch
-function parse_git_branch {
-    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\[\1\]/'
 }
 
 man() {
