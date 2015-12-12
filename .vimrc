@@ -121,6 +121,7 @@ set showmode        " Show the current mode
 set title           " Show the filename in the window titlebar
 set title           " Set the terminal title's
 set showcmd         " Show the (partial) command as it’s being typed
+set lazyredraw      " redraw only when we need to
 
 " Search
 set ignorecase      " Ignore case of searches
@@ -287,7 +288,6 @@ let g:NERDChristmasTree=1
 let g:NERDTreeAutoDeleteBuffer=1
 let g:NERDTreeChDirMode=2
 let g:NERDTreeDirArrows=0
-let g:NERDTreeMinimalUI=1
 let g:NERDTreeShowBookmarks=1
 let g:NERDTreeShowHidden=1
 

@@ -41,6 +41,11 @@ alias dl='aria2c -x 10'
 # Go tool cover
 alias go-cover="go test -coverprofile=/tmp/coverage.out && go tool cover -html /tmp/coverage.out -o /tmp/coverage.html"
 
+# Should be enough to work
+alias ssh-agent="ssh-agent -t 8h"
+alias ssh-add="ssh-add -t 8h"
+alias agent='eval `ssh-agent -s` && ssh-add -t 8h'
+
 # System functions
 extract () {
     if [ -f $1 ] ; then

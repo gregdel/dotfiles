@@ -6,7 +6,12 @@ zstyle ':vcs_info:git*' max-exports 2
 zstyle ':vcs_info:git*' formats ' %b' 'x%R'
 zstyle ':vcs_info:git*' actionformats ' %b|%a' 'x%R'
 
-# autoload colors && colors
+# indicate if there is an ssh-agent running for the current shell
+ssh_agent_enabled() {
+    if [[ -n "$SSH_AUTH_SOCK" ]]; then
+        echo "%{$FG[123]%}◌%f "
+    fi
+}
 
 git_dirty() {
     # check if we're in a git repo
@@ -67,19 +72,17 @@ PS1=""
 # Print username@host
 if [[ "$USER" == "root" ]]
 then
-    PS1+="%{$fg_bold[red]%}%n@%M:"
+    PS1+="%{$fg_bold[red]%}%n@%M:%f"
 else
-    PS1+="%{$fg_bold[green]%}%n@%M:"
+    PS1+="%{$fg_bold[green]%}%n@%M:%f"
 fi
 
 # Print path
-PS1+="%{$reset_color%}"
-PS1+="%{$fg_bold[blue]%}%~"
-PS1+="%{$reset_color%}"
+PS1+="%{$fg_bold[blue]%}%~%f"
 
-# Disable colors
-PS1+="%{$reset_color%}
-%{$fg_bold[red]%}❯ %{$reset_color%}"
+# New line
+PS1+='
+`ssh_agent_enabled`%{$fg_bold[red]%}❯ %f'
 
 # RPS1
 RPS1='`git_dirty`%F{241}$vcs_info_msg_0_%f `git_arrows``suspended_jobs`'
