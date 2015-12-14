@@ -8,7 +8,7 @@ zstyle ':vcs_info:git*' actionformats ' %b|%a' 'x%R'
 
 # indicate if there is an ssh-agent running for the current shell
 ssh_agent_enabled() {
-    if [[ -n "$SSH_AUTH_SOCK" ]]; then
+    if [[ -n `keychain -l` ]]; then
         echo "%{$FG[123]%}◌%f "
     fi
 }
