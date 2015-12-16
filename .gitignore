@@ -3,7 +3,7 @@
 .vim/.netrwhist
 .vim/tmp/*
 .vim/backup/*
-.vim/bundle/vundle/*
+.vim/plugged/*
 .vim/spell/*.add
 .vim/spell/*.spl
 .mutt/cache/*

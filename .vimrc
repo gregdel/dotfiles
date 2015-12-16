@@ -1,40 +1,38 @@
 " Make vim more capable
 set nocompatible
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-call vundle#begin('~/.vim/bundle/vundle')
+call plug#begin('~/.vim/plugged')
 
 " Plugins
-Plugin 'Raimondi/delimitMate'
-Plugin 'ekalinin/Dockerfile.vim'
-Plugin 'fatih/molokai'
-Plugin 'fatih/vim-go'
-Plugin 'godlygeek/tabular'
-Plugin 'itchyny/lightline.vim'
-Plugin 'jistr/vim-nerdtree-tabs'
-Plugin 'kchmck/vim-coffee-script'
-Plugin 'kien/ctrlp.vim'
-Plugin 'majutsushi/tagbar'
-Plugin 'mileszs/ack.vim'
-Plugin 'msanders/snipmate.vim'
-Plugin 'nathanaelkane/vim-indent-guides'
-Plugin 'pangloss/vim-javascript'
-Plugin 'scrooloose/nerdtree'
-Plugin 'scrooloose/syntastic'
-Plugin 'tmhedberg/matchit'
-Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-endwise'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-markdown'
-Plugin 'tpope/vim-rails'
-Plugin 'tpope/vim-repeat'
-Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-unimpaired'
+Plug 'fatih/molokai'
+Plug 'Raimondi/delimitMate'
+Plug 'godlygeek/tabular'
+Plug 'itchyny/lightline.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'jistr/vim-nerdtree-tabs'
+Plug 'kien/ctrlp.vim'
+Plug 'majutsushi/tagbar'
+Plug 'msanders/snipmate.vim'
+Plug 'scrooloose/syntastic'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
 
-" Done with vundle
-call vundle#end()
+Plug 'ekalinin/Dockerfile.vim', { 'for': 'Dockerfile' }
+Plug 'fatih/vim-go', { 'for': 'go' }
+Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
+Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
+Plug 'tmhedberg/matchit', { 'for': 'javascript' }
+Plug 'tpope/vim-endwise', { 'for': ['lua', 'ruby', 'sh', 'zsh', 'vim'] }
+Plug 'tpope/vim-markdown', { 'for': 'markdown' }
+Plug 'tpope/vim-rails', { 'for': 'ruby' }
+
+call plug#end()
+
+" No mouse
+set mouse=
 
 " colors
 if $TERM == "xterm-256color" || $TERM == "screen-256color" || $COLORTERM == "gnome-terminal"
@@ -45,7 +43,7 @@ filetype plugin indent on
 syntax on
 
 " Load the molokai theme if vundle has installed the bundle
-if filereadable( expand("$HOME/.vim/bundle/vundle/molokai/colors/molokai.vim") )
+if filereadable( expand("/home/greg/.vim/plugged/molokai/colors/molokai.vim") )
     colorscheme molokai
 else
     " Fallback to the desert colorscheme
