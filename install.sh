@@ -21,6 +21,10 @@ case ${choice} in
             mkdir -p $HOME/.local/bin
         fi
 
+        if [ ! -d $HOME/.config ]; then
+            mkdir -p $HOME/.config
+        fi
+
         # Config files
         FILES=(
             .bashrc
@@ -74,6 +78,16 @@ case ${choice} in
                 echo "${FILE} linked"
             fi
         done
+
+        # Neovim
+        NEOVIM_PATH=$HOME/.config/nvim
+        if [ -d $NEOVIM_PATH ]
+        then
+                echo "Folder exists: ${NEOVIM_PATH} not linked"
+        else
+            ln -s $DIR/.vim $NEOVIM_PATH
+            echo "${NEOVIM_PATH} linked"
+        fi
         ;;
     n|N)
         echo "Too bad.."

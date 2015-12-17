@@ -1,5 +1,15 @@
-" Make vim more capable
-set nocompatible
+if !has("nvim")
+    " Make vim more capable
+    set nocompatible
+
+    " Remove bgc
+    set t_ut=
+
+    " colors
+    if $TERM == "xterm-256color" || $TERM == "screen-256color"
+            set t_Co=256
+    endif
+endif
 
 call plug#begin('~/.vim/plugged')
 
@@ -34,10 +44,6 @@ call plug#end()
 " No mouse
 set mouse=
 
-" colors
-if $TERM == "xterm-256color" || $TERM == "screen-256color" || $COLORTERM == "gnome-terminal"
-	set t_Co=256
-endif
 
 filetype plugin indent on
 syntax on
@@ -50,8 +56,6 @@ else
     colorscheme desert
 endif
 
-" Remove bgc
-set t_ut=
 
 " Backspace
 set backspace=indent,eol,start
