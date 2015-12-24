@@ -113,8 +113,9 @@ set encoding=utf-8 nobomb
 " Highlight VCS conflict markers
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 
-" statusline (fugtive + virtualenv)
-" set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%{virtualenv#statusline()}%=%-14.(%l,%c%V%)\ %P
+" Highlight trailing spaces
+highlight ExtraWhitespace term=reverse ctermbg=12
+au BufNewFile,BufRead * :match ExtraWhitespace /\s\+$/
 
 " Show all kinds of stuff
 set ruler           " Show the cursor position
@@ -154,32 +155,6 @@ map <C-l> <C-w>l
 set splitright
 set splitbelow
 set diffopt+=vertical
-
-" move the current line up or down with the Ctrl-arrow keys
-nmap <C-Down> :<C-u>move .+1<CR>
-nmap <C-Up>   :<C-u>move .-2<CR>
-imap <C-Down> <C-o>:<C-u>move .+1<CR>
-imap <C-Up>   <C-o>:<C-u>move .-2<CR>
-vmap <C-Down> :move '>+1<CR>gv
-vmap <C-Up> :move '<-2<CR>gv
-
-" Backup / Undo
-set backup
-set noswapfile
-set undodir=~/.vim/tmp/undo//     " undo files
-set backupdir=~/.vim/tmp/backup// " backups
-set directory=~/.vim/tmp/swap//   " swap files
-
-" Make those folders automatically if they don't already exist.
-if !isdirectory(expand(&undodir))
-    call mkdir(expand(&undodir), "p")
-endif
-if !isdirectory(expand(&backupdir))
-    call mkdir(expand(&backupdir), "p")
-endif
-if !isdirectory(expand(&directory))
-    call mkdir(expand(&directory), "p")
-endif"
 
 " Navigate through tabs
 nnoremap gl    :tabnext<CR>
@@ -321,7 +296,7 @@ vmap <Enter> :Tabularize /
 " statusline old one commented / using light line now
 set laststatus=2 "always visible
 set noshowmode
-" set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%{virtualenv#statusline()}%=%-14.(%l,%c%V%)\ %P
+
 " lightline
 let g:lightline = {
       \ 'active': {
