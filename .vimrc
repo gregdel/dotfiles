@@ -44,18 +44,9 @@ call plug#end()
 " No mouse
 set mouse=
 
-
 filetype plugin indent on
 syntax on
-
-" Load the molokai theme if vundle has installed the bundle
-if filereadable( expand("/home/greg/.vim/plugged/molokai/colors/molokai.vim") )
-    colorscheme molokai
-else
-    " Fallback to the desert colorscheme
-    colorscheme desert
-endif
-
+colorscheme molokai
 
 " Backspace
 set backspace=indent,eol,start
