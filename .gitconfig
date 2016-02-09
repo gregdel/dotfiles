@@ -35,7 +35,7 @@
     cia = commit --amend --reset-author
     current-branch = rev-parse --abbrev-ref HEAD
     pushbr = !git push --set-upstream origin `git current-branch`
-
+    dm = !git branch --merged | grep -v '*' | xargs -n 1 git branch -d
 
     l   = log -18 --color=always --all --topo-order --pretty='format:%Cgreen%h%Creset %s%Cred%d%Creset %C(black bold)(by %an)%Creset'
     ll  = log     --color=always --all --topo-order --pretty='format:%Cgreen%h%Creset %s%Cred%d%Creset %C(black bold)(by %an)%Creset'
