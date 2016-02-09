@@ -46,6 +46,12 @@ alias compress-folder='tar -zcvf archive.tar.gz'
 # Download with aria2c
 alias dl='aria2c -x 10'
 
+# docker-compose
+alias dc='docker-compose'
+
+# docker-machine
+alias dm='docker-machine'
+
 # Go tool cover
 alias go-cover="go test -coverprofile=/tmp/coverage.out && go tool cover -html /tmp/coverage.out -o /tmp/coverage.html"
 
