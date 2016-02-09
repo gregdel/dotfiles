@@ -19,7 +19,7 @@ if [ -f ~/.local/bin/z.sh ]; then
 fi
 
 # Keychain agent
-KEYCHAIN_TIMEOUT=60 # 1h
+KEYCHAIN_TIMEOUT=180 # 3h
 eval `keychain --eval --quiet --agents ssh`
 
 function agent() {
