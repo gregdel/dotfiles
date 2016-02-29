@@ -89,6 +89,7 @@ case ${choice} in
             ln -s $DIR/.vim $NEOVIM_PATH
             echo "${NEOVIM_PATH} linked"
         fi
+        ln -s $HOME/.vimrc $NEOVIM_PATH/init.vim
         ;;
     n|N)
         echo "Too bad.."
