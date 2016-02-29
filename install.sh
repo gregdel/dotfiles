@@ -32,6 +32,7 @@ case ${choice} in
             .gitconfig
             .inputrc
             .oh-my-zsh
+            .psqlrc
             .screenrc
             .shell_functions
             .tmux.conf
