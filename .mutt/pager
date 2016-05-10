@@ -4,6 +4,8 @@ bind pager j  next-line
 bind pager gg top
 bind pager G  bottom
 bind pager R  group-reply
+bind index \Cd half-down
+bind index \Cu half-up
 
 # Pager View Options ---------------------------------
 set pager_index_lines = 10 # number of index lines to show

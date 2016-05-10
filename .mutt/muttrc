@@ -27,6 +27,7 @@ set thorough_search      # strip headers and eval mimes before searching
 set editor         = "vim"
 set shell          = "/bin/bash"
 unset mark_old
+set mail_check_recent=no # keep the folder new if there is a new mail
 
 # Header Options -------------------------------------
 ignore *                                         # ignore all headers
@@ -41,10 +42,12 @@ alternative_order text/plain text/enriched text/html
 set date_format = "%d/%m/%y %H:%M"
 set index_format = "[%Z]%4C| %D %?X?(%X)&   ? %-20.20F  %.100s %> %5c%"
 set folder_format=" %2C %t %N %f %> %d "
-set pager_format = "[%b] [%Z] %D  %-20.20F  %.100s %> [%e/%E] %5c%"
+set pager_format = "[%b] [%Z] %D [From: %f] %> [%e/%E] %5c%"
 
 # View attachments properly.
 bind attach <return> view-mailcap
+
+auto_view text/html
 
 # Source
 source "~/.mutt/charset"
