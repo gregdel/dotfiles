@@ -1,98 +1,28 @@
-#!/bin/bash
+function install_rcm()
+{
+    version=1.3.0
+    curl -LO https://thoughtbot.github.io/rcm/dist/rcm-"$version".tar.gz && \
 
-# Find current script dir
-SOURCE="${BASH_SOURCE[0]}"
-while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-    SOURCE="$(readlink "$SOURCE")"
-    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
-done
-DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-BIN_DIR=$HOME/.local/bin
+    tar -xvf rcm-"$version".tar.gz && \
+    cd rcm-"$version" && \
 
-# Read input with default value
-read -p "Install all files for '$USER' user ? (Y/n)" -n 1 choice
-choice=${choice:-"y"};
+    ./configure --prefix="$HOME"/.local && \
+    make && \
+    make install && \
 
-# Yes or no ?
-case ${choice} in
-    y|Y)
-        if [ ! -d $BIN_DIR ]; then
-            mkdir -p $HOME/.local/bin
-        fi
+    cd .. && \
+    rm -rf rcm-"$version"*
+}
 
-        if [ ! -d $HOME/.config ]; then
-            mkdir -p $HOME/.config
-        fi
+function initial_setup()
+{
+    env RCRC=$HOME/.dotfiles/rcrc PATH=$HOME/.local/bin:$PATH rcup -f -v
+    exec bash
+}
 
-        # Config files
-        FILES=(
-            .bashrc
-            .bashrc_ps1
-            .gitconfig
-            .inputrc
-            .oh-my-zsh
-            .psqlrc
-            .screenrc
-            .shell_functions
-            .tmux.conf
-            .vim
-            .vimrc
-            .zshrc
-            .zshrc_ps1
-        )
+# Install rcm if needed
+if type rcup 2>/dev/null; then
+    install_rcm
+fi
 
-        for FILE in  ${FILES[@]}
-        do
-            if [ -f ~/${FILE} ]
-            then
-                echo "File exists : ${FILE} not linked"
-            elif [ -d ~/${FILE} ]
-            then
-                echo "Folder exists: ${FILE} not linked"
-            else
-                ORIGINAL_FILE="${DIR}/${FILE}"
-                SYMBOLIC_LINK="${HOME}/${FILE}"
-                `ln -s "${ORIGINAL_FILE}" "${SYMBOLIC_LINK}"`
-                echo "${FILE} linked"
-            fi
-        done
-
-        # Binary files
-        FILES=(
-            bin/z.sh
-            bin/keychain
-        )
-
-        for FILE in  ${FILES[@]}
-        do
-            if [ -f ~/${FILE} ]
-            then
-                echo "File exists : ${FILE} not linked"
-            elif [ -d ~/${FILE} ]
-            then
-                echo "Folder exists: ${FILE} not linked"
-            else
-                ORIGINAL_FILE="${DIR}/${FILE}"
-                SYMBOLIC_LINK="${HOME}/.local/${FILE}"
-                `ln -s "${ORIGINAL_FILE}" "${SYMBOLIC_LINK}"`
-                echo "${FILE} linked"
-            fi
-        done
-
-        # Neovim
-        NEOVIM_PATH=$HOME/.config/nvim
-        if [ -d $NEOVIM_PATH ]
-        then
-                echo "Folder exists: ${NEOVIM_PATH} not linked"
-        else
-            ln -s $DIR/.vim $NEOVIM_PATH
-            echo "${NEOVIM_PATH} linked"
-        fi
-        ln -s $HOME/.vimrc $NEOVIM_PATH/init.vim
-        ;;
-    n|N)
-        echo "Too bad.."
-        exit
-        ;;
-esac
+initial_setup
