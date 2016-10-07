@@ -1,0 +1,2 @@
+EXCLUDES="README.md install.sh brew.sh"
+SYMLINK_DIRS="vim oh-my-zsh mutt awesome urxvt"

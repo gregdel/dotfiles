@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Required folders
+mkdir -p $HOME/.config
+mkdir -p $HOME/.local/bin
+
+# Neovim
+if [ ! -L $HOME/.config/nvim ]; then
+    ln -s $HOME/.vim $HOME/.config/nvim
+    ln -s $HOME/.vimrc $HOME/.vim/init.vim
+fi
+
+# Install vim plugins
+if type nvim 2>/dev/null; then
+    nvim +PlugInstall +qa
+else
+    vim +PlugInstall +qa
+fi
+
+# z
+touch ~/.z
