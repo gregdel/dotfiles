@@ -21,7 +21,7 @@ function initial_setup()
 }
 
 # Install rcm if needed
-if type rcup 2>/dev/null; then
+if ! type rcup 2>/dev/null; then
     install_rcm
 fi
 
