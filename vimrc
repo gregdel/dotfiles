@@ -276,6 +276,10 @@ let g:go_doc_keywordprg_enabled = 0 " handled by .vim/ftplugin/go.vim
 " Delimate
 let delimitMate_expand_cr = 2
 
+" Airline
+let g:airline_theme='badwolf'
+let g:airline_powerline_fonts=1
+
 " Start interactive EasyAlign in visual mode
 vmap <Enter> :Tabularize /
 
@@ -283,33 +287,11 @@ vmap <Enter> :Tabularize /
 set laststatus=2 "always visible
 set noshowmode
 
-" lightline
-let g:lightline = {
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ],
-      \   'right': [ [ 'syntastic', 'lineinfo' ],
-      \              ['percent'],
-      \              [ 'fileformat', 'fileencoding', 'filetype', 'spell' ] ]
-      \ },
-      \ 'component': {
-      \   'fugitive': '%{exists("*fugitive#head")?fugitive#head():""}'
-      \ },
-      \ 'component_visible_condition': {
-      \   'readonly': '(&filetype!="help"&& &readonly)',
-      \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
-      \   'fugitive': '(exists("*fugitive#head") && ""!=fugitive#head())'
-      \ },
-      \ }
-
 " Reload conf
 if !exists("*Vimrc_update()")
     function! Vimrc_update()
         source $MYVIMRC
         echom 'vimrc reloaded'
-        call lightline#init()
-        call lightline#colorscheme()
-        call lightline#update()
     endfunction
 endif
 
