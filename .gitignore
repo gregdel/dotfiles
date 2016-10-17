@@ -2,8 +2,7 @@
 *~
 vim/.netrwhist
 vim/init.vim
-vim/tmp/*
-vim/backup/*
+vim/files/*
 vim/plugged/*
 vim/spell/*.add
 vim/spell/*.spl

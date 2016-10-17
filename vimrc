@@ -62,6 +62,23 @@ vnoremap ; :
 set history=1000    " much more history than base
 set undolevels=1000 " much more undo
 
+" Backups, swap and undo files
+set backup                                      " Enable backups
+set backupdir=$HOME/.vim/files/backup/
+set backupext=-vimbackup                        " Backup extention
+set backupskip=                                 " Backup everything
+set directory=$HOME/.vim/files/swap//
+set undofile                                    " Keep the undo history
+set undodir=$HOME/.vim/files/undo/
+
+" Create files directory if it does not exist
+if exists('*mkdir') && !isdirectory($HOME.'/.vim/files')
+  call mkdir($HOME.'/.vim/files', "p")
+  call mkdir($HOME.'/.vim/files/backup', "p")
+  call mkdir($HOME.'/.vim/files/swap', "p")
+  call mkdir($HOME.'/.vim/files/undo', "p")
+endif
+
 " Don't try to highlight lines longer than 800 characters.
 set synmaxcol=800
 
