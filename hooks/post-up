@@ -14,9 +14,9 @@ fi
 
 # Install vim plugins
 if type nvim 2>/dev/null; then
-    nvim +PlugInstall +qa
+    nvim -u "$HOME/.vim/plugins.vim" +PlugInstall +qa
 else
-    vim +PlugInstall +qa
+    vim -u "$HOME/.vim/plugins.vim" +PlugInstall +qa
 fi
 
 # z
