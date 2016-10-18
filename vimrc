@@ -60,6 +60,12 @@ set synmaxcol=800
 " Command completion
 set wildmenu
 
+" Use numbers
+set number
+
+" Use cursorline
+set cursorline
+
 " Indentation
 set expandtab       "Tabs to spaces
 set smarttab
@@ -139,9 +145,11 @@ set splitright
 set splitbelow
 set diffopt+=vertical
 
-" Navigate through tabs
+" Navigate through tabs / buffers
 nnoremap gl    :tabnext<CR>
 nnoremap gh    :tabprev<CR>
+nnoremap gL    :bnext<CR>
+nnoremap gH    :bprev<CR>
 
 " Insert mode paste toggle
 set pastetoggle=<F9>
@@ -226,12 +234,6 @@ nmap <leader>v :tabedit $MYVIMRC<CR>
 " Open NERDTree Tabs quick toogle
 nmap <leader>n :NERDTreeTabsToggle<CR>
 
-" Open NERTree if vim start with no file
-autocmd vimenter * if !argc() | let g:nerdtree_tabs_open_on_console_startup=1 | endif
-
-" Open tagbar with a shortcut
-nmap <leader>b :TagbarToggle<CR>
-
 " Visual Mode */# from Scrooloose
 function! s:VSetSearch()
   let temp = @@
@@ -279,6 +281,11 @@ let delimitMate_expand_cr = 2
 " Airline
 let g:airline_theme='badwolf'
 let g:airline_powerline_fonts=1
+let g:airline#extensions#tabline#enabled = 1
+
+" CtrlP
+nmap <leader>b :CtrlPBuffer<CR>
+nmap <leader>m :CtrlPMRUFiles<CR>
 
 " Start interactive EasyAlign in visual mode
 vmap <Enter> :Tabularize /
