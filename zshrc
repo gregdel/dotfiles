@@ -11,7 +11,7 @@ DISABLE_AUTO_UPDATE="true"
 COMPLETION_WAITING_DOTS="true"
 
 # oh-my-zsh plugins
-plugins=( bower brew docker git heroku pass rails ruby vagrant vi-mode )
+plugins=( bower brew docker git git-prompt heroku pass rails ruby vagrant vi-mode )
 
 source $ZSH/oh-my-zsh.sh
 ################
