@@ -60,11 +60,8 @@ set synmaxcol=800
 " Command completion
 set wildmenu
 
-" Use numbers
-set number
-
-" Use cursorline
-set cursorline
+" Use relative numbers
+set relativenumber
 
 " Indentation
 set expandtab       "Tabs to spaces
@@ -182,6 +179,12 @@ set listchars=tab:▸\ ,eol:¬,trail:·
 noremap <Space> za
 vnoremap <Space> zf
 
+" Use arrows for resizing windows
+map <Left>  <C-W><
+map <Right> <C-W>>
+map <Up>    <C-W>+
+map <Down>  <C-W>-
+
 " autocmd filetype group
 augroup filetype_set
     " Clear the autocmd
@@ -231,6 +234,9 @@ augroup END
 " Edit vimrc
 nmap <leader>v :tabedit $MYVIMRC<CR>
 
+" Open NERTree if vim start with no file
+autocmd vimenter * if !argc() | let g:nerdtree_tabs_open_on_console_startup=1 | endif
+
 " Open NERDTree Tabs quick toogle
 nmap <leader>n :NERDTreeTabsToggle<CR>
 
@@ -262,7 +268,6 @@ let g:syntastic_ruby_checkers = ['mri', 'rubocop']
 let g:syntastic_ruby_rubocop_args = "-R"
 let g:syntastic_go_checkers = ['go', 'gofmt', 'golint' , 'govet']
 let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 noremap <leader>e :Errors<CR>
 
