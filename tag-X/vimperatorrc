@@ -14,3 +14,6 @@ set hintchars=hsdfgyuiopqwertnmcv
 
 " Source local config
 source! ~/.vimperatorrc.local
+
+" Hack to make the completion working again
+js services.services.autoCompleteSearch.class_="@mozilla.org/autocomplete/search;1?name=unifiedcomplete"
