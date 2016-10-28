@@ -16,16 +16,19 @@ brew install bash
 
 # Install more recent versions of some OS X tools
 brew install homebrew/dupes/grep
-install vim --override-system-vi
-install lynx
-install node
-install tree
-install aria2
+brew install vim --override-system-vi
+brew install lynx
+brew install node
 
 # Install everything else
 brew install ack
 brew install git
+brew install zsh
+brew install aria2
+brew install tree
 
+# Install neomutt
+brew install neomutt/homebrew-neomutt/neomutt --with-sidebar-patch
 
 # Remove outdated versions from the cellar
 brew cleanup
