@@ -287,6 +287,7 @@ let delimitMate_expand_cr = 2
 let g:airline_theme='badwolf'
 let g:airline_powerline_fonts=1
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_close_button = 0
 
 " CtrlP
 nmap <leader>b :CtrlPBuffer<CR>
@@ -294,6 +295,12 @@ nmap <leader>m :CtrlPMRUFiles<CR>
 
 " Start interactive EasyAlign in visual mode
 vmap <Enter> :Tabularize /
+
+" Ack
+" Try to use ag is it exists
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
 
 " statusline old one commented / using light line now
 set laststatus=2 "always visible
