@@ -1,3 +1,5 @@
+# vim: filetype=muttrc
+
 # Urlview to open links in mail bodies
 macro pager \Cu "|urlview<enter>" "call urlview to open links"
 

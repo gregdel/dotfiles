@@ -1,7 +1,25 @@
+# vim: filetype=muttrc
+
+# If the compile-time symbol 'USE_SIDEBAR' does not exist, then
+# # stop reading the current config file.
+ifndef USE_SIDEBAR finish
+
 set sidebar_width=38
 set sidebar_visible=yes
-set sidebar_delim=" |"
+set sidebar_divider_char=" |"
+set sidebar_folder_indent=yes
+set sidebar_short_path=yes
+set sidebar_format="%B%?F? [%F]?%* %?N?%N/?%S"
+
+# Enable extended buffy mode to calculate total, new, and flagged
+# # message counts for each mailbox.
+set mail_check_stats
+
+color sidebar_ordinary color241 color234
+color sidebar_flagged color241 color234
 color sidebar_new color33 color234
+color sidebar_divider color241 color234
+color sidebar_highlight color234 color33
 
 bind index,pager <down>   sidebar-next
 bind index,pager <up>     sidebar-prev

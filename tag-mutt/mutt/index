@@ -1,3 +1,5 @@
+# vim: filetype=muttrc
+
 # Index View Options ---------------------------------
 set sort = threads                         # like gmail
 set sort_aux = reverse-last-date-received  # like gmail

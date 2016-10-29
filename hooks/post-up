@@ -19,5 +19,12 @@ else
     vim -u "$HOME/.vim/plugins.vim" +PlugInstall +qa
 fi
 
+# Create the required files for mutt
+if [ -L $HOME/.mutt ]; then
+    mkdir -p ~/.mutt/cache
+    mkdir -p ~/.mutt/tmp
+    touch ~/.mutt/certificates
+fi
+
 # z
 touch ~/.z

@@ -1,19 +1,16 @@
-# Source my local vars
-source ~/.local/mutt/vars
+# vim: filetype=muttrc
 
 # No sleep time
 set sleep_time=0
-set header_cache = ~/.local/tmp
-# set header_cache = /run/shm/mutt_header_cache
 
 # Paths ----------------------------------------------
-set alias_file       = ~/.local/mutt/aliases       # where to store aliases
-set header_cache     = ~/.local/mutt/cache/headers # where to store headers
-set message_cachedir = ~/.local/mutt/cache/bodies  # where to store bodies
-set certificate_file = ~/.local/mutt/certificates  # where to store certs
-set tmpdir           = ~/.local/mutt/tmp           # where to keep temp files
-set mailcap_path     = ~/.local/mutt/mailcap       # entries for filetypes
-set signature        = ~/.local/mutt/sig           # my signature file
+set alias_file       = ~/.mutt/aliases       # where to store aliases
+set header_cache     = ~/.mutt/cache/headers # where to store headers
+set message_cachedir = ~/.mutt/cache/bodies  # where to store bodies
+set certificate_file = ~/.mutt/certificates  # where to store certs
+set tmpdir           = ~/.mutt/tmp           # where to keep temp files
+set mailcap_path     = ~/.mutt/mailcap       # entries for filetypes
+set signature        = ~/.mutt/sig           # my signature file
 
 # Basic Options --------------------------------------
 set wait_key = no        # shut up, mutt
@@ -57,11 +54,8 @@ source "~/.mutt/index"
 source "~/.mutt/macros"
 source "~/.mutt/pager"
 source "~/.mutt/sidebar"
-
-# Colors
-source "~/.mutt/mutt-colors"
+source "~/.mutt/colors"
 
 # Source local conf
-source `FILE=$HOME/.local/mutt/accounts; if [ ! -s "$FILE" ]; then FILE=/dev/null;fi;echo "$FILE"`
-source `FILE=$HOME/.local/mutt/aliases; if [ ! -s "$FILE" ]; then FILE=/dev/null;fi;echo "$FILE"`
-
+source `FILE=$HOME/.mutt/accounts; if [ ! -s "$FILE" ]; then FILE=/dev/null;fi;echo "$FILE"`
+source `FILE=$HOME/.mutt/aliases; if [ ! -s "$FILE" ]; then FILE=/dev/null;fi;echo "$FILE"`
