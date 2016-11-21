@@ -303,6 +303,9 @@ if executable('ag')
   let g:ackprg = 'ag --vimgrep'
 endif
 
+" vim-jsx
+let g:jsx_ext_required = 0 " Allow JSX in normal JS files
+
 " statusline old one commented / using light line now
 set laststatus=2 "always visible
 set noshowmode
