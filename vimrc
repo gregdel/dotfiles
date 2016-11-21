@@ -103,6 +103,14 @@ match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 highlight ExtraWhitespace term=reverse ctermbg=12
 au BufNewFile,BufRead * :match ExtraWhitespace /\s\+$/
 
+" Spelling colors
+hi clear SpellBad
+hi SpellBad cterm=italic,bold,underline ctermfg=208
+hi clear SpellCap
+hi SpellCap cterm=italic ctermfg=208
+hi clear SpellRare
+hi SpellRare ctermfg=200
+
 " Show all kinds of stuff
 set ruler           " Show the cursor position
 set shortmess=atI   " Don’t show the intro message when starting Vim
