@@ -296,6 +296,15 @@ let g:airline_theme='badwolf'
 let g:airline_powerline_fonts=1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_close_button = 0
+function! GetSpelllang()
+    return  &spelllang
+endfunction
+function! AirlineInit()
+    call airline#parts#define_function('spelllang', 'GetSpelllang')
+    call airline#parts#define_condition('spelllang', '&spell')
+    let g:airline_section_a = airline#section#create_left(['mode', 'crypt', 'paste', 'spell','spelllang', 'iminsert'])
+endfunction
+autocmd User AirlineAfterInit call AirlineInit()
 
 " CtrlP
 nmap <leader>b :CtrlPBuffer<CR>
