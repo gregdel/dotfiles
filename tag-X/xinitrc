@@ -1,17 +1,29 @@
 #! /bin/bash
 
-xscreensaver &
+export XDG_CONFIG_HOME=$HOME/.config
 
-# set mapping to qwerty
-setxkbmap us
-# use right alt as compose key
-setxkbmap -option compose:ralt
+FONTDIR="$HOME/.local/share/fonts"
+RESOURCES="$HOME/.Xresources"
+RESOURCES_DIR="$HOME/.Xresources.d"
+
+# Fonts
+xset +fp "$FONTDIR"
+
+# Load xresources
+if [ -f "$RESOURCES" ] && [ -d "$RESOURCES_DIR" ]; then
+  xrdb -I"$RESOURCES_DIR" -load "$RESOURCES"
+fi
+
+# use right alt as compose key and caps lock as control
+setxkbmap -option compose:ralt -option ctrl:nocaps
 
 # Super fast typing
 xset r rate 200 44
 
-# export locales
-export LC_ALL=en_US.UTF-8
+# Scaling on XPS 13
+export GDK_SCALE=2
+export GDK_DPI_SCALE=0.5
+export ELM_SCALE=1.5
 
 # execute awesome
 exec awesome >> ~/.cache/awesome/stdout 2>> ~/.cache/awesome/stderr

@@ -1,8 +1,8 @@
-URxvt.termName: xterm-256color
+! vim: filetype=xdefaults
 
 ! Dont use bold
-URxvt.font:      xft:Monospace:pixelsize=12
-URxvt.boldFont:  xft:Monospace:pixelsize=12
+URxvt.font:      xft:DejaVuSansMonoForPowerline Nerd Font:regular:size=12
+Urxvt.letterSpace: 1
 
 ! No scroll bars
 URxvt.scrollBar: false
