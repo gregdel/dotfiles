@@ -12,7 +12,7 @@ theme.wallpaper = "/home/greg/Pictures/Wallpapers/Yosemite-valley-HD-nature-wall
 -- }}}
 
 -- {{{ Styles
-theme.font      = "sans 15"
+theme.font      = "DejaVuSansMonoForPowerline Nerd Font 18"
 
 -- {{{ Colors
 theme.fg_normal  = "#DCDCCC"
