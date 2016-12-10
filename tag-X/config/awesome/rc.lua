@@ -44,7 +44,7 @@ end
 beautiful.init("/home/greg/.config/awesome/themes/zenburn/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "rxvt-unicode"
+terminal = "urxvtc"
 editor = "vim"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -165,6 +165,32 @@ mytasklist.buttons = awful.util.table.join(
                                               awful.client.focus.byidx(-1)
                                               if client.focus then client.focus:raise() end
                                           end))
+separator = wibox.widget.textbox()
+separator:set_text(" | ")
+
+batterywidget = wibox.widget.textbox()
+batterywidget:set_text("Battery")
+batterywidgettimer = timer({ timeout = 20 })
+batterywidgettimer:connect_signal("timeout",
+  function()
+    fh = assert(io.popen("acpi | cut -d, -f 2,3 -", "r"))
+    batterywidget:set_text(fh:read("*l") .. " ")
+    fh:close()
+  end
+)
+batterywidgettimer:start()
+
+backlightwidget = wibox.widget.textbox()
+backlightwidget:set_text("Backlight")
+backlightwidgettimer = timer({ timeout = 20 })
+backlightwidgettimer:connect_signal("timeout",
+  function()
+    fh = assert(io.popen("sudo /usr/sbin/custom_backlight -get", "r"))
+    backlightwidget:set_text(fh:read("*l") .. " ")
+    fh:close()
+  end
+)
+backlightwidgettimer:start()
 
 for s = 1, screen.count() do
     -- Create a promptbox for each screen
@@ -195,6 +221,11 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
+    right_layout:add(separator)
+    right_layout:add(batterywidget)
+    right_layout:add(separator)
+    right_layout:add(backlightwidget)
+    right_layout:add(separator)
     right_layout:add(mytextclock)
     right_layout:add(mylayoutbox[s])
 
@@ -233,6 +264,15 @@ globalkeys = awful.util.table.join(
             if client.focus then client.focus:raise() end
         end),
     awful.key({ modkey,           }, "w", function () mymainmenu:show() end),
+
+    -- Backlight
+    awful.key({ }, "XF86MonBrightnessUp",    function () awful.util.spawn("sudo /usr/sbin/custom_backlight -inc 10") end),
+    awful.key({ }, "XF86MonBrightnessDown",  function () awful.util.spawn("sudo /usr/sbin/custom_backlight -dec 10") end),
+
+    -- rofi
+    awful.key({ "Mod1",           }, "r",   function () awful.util.spawn("rofi -show run") end),
+    awful.key({ "Mod1",           }, "s",   function () awful.util.spawn("rofi -show ssh") end),
+    awful.key({ "Mod1",           }, "Tab", function () awful.util.spawn("rofi -show window") end),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
