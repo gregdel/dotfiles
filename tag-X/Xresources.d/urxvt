@@ -1,5 +1,7 @@
 ! vim: filetype=xdefaults
 
+URxvt.termName: xterm-256color
+
 ! Dont use bold
 URxvt.font:      xft:DejaVuSansMonoForPowerline Nerd Font:regular:size=12
 Urxvt.letterSpace: 1
