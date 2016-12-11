@@ -25,5 +25,8 @@ export GDK_SCALE=2
 export GDK_DPI_SCALE=0.5
 export ELM_SCALE=1.5
 
+# Autolock on lid close
+xss-lock -- $HOME/.local/i3lock-fancy/lock &
+
 # execute awesome
 exec awesome >> ~/.cache/awesome/stdout 2>> ~/.cache/awesome/stderr
