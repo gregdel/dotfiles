@@ -82,7 +82,7 @@ end
 tags = {}
 for s = 1, screen.count() do
     -- Each screen has its own tag table.
-    tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[1])
+    tags[s] = awful.tag({ '  ', '  ', ' 3 ', ' 4 ', ' 5 ', ' 6 ', ' 7 ', ' 8 ', ' 9 ' }, s, layouts[1])
 end
 -- }}}
 
@@ -141,6 +141,30 @@ mytasklist.buttons = awful.util.table.join(
                                           end))
 separator = wibox.widget.textbox()
 separator:set_text(" | ")
+
+volumewidget = wibox.widget.textbox()
+volumewidget:set_text("Volume")
+volumewidgettimer = timer({ timeout = 20 })
+volumewidgettimer:connect_signal("timeout",
+  function()
+      icon = ''
+      volume = ''
+      volmin = 0
+      volmax = 65536
+      local f = io.popen("pacmd dump |grep set-sink-volume")
+      local g = io.popen("pacmd dump |grep set-sink-mute")
+      local v = f:read()
+      local mute = g:read()
+      if mute ~= nil and string.find(mute, "no") then
+          volume = math.floor(tonumber(string.sub(v, string.find(v, 'x')-1)) * 100 / volmax).."% "
+          icon = ''
+      end
+      f:close()
+      g:close()
+      volumewidget:set_text(volume .. icon)
+  end
+)
+volumewidgettimer:start()
 
 batterywidget = wibox.widget.textbox()
 batterywidget:set_text("Battery")
@@ -210,6 +234,8 @@ for s = 1, screen.count() do
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
     right_layout:add(separator)
+    right_layout:add(volumewidget)
+    right_layout:add(separator)
     right_layout:add(batterywidget)
     right_layout:add(separator)
     right_layout:add(backlightwidget)
@@ -254,6 +280,11 @@ globalkeys = awful.util.table.join(
     -- Backlight
     awful.key({ }, "XF86MonBrightnessUp",    function () awful.util.spawn("sudo /usr/sbin/custom_backlight -inc 10") end),
     awful.key({ }, "XF86MonBrightnessDown",  function () awful.util.spawn("sudo /usr/sbin/custom_backlight -dec 10") end),
+
+    -- Sound
+    awful.key({ }, "XF86AudioMute",         function () awful.util.spawn("pactl set-sink-mute 0 toggle") end),
+    awful.key({ }, "XF86AudioRaiseVolume",  function () awful.util.spawn("sh -c 'pactl set-sink-mute 0 false ; pactl set-sink-volume 0 +5%'") end),
+    awful.key({ }, "XF86AudioLowerVolume",  function () awful.util.spawn("sh -c 'pactl set-sink-mute 0 false ; pactl set-sink-volume 0 -5%'") end),
 
     -- rofi
     awful.key({ "Mod1",           }, "r",   function () awful.util.spawn("rofi -show run") end),
@@ -475,5 +506,3 @@ end)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
-
-awful.util.spawn("nm-applet")
