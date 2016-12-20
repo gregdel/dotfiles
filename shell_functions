@@ -3,9 +3,12 @@
 # vim as editor
 export EDITOR=vim
 
+# Add sbin to the user path
+export PATH=/usr/sbin:$PATH
+
 # Add perso bin path
 if [ -d ~/.local/bin ]; then
-    export PATH=$PATH:~/.local/bin
+    export PATH=~/.local/bin:$PATH
 fi
 
 # Import virtualenwrapper
