@@ -1,0 +1,4 @@
+[Default Applications]
+application/pdf=zathura.desktop
+image/png=gthumb.desktop
+image/jpg=shotwell-gthumb.desktop;
