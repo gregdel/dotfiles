@@ -28,5 +28,8 @@ export ELM_SCALE=1.5
 # Autolock on lid close
 xss-lock -- $HOME/.local/i3lock-fancy/lock &
 
+# Start nm-applet
+nm-applet &
+
 # execute awesome
 exec awesome >> ~/.cache/awesome/stdout 2>> ~/.cache/awesome/stderr
