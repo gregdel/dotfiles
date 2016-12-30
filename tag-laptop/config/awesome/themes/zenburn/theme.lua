@@ -3,16 +3,13 @@
 --    By Adrian C. (anrxc)   --
 -------------------------------
 
--- Alternative icon sets and widget icons:
---  * http://awesome.naquadah.org/wiki/Nice_Icons
-
 -- {{{ Main
-theme = {}
-theme.wallpaper = "/home/greg/Pictures/Wallpapers/Yosemite-valley-HD-nature-wallpaper.jpg"
+local theme = {}
+theme.wallpaper = "/home/greg/.config/awesome/themes/zenburn/zenburn-background.png"
 -- }}}
 
 -- {{{ Styles
-theme.font      = "DejaVuSansMonoForPowerline Nerd Font 18"
+theme.font      = "DejaVuSansMonoForPowerline Nerd Font 12"
 
 -- {{{ Colors
 theme.fg_normal  = "#DCDCCC"
@@ -25,6 +22,7 @@ theme.bg_systray = theme.bg_normal
 -- }}}
 
 -- {{{ Borders
+theme.useless_gap   = 0
 theme.border_width  = 2
 theme.border_normal = "#3F3F3F"
 theme.border_focus  = "#6F6F6F"
@@ -95,11 +93,18 @@ theme.layout_max        = "/home/greg/.config/awesome/themes/zenburn/layouts/max
 theme.layout_fullscreen = "/home/greg/.config/awesome/themes/zenburn/layouts/fullscreen.png"
 theme.layout_magnifier  = "/home/greg/.config/awesome/themes/zenburn/layouts/magnifier.png"
 theme.layout_floating   = "/home/greg/.config/awesome/themes/zenburn/layouts/floating.png"
+theme.layout_cornernw   = "/home/greg/.config/awesome/themes/zenburn/layouts/cornernw.png"
+theme.layout_cornerne   = "/home/greg/.config/awesome/themes/zenburn/layouts/cornerne.png"
+theme.layout_cornersw   = "/home/greg/.config/awesome/themes/zenburn/layouts/cornersw.png"
+theme.layout_cornerse   = "/home/greg/.config/awesome/themes/zenburn/layouts/cornerse.png"
 -- }}}
 
 -- {{{ Titlebar
 theme.titlebar_close_button_focus  = "/home/greg/.config/awesome/themes/zenburn/titlebar/close_focus.png"
 theme.titlebar_close_button_normal = "/home/greg/.config/awesome/themes/zenburn/titlebar/close_normal.png"
+
+theme.titlebar_minimize_button_normal = "/home/greg/.config/awesome/themes/default/titlebar/minimize_normal.png"
+theme.titlebar_minimize_button_focus  = "/home/greg/.config/awesome/themes/default/titlebar/minimize_focus.png"
 
 theme.titlebar_ontop_button_focus_active  = "/home/greg/.config/awesome/themes/zenburn/titlebar/ontop_focus_active.png"
 theme.titlebar_ontop_button_normal_active = "/home/greg/.config/awesome/themes/zenburn/titlebar/ontop_normal_active.png"
@@ -124,3 +129,5 @@ theme.titlebar_maximized_button_normal_inactive = "/home/greg/.config/awesome/th
 -- }}}
 
 return theme
+
+-- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:textwidth=80
