@@ -329,8 +329,16 @@ globalkeys = awful.util.table.join(
               {description = "run prompt", group = "launcher"}),
 
     -- Backlight
-    awful.key({ }, "XF86MonBrightnessUp",    function () awful.spawn("sudo /usr/sbin/custom_backlight -inc 10") end),
-    awful.key({ }, "XF86MonBrightnessDown",  function () awful.spawn("sudo /usr/sbin/custom_backlight -dec 10") end),
+    awful.key({ }, "XF86MonBrightnessUp",
+              function ()
+                  awful.spawn("sudo /usr/sbin/custom_backlight -inc 10")
+                  backlightwidget:update()
+              end),
+    awful.key({ }, "XF86MonBrightnessDown",
+              function ()
+                  awful.spawn("sudo /usr/sbin/custom_backlight -dec 10")
+                  backlightwidget:update()
+              end),
 
     -- External screen
     awful.key({ }, "XF86Search",             function () awful.spawn("/home/greg/.local/bin/external_screen.sh") end),
@@ -339,14 +347,17 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86AudioMute",
               function ()
                   awful.spawn("pactl set-sink-mute 0 toggle")
+                  volumewidget:update()
               end),
     awful.key({ }, "XF86AudioRaiseVolume",
               function ()
                   awful.spawn("sh -c 'pactl set-sink-mute 0 false ; pactl set-sink-volume 0 +5%'")
+                  volumewidget:update()
               end),
     awful.key({ }, "XF86AudioLowerVolume",
               function ()
                   awful.spawn("sh -c 'pactl set-sink-mute 0 false ; pactl set-sink-volume 0 -5%'")
+                  volumewidget:update()
               end),
 
     -- rofi

@@ -14,11 +14,11 @@ function backlightwidget.new()
     local w = textbox()
     local timeout = 20
 
-    function w._private.update()
+    function w.update()
         update(w)
         return true -- Continue the timer
     end
-    t = timer.weak_start_new(timeout, w._private.update)
+    t = timer.weak_start_new(timeout, w.update)
     t:emit_signal("timeout")
     return w
 end
