@@ -5,7 +5,7 @@
 
 -- {{{ Main
 local theme = {}
-theme.wallpaper = "/home/greg/.config/awesome/themes/zenburn/zenburn-background.png"
+theme.wallpaper = "/home/greg/pictures/Wallpapers/Yosemite-valley-HD-nature-wallpaper.jpg"
 -- }}}
 
 -- {{{ Styles

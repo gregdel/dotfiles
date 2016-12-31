@@ -66,8 +66,8 @@ modkey = "Mod4"
 -- @DOC_LAYOUT@
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
-    awful.layout.suit.floating,
     awful.layout.suit.tile,
+    awful.layout.suit.floating,
     awful.layout.suit.tile.left,
     awful.layout.suit.tile.bottom,
     awful.layout.suit.tile.top,
@@ -497,37 +497,48 @@ awful.rules.rules = {
      }
     },
 
-    -- @DOC_FLOATING_RULE@
     -- Floating clients.
-    { rule_any = {
-        instance = {
-          "DTA",  -- Firefox addon DownThemAll.
-          "copyq",  -- Includes session name in class.
+    {
+        rule_any = {
+            instance = {
+                "DTA",  -- Firefox addon DownThemAll.
+            },
+            class = {
+                "Arandr",
+                "Wpa_gui",
+                "pinentry",
+            },
+            name = {
+                "Event Tester",  -- xev.
+            },
+            type = {
+                "dialog",
+            },
+            role = {
+                "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
+            }
         },
-        class = {
-          "Arandr",
-          "Gpick",
-          "Kruler",
-          "MessageWin",  -- kalarm.
-          "Sxiv",
-          "Wpa_gui",
-          "pinentry",
-          "veromix",
-          "xtightvncviewer"},
+        properties = { floating = true }
+    },
 
-        name = {
-          "Event Tester",  -- xev.
-        },
-        role = {
-          "AlarmWindow",  -- Thunderbird's calendar.
-          "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
-        }
-      }, properties = { floating = true }},
-
-    -- @DOC_DIALOG_RULE@
     -- Add titlebars to normal clients and dialogs
-    { rule_any = {type = { "normal", "dialog" }
-      }, properties = { titlebars_enabled = true }
+    {
+        rule_any = {
+            type = { "normal", "dialog" }
+        },
+        properties = {
+            titlebars_enabled = true
+        }
+    },
+
+    -- Windows without titlebars
+    {
+        rule_any = {
+            class = { "URxvt", "Firefox" },
+        },
+        properties = {
+            titlebars_enabled = false
+        }
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
