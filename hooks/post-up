@@ -26,5 +26,10 @@ if [ -L $HOME/.mutt ]; then
     touch ~/.mutt/certificates
 fi
 
+# Create the required directory for mpd
+if [ -L $HOME/.mpdconf ]; then
+    mkdir -p ~/.mpd
+fi
+
 # z
 touch ~/.z
