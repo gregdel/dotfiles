@@ -26,10 +26,19 @@ export GDK_DPI_SCALE=0.5
 export ELM_SCALE=1.5
 
 # Autolock on lid close
-xss-lock -- $HOME/.local/i3lock-fancy/lock &
+if ! pgrep -x xss-lock > /dev/null
+then
+    xss-lock -- $HOME/.local/i3lock-fancy/lock &
+fi
 
 # Start nm-applet
-nm-applet &
+if ! pgrep -x nm-applet > /dev/null
+then
+    nm-applet &
+fi
 
 # execute awesome
-exec awesome >> ~/.cache/awesome/stdout 2>> ~/.cache/awesome/stderr
+if ! pgrep -x awesome > /dev/null
+then
+    exec awesome >> ~/.cache/awesome/stdout 2>> ~/.cache/awesome/stderr
+fi
