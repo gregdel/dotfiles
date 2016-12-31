@@ -332,6 +332,9 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86MonBrightnessUp",    function () awful.spawn("sudo /usr/sbin/custom_backlight -inc 10") end),
     awful.key({ }, "XF86MonBrightnessDown",  function () awful.spawn("sudo /usr/sbin/custom_backlight -dec 10") end),
 
+    -- External screen
+    awful.key({ }, "XF86Search",             function () awful.spawn("/home/greg/.local/bin/external_screen.sh") end),
+
     -- Sound
     awful.key({ }, "XF86AudioMute",
               function ()
