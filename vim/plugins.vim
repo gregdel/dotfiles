@@ -20,6 +20,7 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'mileszs/ack.vim'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'ConradIrwin/vim-bracketed-paste'
+Plug 'lilydjwg/colorizer'
 
 Plug 'ekalinin/Dockerfile.vim', { 'for': 'Dockerfile' }
 Plug 'fatih/vim-go', { 'for': 'go' }

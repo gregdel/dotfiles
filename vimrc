@@ -259,6 +259,10 @@ endfunction
 vnoremap * :<C-u>call <SID>VSetSearch()<CR>//<CR><c-o>
 vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR><c-o>
 
+" Colorizer
+let g:colorizer_nomap = 1   " No key mapping
+let g:colorizer_startup = 0 " Disabled by default
+
 "Options for the NERDTree
 let g:NERDChristmasTree=1
 let g:NERDTreeAutoDeleteBuffer=1
