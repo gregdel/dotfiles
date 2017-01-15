@@ -9,11 +9,11 @@ xrandr --output HDMI1 --off
 xrandr --output DP2 --off
 
 if [ $SCREEN_COUNT -ge 2 ]; then
-    xrandr --output eDP1 --primary --mode 3200x1800 --pos 288x2160 --rotate normal
-    xrandr --output DP1 --mode 1920x1080 --pos 0x0 --dpi 96 --scale 2x2 --rotate normal
+    xrandr --output eDP1 --primary --mode 3200x1800 --pos 4032x0
+    xrandr --output DP1 --mode 1920x1080 --pos 0x0 --dpi 96 --scale 2.1x2.1
 else
     xrandr --output DP1 --off
-    xrandr --output eDP1 --primary --mode 3200x1800 --pos 0x0 --rotate normal
+    xrandr --output eDP1 --primary --mode 3200x1800 --pos 0x0
 fi
 
 source ${HOME}/.xinitrc
