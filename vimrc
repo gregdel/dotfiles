@@ -60,9 +60,6 @@ set synmaxcol=800
 " Command completion
 set wildmenu
 
-" Use relative numbers
-set relativenumber
-
 " Indentation
 set expandtab       "Tabs to spaces
 set smarttab
