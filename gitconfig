@@ -28,7 +28,7 @@
     df = diff
     dc = diff --cached
     l  = log --graph --date-order --pretty=format:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit
-    la = !git lol --all
+    la = !git l --all
     ls = ls-files
     pullall = !git pull && git submodule update --init --recursive
     cia = commit --amend --reset-author
