@@ -26,7 +26,13 @@ KEYCHAIN_TIMEOUT=180 # 3h
 eval `keychain --eval --quiet --agents ssh`
 
 function agent() {
-    eval `keychain --eval --timeout $KEYCHAIN_TIMEOUT id_rsa`
+    local key
+    if [ -f ~/.ssh/id_ed25519 ]; then
+        key=~/.ssh/id_ed25519
+    else
+        key=~/.ssh/id_rsa
+    fi
+    eval `keychain --eval --timeout $KEYCHAIN_TIMEOUT ${key}`
 }
 
 # Tmux
