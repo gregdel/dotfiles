@@ -15,19 +15,7 @@ ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg_bold[green]%}✔"
 # indicate if there is an ssh-agent running for the current shell
 ssh_agent_enabled() {
     if [[ -n `keychain -l` ]]; then
-        echo "%{$FG[123]%}◌%f "
-    fi
-}
-
-# indicate a job (for example, vim) has been backgrounded
-# If there is a job in the background, display a ✱
-suspended_jobs() {
-    local sj
-    sj=$(jobs 2>/dev/null | tail -n 1)
-    if [[ $sj == "" ]]; then
-        echo ""
-    else
-        echo "%{$FG[208]%}✱%f"
+        echo "%{$fg_bold[red]%}❯%f"
     fi
 }
 
