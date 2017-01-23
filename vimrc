@@ -276,6 +276,8 @@ let g:syntastic_enable_perl_checker = 1
 let g:syntastic_ruby_checkers = ['mri', 'rubocop']
 let g:syntastic_ruby_rubocop_args = "-R"
 let g:syntastic_go_checkers = ['go', 'gofmt', 'golint' , 'govet']
+let g:syntastic_lua_checkers = ["luac", "luacheck"]
+let g:syntastic_lua_luacheck_args = "--no-unused-args"
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_check_on_wq = 0
 noremap <leader>e :Errors<CR>
