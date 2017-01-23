@@ -5,11 +5,11 @@ local timer = require("gears.timer")
 local batterywidget = { mt = {} }
 
 local function update(w)
-    icon = ''
-    fh = assert(io.popen("acpi | cut -d, -f 2,3 -", "r"))
-    output = fh:read("*l")
-    percentage_str = string.match(output, "(%d+)%%")
-    percentage = tonumber(percentage_str)
+    local icon
+    local fh = assert(io.popen("acpi | cut -d, -f 2,3 -", "r"))
+    local output = fh:read("*l")
+    local percentage_str = string.match(output, "(%d+)%%")
+    local percentage = tonumber(percentage_str)
     if percentage > 80 then
         icon = ''
     elseif percentage > 60 then
@@ -34,7 +34,7 @@ function batterywidget.new()
         update(w)
         return true -- Continue the timer
     end
-    t = timer.weak_start_new(timeout, w._private.update)
+    local t = timer.weak_start_new(timeout, w._private.update)
     t:emit_signal("timeout")
     return w
 end

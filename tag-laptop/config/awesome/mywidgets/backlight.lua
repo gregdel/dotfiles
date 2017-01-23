@@ -5,7 +5,7 @@ local timer = require("gears.timer")
 local backlightwidget = { mt = {} }
 
 local function update(w)
-    fh = assert(io.popen("sudo /usr/sbin/custom_backlight -get", "r"))
+    local fh = assert(io.popen("sudo /usr/sbin/custom_backlight -get", "r"))
     w:set_text(fh:read("*l") .. " ")
     fh:close()
 end
@@ -18,7 +18,7 @@ function backlightwidget.new()
         update(w)
         return true -- Continue the timer
     end
-    t = timer.weak_start_new(timeout, w.update)
+    local t = timer.weak_start_new(timeout, w.update)
     t:emit_signal("timeout")
     return w
 end

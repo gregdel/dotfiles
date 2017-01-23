@@ -5,10 +5,9 @@ local timer = require("gears.timer")
 local volumewidget = { mt = {} }
 
 local function update(w)
-    icon = ''
-    volume = ''
-    volmin = 0
-    volmax = 65536
+    local icon = ''
+    local volume = ''
+    local volmax = 65536
     local f = io.popen("pacmd dump |grep set-sink-volume")
     local g = io.popen("pacmd dump |grep set-sink-mute")
     local v = f:read()
@@ -31,7 +30,7 @@ function volumewidget.new()
         update(w)
         return true -- Continue the timer
     end
-    t = timer.weak_start_new(timeout, w.update)
+    local t = timer.weak_start_new(timeout, w.update)
     t:emit_signal("timeout")
     return w
 end
