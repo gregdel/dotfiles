@@ -11,6 +11,11 @@ if [ -d ~/.local/bin ]; then
     export PATH=~/.local/bin:$PATH
 fi
 
+# Add luarocks bin path
+if [ -d ~/.luarocks/bin ]; then
+    export PATH=$PATH:~/.luarocks/bin
+fi
+
 # Import virtualenwrapper
 if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
     source /usr/local/bin/virtualenvwrapper.sh
