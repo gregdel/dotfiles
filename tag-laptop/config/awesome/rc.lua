@@ -1,4 +1,8 @@
--- @DOC_REQUIRE_SECTION@
+local awesome = require("awesome")
+local client = require("client")
+local screen = require("screen")
+local root = require("root")
+
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
@@ -50,18 +54,15 @@ end
 -- Themes define colours, icons, font and wallpapers.
 beautiful.init("/home/greg/.config/awesome/themes/zenburn/theme.lua")
 
--- @DOC_DEFAULT_APPLICATIONS@
--- This is used later as the default terminal and editor to run.
-terminal = "urxvtc"
-editor = "vim"
-editor_cmd = terminal .. " -e " .. editor
+-- This is used later as the default terminal
+local terminal = "urxvtc"
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
 -- If you do not like this or do not have such a key,
 -- I suggest you to remap Mod4 to another key using xmodmap or other tools.
 -- However, you can use another modifier like Mod1, but it may interact with others.
-modkey = "Mod4"
+local modkey = "Mod4"
 
 -- @DOC_LAYOUT@
 -- Table of layouts to cover with awful.layout.inc, order matters.
@@ -79,9 +80,6 @@ awful.layout.layouts = {
     awful.layout.suit.max.fullscreen,
     awful.layout.suit.magnifier,
     awful.layout.suit.corner.nw,
-    -- awful.layout.suit.corner.ne,
-    -- awful.layout.suit.corner.sw,
-    -- awful.layout.suit.corner.se,
 }
 -- }}}
 
@@ -104,19 +102,17 @@ end
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
--- Keyboard map indicator and switcher
-mykeyboardlayout = awful.widget.keyboardlayout()
-
 -- {{{ Wibar
 -- Create a textclock widget
-mytextclock = wibox.widget.textclock()
+local mytextclock = wibox.widget.textclock()
 
 -- Custom widgets
-separator = wibox.widget.textbox()
-separator.text = " | "
-volumewidget = volume_widget()
-backlightwidget = backlight_widget()
-batterywidget = battery_widget()
+local separator = wibox.widget.textbox()
+separator.text = "  "
+local volumewidget = volume_widget()
+local backlightwidget = backlight_widget()
+local batterywidget = battery_widget()
+local systray = wibox.widget.systray()
 
 -- Create a wibox for each screen and add it
 -- @TAGLIST_BUTTON@
@@ -219,8 +215,8 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            mykeyboardlayout,
-            wibox.widget.systray(),
+            separator,
+            systray,
             separator,
             volumewidget,
             separator,
@@ -245,7 +241,7 @@ root.buttons(awful.util.table.join(
 
 -- {{{ Key bindings
 -- @DOC_GLOBAL_KEYBINDINGS@
-globalkeys = awful.util.table.join(
+local globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
@@ -384,7 +380,7 @@ globalkeys = awful.util.table.join(
 )
 
 -- @DOC_CLIENT_KEYBINDINGS@
-clientkeys = awful.util.table.join(
+local clientkeys = awful.util.table.join(
     awful.key({ modkey,           }, "f",
         function (c)
             c.fullscreen = not c.fullscreen
@@ -427,8 +423,8 @@ for i = 1, 9 do
         -- View tag only.
         awful.key({ modkey }, "#" .. i + 9,
                   function ()
-                        local screen = awful.screen.focused()
-                        local tag = screen.tags[i]
+                        local s = awful.screen.focused()
+                        local tag = s.tags[i]
                         if tag then
                            tag:view_only()
                         end
@@ -437,8 +433,8 @@ for i = 1, 9 do
         -- Toggle tag display.
         awful.key({ modkey, "Control" }, "#" .. i + 9,
                   function ()
-                      local screen = awful.screen.focused()
-                      local tag = screen.tags[i]
+                      local s = awful.screen.focused()
+                      local tag = s.tags[i]
                       if tag then
                          awful.tag.viewtoggle(tag)
                       end
@@ -470,7 +466,7 @@ for i = 1, 9 do
 end
 
 -- @DOC_CLIENT_BUTTONS@
-clientbuttons = awful.util.table.join(
+local clientbuttons = awful.util.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise() end),
     awful.button({ modkey }, 1, awful.mouse.client.move),
     awful.button({ modkey }, 3, awful.mouse.client.resize))
