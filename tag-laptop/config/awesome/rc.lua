@@ -55,7 +55,7 @@ end
 beautiful.init("/home/greg/.config/awesome/themes/zenburn/theme.lua")
 
 -- This is used later as the default terminal
-local terminal = "urxvtc"
+local terminal = "urxvt"
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.

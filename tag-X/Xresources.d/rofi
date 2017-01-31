@@ -17,7 +17,7 @@ rofi.font:                           DejaVuSansMonoForPowerline Nerd Font 25
 ! "Padding" Set from: Default
 rofi.padding:                        10
 ! "Terminal to use" Set from: Default
-rofi.terminal:                       urxvtc
+rofi.terminal:                       urxvt
 ! "Ssh client to use" Set from: Default
 rofi.ssh-client:                     mosh -n
 ! "Hide scroll-bar" Set from: Default
