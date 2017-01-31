@@ -530,7 +530,11 @@ awful.rules.rules = {
     -- Windows without titlebars
     {
         rule_any = {
-            class = { "URxvt", "Firefox" },
+            class = {
+                "URxvt",
+                "Firefox",
+                "Google-chrome",
+            },
         },
         properties = {
             titlebars_enabled = false
