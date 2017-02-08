@@ -14,9 +14,9 @@ fi
 
 # Install vim plugins
 if type nvim 2>/dev/null; then
-    nvim -u "$HOME/.vim/plugins.vim" +PlugInstall +qa
+    nvim -u "$HOME/.vim/plugins.vim" +PlugInstall +PlugClean! +qa
 else
-    vim -u "$HOME/.vim/plugins.vim" +PlugInstall +qa
+    vim -u "$HOME/.vim/plugins.vim" +PlugInstall +PlugClean! +qa
 fi
 
 # Create the required files for mutt
