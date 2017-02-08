@@ -34,7 +34,7 @@ fi
 # Start nm-applet
 if ! pgrep -x nm-applet > /dev/null
 then
-    nm-applet &
+    nm-applet --sm-disable &
 fi
 
 # execute awesome
