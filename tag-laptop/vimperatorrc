@@ -12,6 +12,9 @@ nnoremap <leader>t :tabduplicate <cr>
 " Only use selected chars
 set hintchars=hsdfgyuiopqwertnmcv
 
+" Set editor
+set editor="urxvt -e nvim"
+
 " Source local config
 source! ~/.vimperatorrc.local
 
