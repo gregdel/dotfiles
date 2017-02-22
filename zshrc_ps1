@@ -1,3 +1,5 @@
+# vim: ft=sh :
+
 ZSH_THEME_GIT_PROMPT_BRANCH="%{$fg_bold[blue]%}"
 ZSH_THEME_GIT_PROMPT_PREFIX=""
 ZSH_THEME_GIT_PROMPT_SUFFIX=""
@@ -14,7 +16,9 @@ ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg_bold[green]%}✔"
 
 # indicate if there is an ssh-agent running for the current shell
 ssh_agent_enabled() {
-    if [[ -n `keychain -l` ]]; then
+    local keys
+    keys=$(keychain -l | wc -l)
+    if [ "$keys" -gt "0" ]; then
         echo "%{$fg_bold[red]%}❯%f"
     fi
 }
@@ -22,8 +26,7 @@ ssh_agent_enabled() {
 # PS1
 PS1=""
 # Print username@host
-if [[ "$USER" == "root" ]]
-then
+if [ "$USER" = "root" ]; then
     PS1+="%{$fg_bold[red]%}%n@%M:%f"
 else
     PS1+="%{$fg_bold[green]%}%n@%M:%f"
@@ -34,4 +37,4 @@ PS1+="%{$fg_bold[blue]%}%~%f"
 
 # New line
 PS1+='
-`ssh_agent_enabled`%{$fg_bold[red]%}❯ %f%{$reset_color%}'
+$(ssh_agent_enabled)%{$fg_bold[red]%}❯ %f%{$reset_color%}'
