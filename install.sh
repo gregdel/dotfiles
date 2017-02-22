@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function install_rcm()
 {
     version=1.3.0
@@ -16,7 +18,7 @@ function install_rcm()
 
 function initial_setup()
 {
-    env RCRC=$HOME/.dotfiles/rcrc PATH=$HOME/.local/bin:$PATH rcup -f -v
+    env RCRC="$HOME/.dotfiles/rcrc" PATH="$HOME/.local/bin:$PATH" rcup -f -v
     exec bash
 }
 
