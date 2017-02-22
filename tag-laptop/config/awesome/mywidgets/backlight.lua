@@ -6,7 +6,7 @@ local backlightwidget = { mt = {} }
 
 local function update(w)
     local fh = assert(io.popen("sudo /usr/sbin/custom_backlight -get", "r"))
-    w:set_text(fh:read("*l") .. " ")
+    w:set_text(fh:read("*l") .. " ")
     fh:close()
 end
 
