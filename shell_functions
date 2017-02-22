@@ -1,7 +1,12 @@
 # Shell function for both bash and zsh
+# vim: ft=sh :
 
 # vim as editor
-export EDITOR=vim
+if type nvim &> /dev/null; then
+    export EDITOR=nvim
+else
+    export EDITOR=vim
+fi
 
 # Add sbin to the user path
 export PATH=/usr/sbin:$PATH

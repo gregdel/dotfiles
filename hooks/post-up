@@ -13,7 +13,7 @@ if [ ! -L $HOME/.vim/init.vim ]; then
 fi
 
 # Install vim plugins
-if type nvim 2>/dev/null; then
+if type nvim &> /dev/null; then
     nvim -u "$HOME/.vim/plugins.vim" +PlugInstall +PlugClean! +qa
 else
     vim -u "$HOME/.vim/plugins.vim" +PlugInstall +PlugClean! +qa
