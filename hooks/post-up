@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # Required folders
-mkdir -p $HOME/.config
-mkdir -p $HOME/.local/bin
+mkdir -p "$HOME/.config"
+mkdir -p "$HOME/.local/bin"
 
 # Neovim
-if [ ! -L $HOME/.config/nvim ]; then
-    ln -s $HOME/.vim $HOME/.config/nvim
+if [ ! -L "$HOME/.config/nvim" ]; then
+    ln -s "$HOME/.vim" "$HOME/.config/nvim"
 fi
-if [ ! -L $HOME/.vim/init.vim ]; then
-    ln -s $HOME/.vimrc $HOME/.vim/init.vim
+if [ ! -L "$HOME/.vim/init.vim" ]; then
+    ln -s "$HOME/.vimrc" "$HOME/.vim/init.vim"
 fi
 
 # Install vim plugins
@@ -20,16 +20,16 @@ else
 fi
 
 # Create the required files for mutt
-if [ -L $HOME/.mutt ]; then
-    mkdir -p ~/.mutt/cache
-    mkdir -p ~/.mutt/tmp
-    touch ~/.mutt/certificates
+if [ -L "$HOME/.mutt" ]; then
+    mkdir -p "$HOME/.mutt/cache"
+    mkdir -p "$HOME/.mutt/tmp"
+    touch "$HOME/.mutt/certificates"
 fi
 
 # Create the required directory for mpd
-if [ -L $HOME/.mpdconf ]; then
-    mkdir -p ~/.mpd
+if [ -L "$HOME/.mpdconf" ]; then
+    mkdir -p "$HOME/.mpd"
 fi
 
 # z
-touch ~/.z
+touch "$HOME/.z"

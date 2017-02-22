@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [ -L $HOME/.config/nvim ]; then
-    rm $HOME/.config/nvim
+if [ -L "$HOME/.config/nvim" ]; then
+    rm "$HOME/.config/nvim"
 fi
 
-if [ -L $HOME/.vim/init.vim ]; then
-    rm $HOME/.vim/init.vim
+if [ -L "$HOME/.vim/init.vim" ]; then
+    rm "$HOME/.vim/init.vim"
 fi

@@ -5,18 +5,18 @@ URL="https://github.com/neomutt/neomutt.git"
 BUILD_DIR_ROOT=$HOME/dev/build
 BUILD_DIR=$BUILD_DIR_ROOT/neomutt
 
-if [ ! -d ${BUILD_DIR_ROOT} ]; then
-    mkdir -p ${BUILD_DIR_ROOT}
+if [ ! -d "$BUILD_DIR_ROOT" ]; then
+    mkdir -p "$BUILD_DIR_ROOT"
 fi
 
-if [ ! -d ${BUILD_DIR} ]; then
-    git clone ${URL} ${BUILD_DIR}
-    cd neomutt
+if [ ! -d "$BUILD_DIR" ]; then
+    git clone "$URL" "$BUILD_DIR"
+    cd neomutt || exit 1
 fi
 
-cd ${BUILD_DIR}
+cd "$BUILD_DIR" || exit 1
 git pull origin master --tags
-git checkout ${VERSION}
+git checkout "$VERSION"
 
 # Install dependencies
 sudo apt update
