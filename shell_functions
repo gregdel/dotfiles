@@ -48,6 +48,9 @@ function agent() {
 # Tmux
 alias ta='tmux attach -t'
 
+# Open
+alias o='xdg-open'
+
 # Clear screen
 alias c='clear'
 
