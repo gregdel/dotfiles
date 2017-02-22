@@ -215,7 +215,6 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            separator,
             systray,
             separator,
             volumewidget,
@@ -534,6 +533,7 @@ awful.rules.rules = {
                 "URxvt",
                 "Firefox",
                 "Google-chrome",
+                "Spotify",
             },
         },
         properties = {
