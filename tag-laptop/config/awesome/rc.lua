@@ -54,6 +54,8 @@ end
 -- Themes define colours, icons, font and wallpapers.
 beautiful.init("/home/greg/.config/awesome/themes/zenburn/theme.lua")
 
+local theme = beautiful.get()
+
 -- This is used later as the default terminal
 local terminal = "urxvt"
 
@@ -102,13 +104,8 @@ end
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
--- {{{ Wibar
--- Create a textclock widget
+-- widgets
 local mytextclock = wibox.widget.textclock()
-
--- Custom widgets
-local separator = wibox.widget.textbox()
-separator.text = "  "
 local volumewidget = volume_widget()
 local backlightwidget = backlight_widget()
 local batterywidget = battery_widget()
@@ -199,11 +196,20 @@ awful.screen.connect_for_each_screen(function(s)
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
 
-    -- @DOC_WIBAR@
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s })
 
-    -- @DOC_SETUP_WIDGETS@
+    -- Powerline shape
+    local powerline_shape = function(cr, width, height)
+        return gears.shape.transform(gears.shape.powerline) : rotate_at(width/2, height/2, math.pi)(cr, width, height)
+    end
+    -- Powerline container
+    local powerline_container = function(widget, margin_left, margin_right, index)
+        local color = theme.bg_focus
+        if ((index % 2) == 0) then color = theme.bg_normal end
+        return wibox.container.background(wibox.container.margin(widget, margin_left, margin_right), color, powerline_shape)
+    end
+
     -- Add widgets to the wibox
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
@@ -216,14 +222,10 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             systray,
-            separator,
-            volumewidget,
-            separator,
-            backlightwidget,
-            separator,
-            batterywidget,
-            separator,
-            mytextclock,
+            powerline_container(volumewidget, 30, 30, 1),
+            powerline_container(backlightwidget, 0, 10, 2),
+            powerline_container(batterywidget, 10, 30, 3),
+            powerline_container(mytextclock, 0, 0, 4),
             s.mylayoutbox,
         },
     }
@@ -231,7 +233,6 @@ end)
 -- }}}
 
 -- {{{ Mouse bindings
--- @DOC_ROOT_BUTTONS@
 root.buttons(awful.util.table.join(
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
@@ -239,7 +240,6 @@ root.buttons(awful.util.table.join(
 -- }}}
 
 -- {{{ Key bindings
--- @DOC_GLOBAL_KEYBINDINGS@
 local globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
