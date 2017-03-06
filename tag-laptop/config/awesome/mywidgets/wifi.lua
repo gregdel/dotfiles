@@ -1,6 +1,7 @@
 local setmetatable = setmetatable
 local textbox = require("wibox.widget.textbox")
 local timer = require("gears.timer")
+local awful = require("awful")
 
 local wifiwidget = { mt = {} }
 
@@ -15,16 +16,26 @@ local function update(w)
     end
 end
 
+local function handle_click()
+    awful.spawn("urxvt -e nmtui")
+end
+
 function wifiwidget.new()
     local w = textbox()
     local timeout = 20
 
     function w.update()
         update(w)
-        return true -- Continue the timer
+        return true
     end
+
+    -- Timer
     local t = timer.weak_start_new(timeout, w.update)
     t:emit_signal("timeout")
+
+    -- Mouse
+    w:connect_signal("button::press", handle_click)
+
     return w
 end
 

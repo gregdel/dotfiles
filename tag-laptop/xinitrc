@@ -31,11 +31,12 @@ then
     xss-lock -- $HOME/.local/i3lock-fancy/lock &
 fi
 
-# Start nm-applet
-if ! pgrep -x nm-applet > /dev/null
-then
-    nm-applet --sm-disable &
-fi
+# Let's disable it for now and give a try to nmtui
+# # Start nm-applet
+# if ! pgrep -x nm-applet > /dev/null
+# then
+#     nm-applet --sm-disable &
+# fi
 
 # execute awesome
 if ! pgrep -x awesome > /dev/null
