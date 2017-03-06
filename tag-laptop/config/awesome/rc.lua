@@ -22,6 +22,7 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 local volume_widget = require("mywidgets.volume")
 local backlight_widget = require("mywidgets.backlight")
 local battery_widget = require("mywidgets.battery")
+local wifi_widget = require("mywidgets.wifi")
 
 -- {{{ Error handling
 -- @DOC_ERROR_HANDLING@
@@ -109,6 +110,7 @@ local mytextclock = wibox.widget.textclock()
 local volumewidget = volume_widget()
 local backlightwidget = backlight_widget()
 local batterywidget = battery_widget()
+local wifiwidget = wifi_widget()
 local systray = wibox.widget.systray()
 
 -- Create a wibox for each screen and add it
@@ -222,10 +224,11 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             systray,
-            powerline_container(volumewidget, 30, 30, 1),
-            powerline_container(backlightwidget, 0, 10, 2),
-            powerline_container(batterywidget, 10, 30, 3),
-            powerline_container(mytextclock, 0, 0, 4),
+            powerline_container(wifiwidget, 30, 30, 1),
+            powerline_container(volumewidget, 10, 10, 2),
+            powerline_container(backlightwidget, 20, 30, 3),
+            powerline_container(batterywidget, 0, 10, 4),
+            powerline_container(mytextclock, 10, 10, 5),
             s.mylayoutbox,
         },
     }
