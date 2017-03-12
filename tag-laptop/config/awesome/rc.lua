@@ -9,9 +9,12 @@ local home = os.getenv("HOME")
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
+-- local debug = require("gears.debug")
 require("awful.autofocus")
+
 -- Widget and layout library
 local wibox = require("wibox")
+
 -- Theme handling library
 local beautiful = require("beautiful")
 beautiful.xresources = require("beautiful.xresources")
@@ -174,11 +177,24 @@ awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
     set_wallpaper(s)
 
+    -- DPI setting
+    local default_dpi = 166
+    for screen_name, _ in pairs(s.outputs) do
+        if screen_name == "eDP1" then
+            -- Laptop screen
+            beautiful.xresources.set_dpi(default_dpi, s)
+        elseif screen_name == "DP1" then
+            -- External screen
+            beautiful.xresources.set_dpi(default_dpi, s)
+        end
+    end
+
     -- Each screen has its own tag table.
     awful.tag({ '  ', '  ', '  ', '  ', '  ', '  ', '  ', '  ', '  '  }, s, awful.layout.layouts[1])
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
+
     -- Create an imagebox widget which will contains an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
     s.mylayoutbox = awful.widget.layoutbox(s)

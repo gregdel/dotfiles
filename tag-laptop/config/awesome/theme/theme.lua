@@ -11,7 +11,7 @@ local bg_normal  = "#383C4A"
 local bg_focus   = "#22242D"
 local bg_urgent  = "#383C4A"
 local border_normal = "#3F3F3F"
-local border_focus  = "#6F6F6F"
+local border_focus  = "#5294e2"
 local border_marked = "#CC9393"
 
 local theme = {}
@@ -31,7 +31,7 @@ theme.bg_systray = theme.bg_normal
 
 -- Borders
 theme.useless_gap   = 0
-theme.border_width  = 2
+theme.border_width  = 3
 theme.border_normal = border_normal
 theme.border_focus  = border_focus
 theme.border_marked = border_marked
@@ -43,8 +43,10 @@ theme.titlebar_bg_normal = bg_normal
 -- Tasklist
 theme.tasklist_fg_focus  = fg_focus
 theme.tasklist_fg_normal = fg_normal
-theme.tasklist_bg_focus  = bg_focus
+theme.tasklist_bg_focus  = bg_normal
 theme.tasklist_bg_normal = bg_normal
+theme.tasklist_disable_icon = "true"
+theme.tasklist_align = "center"
 
 -- Taglist
 theme.taglist_fg_focus  = fg_focus
@@ -52,48 +54,10 @@ theme.taglist_fg_normal = fg_normal
 theme.taglist_bg_focus  = bg_focus
 theme.taglist_bg_normal = bg_normal
 
--- Taglist
--- theme.taglist.fg_focus  = "#000000"
--- theme.titlebar_bg_normal = "#3F3F3F"
-
--- There are other variable sets
--- overriding the default one when
--- defined, the sets are:
--- [taglist|tasklist]_[bg|fg]_[focus|urgent]
--- titlebar_[normal|focus]
--- tooltip_[font|opacity|fg_color|bg_color|border_width|border_color]
--- Example:
---theme.taglist_bg_focus = "#CC9393"
-
--- Widgets
--- You can add as many variables as
--- you wish and access them by using
--- beautiful.variable in your rc.lua
---theme.fg_widget        = "#AECF96"
---theme.fg_center_widget = "#88A175"
---theme.fg_end_widget    = "#FF5656"
---theme.bg_widget        = "#494B4F"
---theme.border_widget    = "#3F3F3F"
-
--- Mouse finder
-theme.mouse_finder_color = "#CC9393"
--- mouse_finder_[timeout|animate_timeout|radius|factor]
-
--- Menu
--- Variables set for theming the menu:
--- menu_[bg|fg]_[normal|focus]
--- menu_[border_color|border_width]
-theme.menu_height = 15
-theme.menu_width  = 100
-
 -- Taglist icons
 theme.taglist_squares_sel   = theme_dir .. "/taglist/squarefz.png"
 theme.taglist_squares_unsel = theme_dir .. "/taglist/squarez.png"
 theme.taglist_squares_resize = "true"
-
--- Misc
-theme.awesome_icon           = theme_dir .. "/awesome-icon.png"
-theme.menu_submenu_icon      = theme_dir .. "submenu.png"
 
 -- Layout
 theme.layout_tile       = theme_dir .. "/layouts/tile.png"
