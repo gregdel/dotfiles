@@ -6,8 +6,15 @@ local backlightwidget = { mt = {} }
 
 local function update(w)
     local fh = assert(io.popen("/usr/bin/xbacklight -get", "r"))
-    local value = math.floor(tonumber(fh:read("*l")))
+    local out = fh:read("*l")
     fh:close()
+    local value
+    if out == nil then
+        value = "?"
+    else
+        value = math.floor(tonumber(out))
+    end
+
     w:set_text(value .. "% ")
 end
 

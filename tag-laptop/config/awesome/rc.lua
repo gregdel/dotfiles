@@ -3,6 +3,9 @@ local client = require("client")
 local screen = require("screen")
 local root = require("root")
 
+local os = { getenv = os.getenv }
+local home = os.getenv("HOME")
+
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
@@ -53,7 +56,7 @@ end
 -- {{{ Variable definitions
 -- @DOC_LOAD_THEME@
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init("/home/greg/.config/awesome/themes/zenburn/theme.lua")
+beautiful.init(home .. "/.config/awesome/theme/theme.lua")
 
 local theme = beautiful.get()
 
