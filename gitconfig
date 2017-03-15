@@ -21,22 +21,29 @@
     changed = green
     untracked = cyan
 [alias]
+    l  = log --graph --date-order --pretty=format:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit
+    la = !git l --all
+
+    redate = "!f() { git filter-branch --env-filter 'export GIT_COMMITTER_DATE=\"$GIT_AUTHOR_DATE\"' $@ --; }; f"
+    ahd = "!f() { remote=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2> /dev/null); [ -n \"$remote\" ] && git log $remote..; }; f"
+    bhd = "!f() { remote=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2> /dev/null); [ -n \"$remote\" ] && git log ..$remote; }; f"
+    rmtls = remote -v show
+    brls = branch -vva --list
+
+    cia = commit --amend --reset-author
+    dm = !git branch --merged | grep -v '*' | xargs -n 1 git branch -d
+    current-branch = rev-parse --abbrev-ref HEAD
+    pushdev = !git push --set-upstream origin `git current-branch`:dev/`git current-branch`
+    pushbr = !git push --set-upstream origin `git current-branch`
+    su = submodule update --init
+
     st = status
     ci = commit
     br = branch
     co = checkout
     df = diff
     dc = diff --cached
-    l  = log --graph --date-order --pretty=format:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit
-    la = !git l --all
     ls = ls-files
-    pullall = !git pull && git submodule update --init --recursive
-    cia = commit --amend --reset-author
-    current-branch = rev-parse --abbrev-ref HEAD
-    pushbr = !git push --set-upstream origin `git current-branch`
-    dm = !git branch --merged | grep -v '*' | xargs -n 1 git branch -d
-    pushdev = !git push --set-upstream origin `git current-branch`:dev/`git current-branch`
-    subup = submodule update --init
 [push]
     default = tracking
 [core]
