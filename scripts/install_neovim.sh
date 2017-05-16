@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="v0.1.7"
+VERSION="v0.2.0"
 URL="https://github.com/neovim/neovim.git"
 BUILD_DIR_ROOT=$HOME/dev/build
 BUILD_DIR=$BUILD_DIR_ROOT/neovim
@@ -23,7 +23,7 @@ sudo apt update
 sudo apt install -y libtool libtool-bin autoconf automake cmake g++ pkg-config unzip
 
 # Make
-rm -r build
+rm -rf "$BUILD_DIR/build"
 make clean
 make CMAKE_BUILD_TYPE=Release
 
