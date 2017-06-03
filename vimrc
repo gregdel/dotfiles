@@ -287,6 +287,8 @@ let g:syntastic_ruby_rubocop_args = "-R"
 let g:syntastic_go_checkers = ['go', 'gofmt', 'golint' , 'govet']
 let g:syntastic_lua_checkers = ["luac", "luacheck"]
 let g:syntastic_lua_luacheck_args = "--no-unused-args"
+let g:syntastic_javascript_eslint_exe='$(npm bin)/eslint'
+let g:syntastic_javascript_checkers = ["eslint"]
 let g:syntastic_always_populate_loc_list = 1
 noremap <leader>e :Errors<CR>
 
