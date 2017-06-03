@@ -168,6 +168,9 @@ nnoremap <leader>r :redraw! <CR>
 " Shortcut to rapidly toggle `set list`
 nmap <leader>l :set list!<CR>
 
+" Shortcut for :Ggrep
+nmap <leader>g :Ggrep
+
 " Toggle spell lang
 nnoremap <leader>s :let &l:spelllang=( &l:spelllang == "en" ? "fr" : "en" )<CR>
 
@@ -236,6 +239,12 @@ augroup config
     autocmd BufWrite * %s/\s\+$//ge
 augroup END
 
+" autocmd location list
+augroup locationlist
+    autocmd!
+    autocmd QuickFixCmdPost *grep* cwindow
+augroup END
+
 " Edit vimrc
 nmap <leader>v :tabedit $MYVIMRC<CR>
 
@@ -292,6 +301,10 @@ let g:go_doc_keywordprg_enabled = 0 " handled by .vim/ftplugin/go.vim
 
 " Delimate
 let delimitMate_expand_cr = 2
+
+" ListToggle
+let g:lt_quickfix_list_toggle_map = '<leader>q'
+let g:lt_location_list_toggle_map = '<leader>w'
 
 " Airline
 let g:airline_theme='badwolf'
