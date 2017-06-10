@@ -15,7 +15,7 @@ local border_focus  = "#5294e2"
 local border_marked = "#CC9393"
 
 local theme = {}
-theme.wallpaper = home .. "/pictures/Wallpapers/Yosemite-valley-HD-nature-wallpaper.jpg"
+theme.wallpaper = home .. "/pictures/Wallpapers/biqimwxx_wu-sergee-bee.jpg"
 
 -- Font
 theme.font      = "InconsolataForPowerline Nerd Font 12"
