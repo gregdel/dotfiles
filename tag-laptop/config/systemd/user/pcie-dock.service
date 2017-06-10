@@ -1,0 +1,17 @@
+; This requires a udev rule to work
+; root@lois:/etc/udev/rules.d
+; ❯ cat 10-dock.rules
+; ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x8086", ATTR{class}=="0x060400", TAG+="systemd", ENV{SYSTEMD_USER_WANTS}="pcie-dock.service"
+[Unit]
+Description=Handle PCIe Dock plug / unplug
+BindsTo=sys-devices-pci0000:00-0000:00:1c.0-0000:01:00.0.device
+After=sys-devices-pci0000:00-0000:00:1c.0-0000:01:00.0.device
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/home/greg/.local/bin/external_screen.sh
+ExecStop=/home/greg/.local/bin/external_screen.sh
+
+[Install]
+WantedBy=multi-user.target
