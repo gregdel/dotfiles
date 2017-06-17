@@ -31,6 +31,9 @@ if [ -f ~/.local/bin/z.sh ]; then
     source ~/.local/bin/z.sh
 fi
 
+# Default mosh timeout of 2 days
+export MOSH_SERVER_NETWORK_TMOUT="172800"
+
 # Keychain agent
 KEYCHAIN_TIMEOUT=180 # 3h
 eval `keychain --eval --quiet --agents ssh`
