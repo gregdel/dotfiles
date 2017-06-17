@@ -36,16 +36,16 @@ export MOSH_SERVER_NETWORK_TMOUT="172800"
 
 # Keychain agent
 KEYCHAIN_TIMEOUT=180 # 3h
-eval `keychain --eval --quiet --agents ssh`
+eval "$(keychain --eval --quiet --agents ssh)"
 
-function agent() {
+agent() {
     local key
     if [ -f ~/.ssh/id_ed25519 ]; then
         key=~/.ssh/id_ed25519
     else
         key=~/.ssh/id_rsa
     fi
-    eval `keychain --eval --timeout $KEYCHAIN_TIMEOUT ${key}`
+    eval "$(keychain --eval --timeout "$KEYCHAIN_TIMEOUT" "${key}")"
 }
 
 # Tmux
@@ -77,24 +77,27 @@ alias dc='docker-compose'
 # docker-machine
 alias dm='docker-machine'
 
+# systemd --user
+alias sysu='systemctl --user'
+
 # Go tool cover
 alias go-cover="go test -coverprofile=/tmp/coverage.out && go tool cover -html /tmp/coverage.out -o /tmp/coverage.html"
 
 # System functions
 extract () {
-    if [ -f $1 ] ; then
-        case $1 in
-            *.tar.bz2)   tar xjf $1     ;;
-            *.tar.gz)    tar xzf $1     ;;
-            *.bz2)       bunzip2 $1     ;;
-            *.rar)       unrar e $1     ;;
-            *.gz)        gunzip $1      ;;
-            *.tar)       tar xf $1      ;;
-            *.tbz2)      tar xjf $1     ;;
-            *.tgz)       tar xzf $1     ;;
-            *.zip)       unzip $1       ;;
-            *.Z)         uncompress $1  ;;
-            *.7z)        7z x $1        ;;
+    if [ -f "$1" ] ; then
+        case "$1" in
+            *.tar.bz2)   tar xjf "$1"     ;;
+            *.tar.gz)    tar xzf "$1"     ;;
+            *.bz2)       bunzip2 "$1"     ;;
+            *.rar)       unrar e "$1"     ;;
+            *.gz)        gunzip "$1"      ;;
+            *.tar)       tar xf "$1"      ;;
+            *.tbz2)      tar xjf "$1"     ;;
+            *.tgz)       tar xzf "$1"     ;;
+            *.zip)       unzip "$1"       ;;
+            *.Z)         uncompress "$1"  ;;
+            *.7z)        7z x "$1"        ;;
             *) echo "'$1' cannot be extracted via extract()" ;;
         esac
     else
@@ -103,8 +106,8 @@ extract () {
 }
 
 # Create dir and jump into it
-function mcd() {
-    mkdir -p "$1" && cd "$1";
+mcd() {
+    mkdir -p "$1" && cd "$1" || return;
 }
 
 man() {
