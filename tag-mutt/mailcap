@@ -6,8 +6,8 @@ application/pdf; zathura %s
 
 # HTML
 # text/html; xdg-open %s
-text/html; links %s; nametemplate=%s.html
-text/html; links -dump %s;
+text/html; links -html-assume-codepage utf-8 -html-numbered-links 1 %s; nametemplate=%s.html
+text/html; links -html-assume-codepage utf-8 -html-numbered-links 1 -dump %s; nametemplate=%s.html; copiousoutput
 
 # Plain
 text/plain; vim %s
