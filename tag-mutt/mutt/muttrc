@@ -8,8 +8,8 @@ set alias_file       = ~/.mutt/aliases       # where to store aliases
 set header_cache     = ~/.mutt/cache/headers # where to store headers
 set certificate_file = ~/.mutt/certificates  # where to store certs
 set tmpdir           = ~/.mutt/tmp           # where to keep temp files
-set mailcap_path     = ~/.mutt/mailcap       # entries for filetypes
 set signature        = ~/.mutt/sig           # my signature file
+set mailcap_path     = ~/.mailcap            # entries for filetypes
 
 # Basic Options --------------------------------------
 set wait_key = no        # shut up, mutt
