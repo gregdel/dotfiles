@@ -1,3 +1,6 @@
+-- DPI stuff
+local dpi = require("beautiful.xresources").apply_dpi
+
 -- Imports
 local os = { getenv = os.getenv }
 local home = os.getenv("HOME")
@@ -30,8 +33,8 @@ theme.bg_urgent  = bg_urgent
 theme.bg_systray = theme.bg_normal
 
 -- Borders
-theme.useless_gap   = 0
-theme.border_width  = 3
+theme.useless_gap   = dpi(0)
+theme.border_width  = dpi(1)
 theme.border_normal = border_normal
 theme.border_focus  = border_focus
 theme.border_marked = border_marked
