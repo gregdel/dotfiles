@@ -340,12 +340,12 @@ local globalkeys = awful.util.table.join(
     -- Backlight
     awful.key({ }, "XF86MonBrightnessUp",
               function ()
-                  awful.spawn("/usr/bin/xbacklight -inc 10")
+                  awful.spawn("sudo /usr/sbin/custom_backlight -inc 10")
                   backlightwidget:update()
               end),
     awful.key({ }, "XF86MonBrightnessDown",
               function ()
-                  awful.spawn("/usr/bin/xbacklight -dec 10")
+                  awful.spawn("sudo /usr/sbin/custom_backlight -dec 10")
                   backlightwidget:update()
               end),
 
