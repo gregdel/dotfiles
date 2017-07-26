@@ -548,6 +548,7 @@ awful.rules.rules = {
                 "Firefox",
                 "Google-chrome",
                 "Spotify",
+                "Slack",
             },
         },
         properties = {
