@@ -5,7 +5,7 @@ local timer = require("gears.timer")
 local backlightwidget = { mt = {} }
 
 local function update(w)
-    local fh = assert(io.popen("sudo /usr/sbin/custom_backlight -get", "r"))
+    local fh = assert(io.popen("/usr/bin/xbacklight -get", "r"))
     local out = fh:read("*l")
     fh:close()
     local value
