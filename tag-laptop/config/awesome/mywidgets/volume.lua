@@ -8,12 +8,12 @@ local function update(w)
     local icon = ''
     local volume = ''
     local volmax = 65536
-    local f = io.popen("pacmd dump |grep set-sink-volume")
-    local g = io.popen("pacmd dump |grep set-sink-mute")
+    local f = io.popen("pamixer --get-volume")
+    local g = io.popen("pamixer --get-mute")
     local v = f:read()
     local mute = g:read()
-    if mute ~= nil and string.find(mute, "no") then
-        volume = math.floor(tonumber(string.sub(v, string.find(v, 'x')-1)) * 100 / volmax).."% "
+    if mute ~= nil and string.find(mute, "false") then
+        volume = tonumber(v) .."% "
         icon = ''
     end
     f:close()

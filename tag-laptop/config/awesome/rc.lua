@@ -1,7 +1,7 @@
-local awesome = require("awesome")
-local client = require("client")
-local screen = require("screen")
-local root = require("root")
+-- local awesome = require("awesome")
+-- local client = require("client")
+-- local screen = require("screen")
+-- local root = require("root")
 
 local os = { getenv = os.getenv }
 local home = os.getenv("HOME")
@@ -355,17 +355,17 @@ local globalkeys = awful.util.table.join(
     -- Sound
     awful.key({ }, "XF86AudioMute",
               function ()
-                  awful.spawn("pactl set-sink-mute 0 toggle")
+                  awful.spawn("pamixer --toggle-mute")
                   volumewidget:update()
               end),
     awful.key({ }, "XF86AudioRaiseVolume",
               function ()
-                  awful.spawn("sh -c 'pactl set-sink-mute 0 false ; pactl set-sink-volume 0 +5%'")
+                  awful.spawn("pamixer --unmute --increase 5")
                   volumewidget:update()
               end),
     awful.key({ }, "XF86AudioLowerVolume",
               function ()
-                  awful.spawn("sh -c 'pactl set-sink-mute 0 false ; pactl set-sink-volume 0 -5%'")
+                  awful.spawn("pamixer --unmute --decrease 5")
                   volumewidget:update()
               end),
 
@@ -516,6 +516,7 @@ awful.rules.rules = {
                 "Arandr",
                 "Wpa_gui",
                 "pinentry",
+                "mpv",
             },
             name = {
                 "Event Tester",  -- xev.
@@ -545,6 +546,7 @@ awful.rules.rules = {
         rule_any = {
             class = {
                 "URxvt",
+                "mpv",
                 "Firefox",
                 "Google-chrome",
                 "Spotify",
