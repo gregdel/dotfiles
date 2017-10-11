@@ -25,27 +25,14 @@ export GDK_SCALE=2
 export GDK_DPI_SCALE=0.5
 export ELM_SCALE=1.5
 
-# Autolock on lid close
-if ! pgrep -x xss-lock > /dev/null
-then
-    xss-lock -- $HOME/.local/i3lock-fancy/lock &
-fi
-
-# Let's disable it for now and give a try to nmtui
-# # Start nm-applet
-# if ! pgrep -x nm-applet > /dev/null
-# then
-#     nm-applet --sm-disable &
-# fi
-
 # execute awesome
-if ! pgrep -x awesome > /dev/null
-then
-    exec awesome >> ~/.cache/awesome/stdout 2>> ~/.cache/awesome/stderr
-fi
-
-# # execute i3
-# if ! pgrep -x i3 > /dev/null
+# if ! pgrep -x awesome > /dev/null
 # then
-#     exec i3 -V >> $HOME/.cache/i3log 2>&1
+#     exec awesome >> ~/.cache/awesome/stdout 2>> ~/.cache/awesome/stderr
 # fi
+
+# execute i3
+if ! pgrep -x i3 > /dev/null
+then
+    exec i3 -V >> $HOME/.cache/i3log 2>&1
+fi
