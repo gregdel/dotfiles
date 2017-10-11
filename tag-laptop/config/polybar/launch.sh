@@ -8,6 +8,10 @@ while pgrep -x polybar >/dev/null; do sleep 1; done
 
 # Launch bars
 polybar laptop &
-polybar external_display &
+
+SCREEN_COUNT=$(xrandr | grep -w connected -c)
+if [ "$SCREEN_COUNT" -ge 2 ]; then
+	polybar external_display &
+fi
 
 echo "Bars launched..."

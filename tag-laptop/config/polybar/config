@@ -32,16 +32,15 @@ fixed-center = true
 background = ${colors.background}
 foreground = ${colors.foreground}
 
-line-size = 2
-line-color = #f00
+underline-size = 2
+underline-color = ${colors.background}
+overline-size = 0
 
-border-size = 1
-border-color = #00000000
+border-size = 0
 
 padding-left = 0
-padding-right = 0
+padding-right = 1
 
-module-margin-top = 1
 module-margin-left = 1
 module-margin-right = 1
 
@@ -49,7 +48,7 @@ font-0 = InconsolataForPowerline Nerd Font:size=20:antialias=false;0
 
 modules-left = i3
 modules-center =
-modules-right = wlan volume xbacklight battery date
+modules-right = ovh redshift wlan volume xbacklight battery date
 
 tray-position = right
 tray-padding = 2
@@ -57,7 +56,7 @@ tray-transparent = false
 
 wm-restack = i3
 ;override-redirect = true
-;
+
 
 enable-scroll = false
 
@@ -121,13 +120,20 @@ interface = wlp58s0
 interval = 3.0
 
 format-connected = <label-connected>
-format-connected-underline = ${colors.primary}
+format-connected-underline = ${colors.ok}
 label-connected =  %essid% (%signal%%)
 
 format-disconnected = <label-disconnected>
 format-disconnected-underline = ${colors.secondary}
-label-disconnected = %ifname% disconnected
+label-disconnected =  %ifname% disconnected
 label-disconnected-foreground = ${colors.foreground-alt}
+
+[module/ovh]
+type = custom/script
+exec = pgrep vpnc
+interval = 10
+label =  OVH
+format-underline = ${colors.primary}
 
 [module/date]
 type = internal/date
@@ -137,6 +143,13 @@ time = %H:%M
 date = "%m/%d/%Y"
 
 label = %time% %date%
+
+[module/redshift]
+type = custom/script
+exec = pgrep redshift
+interval = 10
+label =  Redshift
+format-underline = ${colors.primary}
 
 [module/volume]
 type = internal/volume
@@ -161,11 +174,11 @@ format-charging-underline = ${colors.ok}
 label-charging = %percentage%% %time%
 
 format-full-prefix = ""
-format-full-prefix-foreground = ${colors.foreground-alt}
+format-full-prefix-foreground = ${colors.ok}
 format-full-underline = ${self.format-charging-underline}
 
 format-discharging = <ramp-capacity> <label-discharging>
-format-discharging-underline = ${self.format-charging-underline}
+format-discharging-underline = ${colors.primary}
 label-discharging = %percentage%% %time%
 
 ramp-capacity-0 = 
@@ -173,7 +186,7 @@ ramp-capacity-1 = 
 ramp-capacity-2 = 
 ramp-capacity-3 = 
 ramp-capacity-4 = 
-ramp-capacity-foreground = ${colors.foreground-alt}
+ramp-capacity-foreground = ${colors.foreground}
 
 animation-charging-0 = 
 animation-charging-1 = 
