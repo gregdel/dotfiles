@@ -93,6 +93,12 @@ bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
 
+# Move workspace between outputs
+bindsym $mod+o move workspace to output right
+
+# w000t
+bindsym Mod1+w exec /home/greg/.local/bin/w000t.sh
+
 # rofi
 bindsym Mod1+r exec rofi -show run
 bindsym Mod1+s exec rofi -show ssh
@@ -103,9 +109,12 @@ bindsym XF86AudioRaiseVolume exec pamixer --unmute --increase 5
 bindsym XF86AudioLowerVolume exec pamixer --unmute --decrease 5
 bindsym XF86AudioMute exec pamixer --toggle-mute
 
+# Screen switch
+bindsym XF86Search exec ~/.local/bin/external_screen.sh
+
 # screen brightness controls
-bindsym XF86MonBrightnessUp exec xbacklight -inc 10
-bindsym XF86MonBrightnessDown exec xbacklight -dec 10
+bindsym XF86MonBrightnessUp exec xbacklight -inc 5
+bindsym XF86MonBrightnessDown exec xbacklight -dec 5
 
 # windows specific configurations
 for_window [class="urxvt"] border none
