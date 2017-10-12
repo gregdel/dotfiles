@@ -17,7 +17,7 @@ ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg_bold[green]%}✔"
 # indicate if there is an ssh-agent running for the current shell
 ssh_agent_enabled() {
     local keys
-    keys=$(ssh-add -l | wc -l)
+    keys=$(keychain -l | wc -l)
     [ "$keys" -gt "0" ] && echo "%{$fg_bold[red]%}❯%f"
 }
 
