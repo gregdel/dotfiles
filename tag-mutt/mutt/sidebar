@@ -1,9 +1,5 @@
 # vim: filetype=muttrc
 
-# If the compile-time symbol 'USE_SIDEBAR' does not exist, then
-# # stop reading the current config file.
-ifndef USE_SIDEBAR finish
-
 set sidebar_width=38
 set sidebar_visible=yes
 set sidebar_divider_char=" |"

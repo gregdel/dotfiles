@@ -63,6 +63,13 @@ color header        color33         color234        "^(Subject)"
 
 # body -----------------------------------------------------------------
 
+# Patch colors
+color body brightred color234 "^-.*"
+color body brightgreen color234 "^[+].*"
+color body brightwhite color234 "^diff --git.*"
+color body brightwhite color234 "^index [a-f0-9].*"
+color body brightyellow color234 "^@@.*"
+
 color quoted        color33         color234
 color quoted1       color37         color234
 color quoted2       color136        color234
