@@ -12,6 +12,7 @@ set signature        = ~/.mutt/sig           # my signature file
 set mailcap_path     = ~/.mailcap            # entries for filetypes
 
 # Basic Options --------------------------------------
+set help = no            # do not display the help
 set wait_key = no        # shut up, mutt
 set mbox_type = Maildir  # mailbox type
 set timeout = 3          # idle time before scanning
@@ -35,10 +36,12 @@ set quote_regexp = "^( {0,4}[>|:#%]| {0,4}[a-z0-9]+[>|]+)+"
 alternative_order text/plain text/enriched text/html
 
 # Folder format -------------------------------------
-set date_format = "%d/%m/%y %H:%M"
-set index_format = "[%Z]%4C| %D %?X?(%X)&   ? %-20.20F  %.100s %> %5c%"
-set folder_format=" %2C %t %N %f %> %d "
-set pager_format = "[%b] [%Z] %D [From: %f] %> [%e/%E] %5c%"
+set date_format   = "%d/%m/%y %H:%M"
+set index_format  = "%Z|%4C %D %?X?:%X&   ? %-20.20F  %.100s %> %5c%"
+set folder_format = " %2C %t %N %f %> %d "
+set pager_format  = " %b  %Z  %D  From: %f %>  %e/%E  %5c "
+set status_format = " %h  %f  :%?M?%M/?%m%?n? :%n?%?d? :%d?%?F? :%F?%?t? :%t?%?p? :%p? %> %?V? :%V ? %s  %S  %P  %l "
+set attach_format = "%4n  %u%?t? &  ?%?D? &  ?%I  %T%d %> %20m/%-20M  %16e  %?C?%15C&unknown charset?  %6s "
 
 # View attachments properly.
 bind attach <return> view-mailcap
