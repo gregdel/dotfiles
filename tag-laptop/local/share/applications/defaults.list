@@ -3,3 +3,4 @@ application/pdf=zathura.desktop
 image/png=gthumb.desktop
 image/jpg=shotwell-gthumb.desktop;
 text/html=firefox.desktop;
+video/mp4=mpv.desktop;
