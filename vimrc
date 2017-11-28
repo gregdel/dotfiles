@@ -300,6 +300,7 @@ let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_doc_command = "godoc"
 let g:go_doc_keywordprg_enabled = 0 " handled by .vim/ftplugin/go.vim
+let g:go_fmt_command = "goimports"
 
 " Delimate
 let delimitMate_expand_cr = 2
@@ -308,11 +309,20 @@ let delimitMate_expand_cr = 2
 let g:lt_quickfix_list_toggle_map = '<leader>q'
 let g:lt_location_list_toggle_map = '<leader>w'
 
+" Ale
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '⚠'
+let g:ale_linters = {'go': ['go build', 'gofmt', 'golint', 'gosimple', 'go vet', 'staticcheck'] }
+let g:ale_lint_on_text_changed = 'never'
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
+
 " Airline
 let g:airline_theme='badwolf'
 let g:airline_powerline_fonts=1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_close_button = 0
+let g:airline#extensions#ale#enabled = 1
 function! GetSpelllang()
     return  &spelllang
 endfunction
