@@ -44,11 +44,11 @@ padding-right = 1
 module-margin-left = 1
 module-margin-right = 1
 
-font-0 = InconsolataForPowerline Nerd Font:size=20:antialias=false;0
+font-0 = InconsolataForPowerline Nerd Font:size=20:antialias=true;0
 
 modules-left = i3
 modules-center =
-modules-right = ovh redshift wlan volume xbacklight battery date
+modules-right = ovh wlan volume xbacklight battery date
 
 tray-position = right
 tray-padding = 2
@@ -130,7 +130,7 @@ label-disconnected-foreground = ${colors.foreground-alt}
 
 [module/ovh]
 type = custom/script
-exec = pgrep vpnc
+exec = pgrep -x vpnc
 interval = 10
 label =  OVH
 format-underline = ${colors.primary}
@@ -143,13 +143,6 @@ time = %H:%M
 date = "%m/%d/%Y"
 
 label = %time% %date%
-
-[module/redshift]
-type = custom/script
-exec = pgrep redshift
-interval = 10
-label =  Redshift
-format-underline = ${colors.primary}
 
 [module/volume]
 type = internal/volume
