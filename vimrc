@@ -170,6 +170,7 @@ nmap <leader>l :set list!<CR>
 
 " Shortcut for :Ggrep
 nmap <leader>g :Ggrep
+cnoremap grep Ggrep
 
 " Toggle spell lang
 nnoremap <leader>s :let &l:spelllang=( &l:spelllang == "en" ? "fr" : "en" )<CR>
@@ -197,8 +198,6 @@ map <Down>  <C-W>-
 augroup filetype_set
     " Clear the autocmd
     autocmd!
-    " Markdown filetype
-    autocmd BufRead,BufNewFile *.md set filetype=markdown
     " Vagrantfile
     autocmd BufRead,BufNewFile Vagrantfile set filetype=ruby
     " JSON
@@ -233,8 +232,6 @@ augroup END
 augroup config
     " Clear the autocmd
     autocmd!
-    " Source the vimrc on write
-    autocmd bufwritepost .vimrc call Vimrc_update()
     " Delete spaces at the end of the lines on save
     autocmd BufWrite * %s/\s\+$//ge
 augroup END
@@ -351,14 +348,6 @@ let g:jsx_ext_required = 0 " Allow JSX in normal JS files
 " statusline old one commented / using light line now
 set laststatus=2 "always visible
 set noshowmode
-
-" Reload conf
-if !exists("*Vimrc_update()")
-    function! Vimrc_update()
-        source $MYVIMRC
-        echom 'vimrc reloaded'
-    endfunction
-endif
 
 " Source local vimrc
 if filereadable(glob("~/.vimrc.local"))
