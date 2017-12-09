@@ -298,6 +298,7 @@ let g:go_highlight_methods = 1
 let g:go_doc_command = "godoc"
 let g:go_doc_keywordprg_enabled = 0 " handled by .vim/ftplugin/go.vim
 let g:go_fmt_command = "goimports"
+let g:go_template_autocreate = 1
 
 " Delimate
 let delimitMate_expand_cr = 2
@@ -311,6 +312,20 @@ let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '⚠'
 let g:ale_linters = {'go': ['go build', 'gofmt', 'golint', 'gosimple', 'go vet', 'staticcheck'] }
 let g:ale_lint_on_text_changed = 'never'
+
+" Deoplete
+if has('nvim')
+    let g:deoplete#enable_at_startup = 0
+    nmap <leader>d :call deoplete#toggle()<CR>
+endif
+
+" Ultisnip
+let g:UltiSnipsEditSplit    = 'vertical'
+let g:UltiSnipsListSnippets = '<S-Tab>'
+
+" Markdown
+let g:vim_markdown_folding_disabled = 0
+let g:vim_markdown_override_foldtext = 0
 
 " Airline
 let g:airline_theme='badwolf'
