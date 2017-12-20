@@ -113,7 +113,6 @@ set ruler           " Show the cursor position
 set shortmess=atI   " Don’t show the intro message when starting Vim
 set showmode        " Show the current mode
 set title           " Show the filename in the window titlebar
-set title           " Set the terminal title's
 set showcmd         " Show the (partial) command as it’s being typed
 set lazyredraw      " redraw only when we need to
 
@@ -153,10 +152,7 @@ nnoremap gh    :tabprev<CR>
 nnoremap gL    :bnext<CR>
 nnoremap gH    :bprev<CR>
 
-" Insert mode paste toggle
-set pastetoggle=<F9>
-nnoremap <F10> :set nonumber!<CR>
-nnoremap <F12> :set paste<CR>i
+" Paste mode
 nnoremap <leader>i :set paste<CR>i
 
 " Open a new tab the easy way
@@ -175,16 +171,13 @@ cnoremap grep Ggrep
 " Toggle spell lang
 nnoremap <leader>s :let &l:spelllang=( &l:spelllang == "en" ? "fr" : "en" )<CR>
 
-" Choose the first spelling correction
-nnoremap z- 1z=
-
 " Correct the next word
 nnoremap <Leader>c ]s1z=
 
 " Use the same symbols as TextMate for tabstops and EOLs
 set listchars=tab:▸\ ,eol:¬,trail:·
 
-" Easy folding
+" Easy folding with space
 noremap <Space> za
 vnoremap <Space> zf
 
@@ -212,14 +205,6 @@ augroup paste_helper
     autocmd InsertLeave * set nopaste
 augroup END
 
-" autocmd spell group
-augroup spell_set
-    " Clear the autocmd
-    autocmd!
-    " svn
-    autocmd BufNewFile,BufRead svn-commit.tmp setlocal spell
-augroup END
-
 " autocmd vim help
 augroup vim_help
     " Clear the autocmd
@@ -244,9 +229,6 @@ augroup END
 
 " Edit vimrc
 nmap <leader>v :tabedit $MYVIMRC<CR>
-
-" Open NERTree if vim start with no file
-autocmd vimenter * if !argc() | let g:nerdtree_tabs_open_on_console_startup=1 | endif
 
 " Open NERDTree Tabs quick toogle
 nmap <leader>n :NERDTreeTabsToggle<CR>
@@ -351,16 +333,10 @@ let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-stand
 " Start interactive EasyAlign in visual mode
 vmap <Enter> :Tabularize /
 
-" Ack
-" Try to use ag is it exists
-if executable('ag')
-  let g:ackprg = 'ag --vimgrep'
-endif
-
 " vim-jsx
 let g:jsx_ext_required = 0 " Allow JSX in normal JS files
 
-" statusline old one commented / using light line now
+" statusline
 set laststatus=2 "always visible
 set noshowmode
 
