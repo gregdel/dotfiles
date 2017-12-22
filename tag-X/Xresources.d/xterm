@@ -1,0 +1,11 @@
+! vim: filetype=xdefaults
+
+/* UTF8 */
+xterm*locale: true
+
+/* Alt key */
+xterm*metaSendsEscape: true
+
+xterm*saveLines: 10000
+
+xterm*faceName: DejaVuSansMonoForPowerline Nerd Font:size=12:antialias=false

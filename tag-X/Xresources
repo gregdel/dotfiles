@@ -1,3 +1,5 @@
-#include "fonts"
-#include "urxvt"
-#include "rofi"
+#include ".Xresources.d/fonts"
+#include ".Xresources.d/urxvt"
+#include ".Xresources.d/xterm"
+#include ".Xresources.d/rofi"
+#include ".Xresources.d/colors"
