@@ -17,10 +17,6 @@ secondary = #CC9393
 alert = #CC9393
 ok = #5294e2
 
-[global/wm]
-margin-top = 5
-margin-bottom = 5
-
 [bar/laptop]
 monitor = eDP1
 monitor-strict = true
@@ -32,11 +28,13 @@ fixed-center = true
 background = ${colors.background}
 foreground = ${colors.foreground}
 
-underline-size = 2
+underline-size = 4
 underline-color = ${colors.background}
 overline-size = 0
 
 border-size = 0
+border-bottom-size = 3
+border-bottom-color = ${colors.background}
 
 padding-left = 0
 padding-right = 1
@@ -52,11 +50,8 @@ modules-right = ovh wlan volume xbacklight battery date
 
 tray-position = right
 tray-padding = 2
+tray-scale = 1
 tray-transparent = false
-
-wm-restack = i3
-;override-redirect = true
-
 
 enable-scroll = false
 
@@ -74,6 +69,7 @@ type = internal/i3
 format = <label-state> <label-mode>
 index-sort = true
 wrapping-scroll = false
+enable-scroll = false
 
 ; Only show workspaces on the same output as the bar
 pin-workspaces = true
