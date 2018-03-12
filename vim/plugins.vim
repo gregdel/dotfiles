@@ -21,9 +21,11 @@ Plug 'AndrewRadev/splitjoin.vim'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'lilydjwg/colorizer'
 Plug 'Valloric/ListToggle'
-Plug 'airblade/vim-gitgutter'
 Plug 'SirVer/ultisnips'
+Plug 'junegunn/goyo.vim'
 
+Plug 'vivien/vim-linux-coding-style', { 'for': 'c' }
+Plug 'vim-scripts/c.vim', { 'for': 'c' }
 Plug 'hashivim/vim-terraform', { 'for': 'terraform' }
 Plug 'ekalinin/Dockerfile.vim', { 'for': 'Dockerfile' }
 Plug 'fatih/vim-go', { 'for': 'go' }
@@ -35,11 +37,6 @@ Plug 'tmhedberg/matchit', { 'for': 'javascript' }
 Plug 'tpope/vim-endwise', { 'for': ['lua', 'ruby', 'sh', 'zsh', 'vim'] }
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-rails', { 'for': 'ruby' }
-
-" neovim
-if (has('nvim') && has("python3"))
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'zchee/deoplete-go', { 'for': 'go', 'do': 'make'}
-endif
+Plug 'wannesm/wmgraphviz.vim', { 'for': 'dot' }
 
 call plug#end()
