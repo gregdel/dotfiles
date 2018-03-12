@@ -11,7 +11,7 @@ DISABLE_AUTO_UPDATE="true"
 COMPLETION_WAITING_DOTS="true"
 
 # oh-my-zsh plugins
-plugins=( docker docker-compose git-prompt pass vi-mode )
+plugins=( docker docker-compose git-prompt pass vi-mode vagrant rkt )
 
 source $ZSH/oh-my-zsh.sh
 ################
