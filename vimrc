@@ -187,6 +187,12 @@ map <Right> <C-W>>
 map <Up>    <C-W>+
 map <Down>  <C-W>-
 
+" Terminal mode in neovim
+if has('nvim')
+    tnoremap <Esc> <C-\><C-n>
+endif
+
+
 " autocmd filetype group
 augroup filetype_set
     " Clear the autocmd
@@ -229,6 +235,9 @@ augroup END
 
 " Edit vimrc
 nmap <leader>v :tabedit $MYVIMRC<CR>
+
+" Open NERTree if vim start with no file
+autocmd vimenter * if !argc() | let g:nerdtree_tabs_open_on_console_startup=1 | endif
 
 " Open NERDTree Tabs quick toogle
 nmap <leader>n :NERDTreeTabsToggle<CR>
@@ -294,12 +303,6 @@ let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '⚠'
 let g:ale_linters = {'go': ['go build', 'gofmt', 'golint', 'gosimple', 'go vet', 'staticcheck'] }
 let g:ale_lint_on_text_changed = 'never'
-
-" Deoplete
-if has('nvim')
-    let g:deoplete#enable_at_startup = 0
-    nmap <leader>d :call deoplete#toggle()<CR>
-endif
 
 " Ultisnip
 let g:UltiSnipsEditSplit    = 'vertical'
