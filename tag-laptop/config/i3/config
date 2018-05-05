@@ -23,14 +23,15 @@ for_window [class="^.*"] border pixel  0
 
 # Gaps
 gaps inner 15
-gaps outer 2
+gaps outer 0
 
 # Only use gaps if there is more than one container
 smart_gaps on
 smart_borders on
 
 # start a terminal
-bindsym $mod+Return exec urxvt
+bindsym $mod+Shift+Return exec urxvt
+bindsym $mod+Return exec st
 
 # kill focused window
 bindsym $mod+q kill
@@ -76,16 +77,16 @@ bindsym $mod+c focus child
 bindsym $mod+Escape workspace back_and_forth
 
 # workspaces
-set $ws1 "1"
-set $ws2 "2"
-set $ws3 "3"
-set $ws4 "4"
-set $ws5 "5"
-set $ws6 "6"
-set $ws7 "7"
-set $ws8 "8"
-set $ws9 "9"
-set $ws10 "10"
+set $ws1 1
+set $ws2 2
+set $ws3 3
+set $ws4 4
+set $ws5 5
+set $ws6 6
+set $ws7 7
+set $ws8 8
+set $ws9 9
+set $ws10 10
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1
@@ -144,6 +145,52 @@ bindsym XF86MonBrightnessDown exec xbacklight -dec 5
 for_window [class="urxvt"] border none
 for_window [class="mpv"] floating enable border none
 for_window [class="Slack"] move workspace $ws10
+
+# dropdown terminal
+for_window [instance="dropdown"] floating enable
+for_window [instance="dropdown"] resize set 50 ppt 50 ppt
+for_window [instance="dropdown"] border pixel 5
+for_window [instance="dropdown"] move scratchpad
+# exec --no-startup-id st -n dropdown
+bindsym $mod+u [instance="dropdown"] scratchpad show; [instance="dropdown"] move position center
+
+# Gaps control
+set $mode_gaps Gaps: (o) outer, (i) inner
+set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
+bindsym $mod+Shift+g mode "$mode_gaps"
+
+mode "$mode_gaps" {
+        bindsym o      mode "$mode_gaps_outer"
+        bindsym i      mode "$mode_gaps_inner"
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+mode "$mode_gaps_inner" {
+        bindsym plus  gaps inner current plus 5
+        bindsym minus gaps inner current minus 5
+        bindsym 0     gaps inner current set 0
+
+        bindsym Shift+plus  gaps inner all plus 5
+        bindsym Shift+minus gaps inner all minus 5
+        bindsym Shift+0     gaps inner all set 0
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_outer" {
+        bindsym plus  gaps outer current plus 5
+        bindsym minus gaps outer current minus 5
+        bindsym 0     gaps outer current set 0
+
+        bindsym Shift+plus  gaps outer all plus 5
+        bindsym Shift+minus gaps outer all minus 5
+        bindsym Shift+0     gaps outer all set 0
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
 
 # reload the configuration file
 bindsym $mod+Shift+c reload

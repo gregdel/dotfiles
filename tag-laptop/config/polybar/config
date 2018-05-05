@@ -71,6 +71,13 @@ index-sort = true
 wrapping-scroll = false
 enable-scroll = false
 
+; This will split the workspace name on ':'
+strip-wsnumbers = true
+
+ws-icon-1 = 1;
+ws-icon-0 = 10;
+ws-icon-default = 
+
 ; Only show workspaces on the same output as the bar
 pin-workspaces = true
 
@@ -79,25 +86,29 @@ label-mode-foreground = #000
 label-mode-background = ${colors.primary}
 
 ; focused = Active workspace on focused monitor
-label-focused = %index%
+label-focused = %index%:%icon%
 label-focused-background = ${colors.background-alt}
 label-focused-underline = ${colors.primary}
 label-focused-padding = 2
 
 ; unfocused = Inactive workspace on any monitor
-label-unfocused = %index%
+label-unfocused = %index%:%icon%
 label-unfocused-padding = 2
 
 ; visible = Active workspace on unfocused monitor
-label-visible = %index%
+label-visible = %index%:%icon%
 label-visible-background = ${self.label-focused-background}
 label-visible-underline = ${self.label-focused-underline}
 label-visible-padding = ${self.label-focused-padding}
 
 ; urgent = Workspace with urgency hint set
-label-urgent = %index%
+label-urgent = %index%:%icon%
 label-urgent-background = ${colors.alert}
 label-urgent-padding = 2
+
+; label-separator = |
+; label-separator-padding = 0
+; label-separator-foreground = ${colors.background-alt}
 
 [module/xbacklight]
 type = internal/xbacklight
@@ -145,7 +156,7 @@ type = internal/date
 interval = 60
 
 time = %H:%M
-date = "%m/%d/%Y"
+date = "%d/%m/%Y"
 
 label = %time% %date%
 
