@@ -8,20 +8,20 @@
 ;=====================================================
 
 [colors]
-background = #383C4A
-background-alt = #22242D
-foreground = #D3DAE3
-foreground-alt = #555
+background = #101010
+background-alt = #191919
+foreground = #EBEBEB
+foreground-alt = #666666
 primary = #F0DFAF
 secondary = #CC9393
-alert = #CC9393
-ok = #5294e2
+alert = #B03131
+ok = #538F69
 
 [bar/laptop]
 monitor = eDP1
 monitor-strict = true
 width = 100%
-height = 45
+height = 48
 radius = 0
 fixed-center = true
 
@@ -45,8 +45,8 @@ module-margin-right = 1
 font-0 = Inconsolata Nerd Font:size=20:antialias=true;0
 
 modules-left = i3
-modules-center =
-modules-right = ovh wlan syncthing volume xbacklight battery date
+modules-center = date
+modules-right = ovh syncthing volume xbacklight wlan battery
 
 tray-position = right
 tray-padding = 2
@@ -87,6 +87,7 @@ label-mode-background = ${colors.primary}
 
 ; focused = Active workspace on focused monitor
 label-focused = %index%:%icon%
+label-focused-foreground = ${colors.foreground}
 label-focused-background = ${colors.background-alt}
 label-focused-underline = ${colors.primary}
 label-focused-padding = 2
@@ -94,6 +95,7 @@ label-focused-padding = 2
 ; unfocused = Inactive workspace on any monitor
 label-unfocused = %index%:%icon%
 label-unfocused-padding = 2
+label-unfocused-foreground = ${colors.foreground-alt}
 
 ; visible = Active workspace on unfocused monitor
 label-visible = %index%:%icon%
@@ -103,8 +105,9 @@ label-visible-padding = ${self.label-focused-padding}
 
 ; urgent = Workspace with urgency hint set
 label-urgent = %index%:%icon%
-label-urgent-background = ${colors.alert}
 label-urgent-padding = 2
+label-urgent-foreground = ${colors.alert}
+label-urgent-underline = ${colors.alert}
 
 ; label-separator = |
 ; label-separator-padding = 0
@@ -112,9 +115,11 @@ label-urgent-padding = 2
 
 [module/xbacklight]
 type = internal/xbacklight
-
-format = <label>
-label =  %percentage%%
+format = <ramp> <label>
+ramp-0 = 
+ramp-1 = ﯧ
+ramp-2 = ﯦ
+label = %percentage%%
 
 [module/backlight-acpi]
 inherit = module/xbacklight
@@ -154,22 +159,21 @@ click-right = ~/.config/polybar/syncthing.sh open
 [module/date]
 type = internal/date
 interval = 60
-
 time = %H:%M
-date = "%d/%m/%Y"
-
-label = %time% %date%
+label = %time%
+format-foreground = ${colors.foreground}
 
 [module/volume]
 type = internal/pulseaudio
 sink = alsa_output.pci-0000_00_1f.3.analog-stereo
-
-format-volume = <label-volume>
-label-volume =  %percentage%%
-label-volume-foreground = ${root.foreground}
-
+format-volume = <ramp-volume> <label-volume>
+ramp-volume-0 = 奄
+ramp-volume-1 = 奔
+ramp-volume-2 = 墳
+label-volume = %percentage%%
+label-volume-foreground = ${colors.foreground}
 format-muted-foreground = ${colors.foreground-alt}
-label-muted = 
+label-muted = ﱝ
 
 [module/battery]
 type = internal/battery
