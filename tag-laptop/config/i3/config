@@ -121,6 +121,7 @@ bindsym Mod1+w exec /home/greg/.local/bin/w000t.sh
 # rofi
 bindsym Mod1+r exec rofi -show run
 bindsym Mod1+s exec rofi -show ssh
+bindsym Mod1+m exec ~/.local/bin/man-rofi
 bindsym Mod1+Tab exec rofi -show window
 
 # window resizing

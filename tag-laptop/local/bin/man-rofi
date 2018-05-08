@@ -1,0 +1,7 @@
+#!/bin/sh
+
+TERMINAL=${TERMINAL:-st}
+
+selected=$(man -k . -s 1 | awk '{print $1}' | rofi -p " "  -dmenu)
+
+"$TERMINAL" -e zsh -i -c "man $selected"
