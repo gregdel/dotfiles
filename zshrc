@@ -5,13 +5,17 @@
 ZSH=$HOME/.oh-my-zsh
 
 # Disable auto updates
+DISABLE_UPDATE_PROMPT=true
 DISABLE_AUTO_UPDATE="true"
 
-# Dot when completion in progress
-COMPLETION_WAITING_DOTS="true"
-
 # oh-my-zsh plugins
-plugins=( docker docker-compose git-prompt pass vi-mode vagrant rkt )
+plugins=(
+    docker
+    docker-compose
+    git-prompt
+    vi-mode
+    pass
+)
 
 source $ZSH/oh-my-zsh.sh
 ################
@@ -56,16 +60,12 @@ zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
 
 # Import ps1 / rps1
-if [ -f ~/.zshrc_ps1 ]; then
-    source ~/.zshrc_ps1
-fi
+[ -f ~/.zshrc_ps1 ] && . ~/.zshrc_ps1
 
 # Import functions
-if [ -f ~/.shell_functions ]; then
-    source ~/.shell_functions
-fi
+[ -f ~/.shell_functions ] && . ~/.shell_functions
 
 function reload_zsh {
-    source ~/.zshrc
+    . ~/.zshrc
     rehash
 }
