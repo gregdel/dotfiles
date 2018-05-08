@@ -48,3 +48,5 @@
     default = tracking
 [core]
     editor = vim
+[http]
+	cookiefile = /home/greg/.gitcookies
