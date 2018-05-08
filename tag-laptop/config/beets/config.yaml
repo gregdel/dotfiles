@@ -1,4 +1,8 @@
 directory: ~/music
 library: ~/music/beets_db.blb
+plugins:
+  - web
+  - chroma
+  - fetchart
 import:
   move: yes
