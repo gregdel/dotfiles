@@ -6,5 +6,6 @@ vim/files/*
 vim/plugged/*
 vim/spell/*.add
 vim/spell/*.spl
+vim/spell/*.sug
 tag-mutt/mutt/cache/*
 tag-mutt/mutt/tmp/*
