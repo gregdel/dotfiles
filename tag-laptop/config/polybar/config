@@ -48,10 +48,8 @@ modules-left = i3
 modules-center = date
 modules-right = ovh syncthing volume xbacklight wlan battery
 
-tray-position = right
-tray-padding = 2
-tray-scale = 1
-tray-transparent = false
+# Disable tray
+tray-position =
 
 enable-scroll = false
 
