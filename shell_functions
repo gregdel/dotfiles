@@ -1,35 +1,22 @@
 # Shell function for both bash and zsh
 # vim: ft=sh :
+# shellcheck disable=1090
 
 # vim as editor
 if type nvim &> /dev/null; then
-    export EDITOR=nvim
+	export EDITOR=nvim
 else
-    export EDITOR=vim
+	export EDITOR=vim
 fi
 
 # Add sbin to the user path
 export PATH=/usr/sbin:$PATH
 
 # Add perso bin path
-if [ -d ~/.local/bin ]; then
-    export PATH=~/.local/bin:$PATH
-fi
-
-# Add luarocks bin path
-if [ -d ~/.luarocks/bin ]; then
-    export PATH=$PATH:~/.luarocks/bin
-fi
-
-# Import virtualenwrapper
-if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
-    source /usr/local/bin/virtualenvwrapper.sh
-fi
+[ -d ~/.local/bin ] && export PATH=~/.local/bin:$PATH
 
 # Use z
-if [ -f ~/.local/bin/z.sh ]; then
-    source ~/.local/bin/z.sh
-fi
+[ -f ~/.local/bin/z.sh ] && . ~/.local/bin/z.sh
 
 # Default mosh timeout of 2 days
 export MOSH_SERVER_NETWORK_TMOUT="172800"
@@ -76,9 +63,6 @@ alias ta='tmux attach -t'
 # Open
 alias o='xdg-open'
 
-# Clear screen
-alias c='clear'
-
 # List alias
 alias l='ls'
 alias ll='ls -lh'
@@ -102,48 +86,43 @@ alias dm='docker-machine'
 # systemd --user
 alias sysu='systemctl --user'
 
-# Go tool cover
-alias go-cover="go test -coverprofile=/tmp/coverage.out && go tool cover -html /tmp/coverage.out -o /tmp/coverage.html"
-
 # System functions
 extract () {
-    if [ -f "$1" ] ; then
-        case "$1" in
-            *.tar.bz2)   tar xjf "$1"     ;;
-            *.tar.gz)    tar xzf "$1"     ;;
-            *.bz2)       bunzip2 "$1"     ;;
-            *.rar)       unrar e "$1"     ;;
-            *.gz)        gunzip "$1"      ;;
-            *.tar)       tar xf "$1"      ;;
-            *.tbz2)      tar xjf "$1"     ;;
-            *.tgz)       tar xzf "$1"     ;;
-            *.zip)       unzip "$1"       ;;
-            *.Z)         uncompress "$1"  ;;
-            *.7z)        7z x "$1"        ;;
-            *) echo "'$1' cannot be extracted via extract()" ;;
-        esac
-    else
-        echo "'$1' is not a valid file"
-    fi
+	if [ -f "$1" ] ; then
+		case "$1" in
+			*.tar.bz2)   tar xjf "$1"     ;;
+			*.tar.gz)    tar xzf "$1"     ;;
+			*.bz2)       bunzip2 "$1"     ;;
+			*.rar)       unrar e "$1"     ;;
+			*.gz)        gunzip "$1"      ;;
+			*.tar)       tar xf "$1"      ;;
+			*.tbz2)      tar xjf "$1"     ;;
+			*.tgz)       tar xzf "$1"     ;;
+			*.zip)       unzip "$1"       ;;
+			*.Z)         uncompress "$1"  ;;
+			*.7z)        7z x "$1"        ;;
+			*) echo "'$1' cannot be extracted via extract()" ;;
+		esac
+	else
+		echo "'$1' is not a valid file"
+	fi
 }
 
 # Create dir and jump into it
 mcd() {
-    mkdir -p "$1" && cd "$1" || return;
+	mkdir -p "$1" && cd "$1" || return;
 }
 
 man() {
-    env LESS_TERMCAP_mb=$'\E[01;31m' \
-    LESS_TERMCAP_md=$'\E[01;31m' \
-    LESS_TERMCAP_me=$'\E[0m' \
-    LESS_TERMCAP_se=$'\E[0m' \
-    LESS_TERMCAP_so=$'\E[01;44;33m' \
-    LESS_TERMCAP_ue=$'\E[0m' \
-    LESS_TERMCAP_us=$'\E[01;32m' \
-    man "$@"
+	env LESS_TERMCAP_mb=$'\E[01;31m' \
+		LESS_TERMCAP_md=$'\E[01;31m' \
+		LESS_TERMCAP_me=$'\E[0m' \
+		LESS_TERMCAP_se=$'\E[0m' \
+		LESS_TERMCAP_so=$'\E[01;44;33m' \
+		LESS_TERMCAP_ue=$'\E[0m' \
+		LESS_TERMCAP_us=$'\E[01;32m' \
+		man "$@"
 }
 
 # Add local configs
-if [ -f ~/.shell_local ]; then
-    source ~/.shell_local
-fi
+[ -f ~/.shell_local ] && . ~/.shell_local
