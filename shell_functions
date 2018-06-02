@@ -18,6 +18,11 @@ export PATH=/usr/sbin:$PATH
 # Use z
 [ -f ~/.local/bin/z.sh ] && . ~/.local/bin/z.sh
 
+# Go
+export GOPATH=$HOME/dev/go
+export GOBIN=$HOME/dev/go/bin
+export PATH=$PATH:/usr/local/go/bin:$GOBIN
+
 # Default mosh timeout of 2 days
 export MOSH_SERVER_NETWORK_TMOUT="172800"
 
