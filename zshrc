@@ -15,6 +15,7 @@ plugins=(
     git-prompt
     vi-mode
     pass
+    taskwarrior
 )
 
 source $ZSH/oh-my-zsh.sh
