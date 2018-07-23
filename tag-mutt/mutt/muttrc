@@ -46,7 +46,9 @@ set attach_format = "%4n  %u%?t? &  ?%?D? &  ?%I  %T%d %> %20m/%-20M
 # View attachments properly.
 bind attach <return> view-mailcap
 
-auto_view text/html
+# Handle multipart/alternative
+alternative_order text/calendar text/html text/plain text/*
+auto_view text/calendar text/html image/*
 
 # Source
 source "~/.mutt/charset"

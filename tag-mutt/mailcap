@@ -1,5 +1,10 @@
 # Images
-image/*;      feh %s
+#image/*; w3m -no-mouse -o auto_image=TRUE -o ext_image_viewer=0 %s
+image/*; feh --auto-zoom %s
+image/*; img2txt -d fstein -W 100 %s ; copiousoutput;
+
+# Video
+video/quicktime; mpv %s
 
 # PDFs
 application/pdf; zathura %s
@@ -8,17 +13,18 @@ application/pdf; zathura %s
 text/calendar; ~/.mutt/scripts/dump-ical.py %s; copiousoutput
 
 # HTML
-# text/html; xdg-open %s
 text/html; links -html-assume-codepage utf-8 -html-numbered-links 1 %s; nametemplate=%s.html
 text/html; links -html-assume-codepage utf-8 -html-numbered-links 1 -dump %s; nametemplate=%s.html; copiousoutput
 
 # Plain
-text/plain; vim %s
+text/plain; nvim %s
 
 # Diff
-text/x-diff; vim %s
+text/x-diff; nvim %s
 
 # Office documents
+application/msword; libreoffice %s
 application/vnd.openxmlformats-officedocument.wordprocessingml.document; libreoffice %s
 application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; libreoffice %s
 application/vnd.openxmlformats-officedocument.presentationml.presentation; libreoffice %s
+application/vnd.oasis.opendocument.spreadsheet: libreoffice %s
