@@ -21,7 +21,6 @@ Plug 'AndrewRadev/splitjoin.vim'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'lilydjwg/colorizer'
 Plug 'Valloric/ListToggle'
-Plug 'SirVer/ultisnips'
 Plug 'junegunn/goyo.vim'
 
 Plug 'vivien/vim-linux-coding-style', { 'for': 'c' }
