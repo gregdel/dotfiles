@@ -35,9 +35,20 @@ hdr_order from: to: cc: date: reply-to: subject: # and in this order
 set quote_regexp = "^( {0,4}[>|:#%]| {0,4}[a-z0-9]+[>|]+)+"
 alternative_order text/plain text/enriched text/html
 
+# Attachements counting
+attachments  +A */.*
+attachments  -A application/pgp-signature
+attachments  -A application/pgp-keys
+attachments  +I */.*
+attachments  -I multipart/.*
+attachments  -I text/plain
+attachments  -I text/html
+attachments  -I application/pgp-signature
+attachments  -I application/pgp-keys
+
 # Folder format -------------------------------------
 set date_format   = "%d/%m/%y %H:%M"
-set index_format  = "%Z|%4C %D %?X?:%X&   ? %-20.20F  %.100s %> %5c%"
+set index_format  = "%Z|%4C %D %?X?:%X&   ? %-20.20F  %.100s %> %5c%"
 set folder_format = " %2C %t %N %f %> %d "
 set pager_format  = " %b  %Z  %D  From: %f %>  %e/%E  %5c "
 set status_format = " %h  %f  :%?M?%M/?%m%?n? :%n?%?d? :%d?%?F? :%F?%?t? :%t?%?p? :%p? %> %?V? :%V ? %s  %S  %P  %l "
