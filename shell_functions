@@ -48,7 +48,7 @@ _start_agent
 
 agent() {
 	local key
-	local timeout=180
+	local timeout=10800 # 3h
 	if [ -f ~/.ssh/id_ed25519 ]; then
 		key=~/.ssh/id_ed25519
 	else
