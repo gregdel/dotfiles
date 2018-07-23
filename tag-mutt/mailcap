@@ -4,6 +4,9 @@ image/*;      feh %s
 # PDFs
 application/pdf; zathura %s
 
+# Calendar invites
+text/calendar; ~/.mutt/scripts/dump-ical.py %s; copiousoutput
+
 # HTML
 # text/html; xdg-open %s
 text/html; links -html-assume-codepage utf-8 -html-numbered-links 1 %s; nametemplate=%s.html
