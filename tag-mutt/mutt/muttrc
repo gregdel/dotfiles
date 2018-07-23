@@ -7,9 +7,9 @@ set sleep_time=0
 set alias_file       = ~/.mutt/aliases       # where to store aliases
 set header_cache     = ~/.mutt/cache/headers # where to store headers
 set certificate_file = ~/.mutt/certificates  # where to store certs
-set tmpdir           = ~/.mutt/tmp           # where to keep temp files
 set signature        = ~/.mutt/sig           # my signature file
 set mailcap_path     = ~/.mailcap            # entries for filetypes
+set tmpdir           = /tmp                  # where to keep temp files
 
 # Basic Options --------------------------------------
 set help = no            # do not display the help
@@ -22,7 +22,7 @@ set beep_new             # bell on new mails
 set pipe_decode          # strip headers and eval mimes when piping
 set thorough_search      # strip headers and eval mimes before searching
 set editor         = "vim"
-set shell          = "/bin/bash"
+set shell          = "zsh"
 unset mark_old
 set mail_check_recent=no # keep the folder new if there is a new mail
 
