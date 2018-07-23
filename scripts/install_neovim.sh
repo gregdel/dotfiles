@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="v0.2.0"
+VERSION="v0.3.0"
 URL="https://github.com/neovim/neovim.git"
 BUILD_DIR_ROOT=$HOME/dev/build
 BUILD_DIR=$BUILD_DIR_ROOT/neovim
