@@ -1,0 +1,26 @@
+#!/bin/sh
+
+PASSDIR="$HOME/.password-store/"
+
+list_pass() {
+	find "$PASSDIR" -type f -name '*.gpg' \
+		| sed 's/.gpg//' \
+		| cut -c "$(( ${#PASSDIR} + 1 ))-" \
+		| sort
+}
+
+get_url() {
+	pass show "$1" \
+		| grep -i url \
+		| awk '{ print $2 }'
+}
+
+selected=$(list_pass | rofi -p " " -dmenu)
+[ "$selected" ] || exit 0
+
+pass -c "$selected"
+
+[ "$1" = "--open" ] && {
+	url=$(get_url "$selected")
+	[ "$url" ] && xdg-open "$url"
+}
