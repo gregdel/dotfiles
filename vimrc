@@ -339,6 +339,9 @@ vmap <Enter> :Tabularize /
 " vim-jsx
 let g:jsx_ext_required = 0 " Allow JSX in normal JS files
 
+" vim-latex-live-preview
+let g:livepreview_previewer = 'zathura'
+
 " statusline
 set laststatus=2 "always visible
 set noshowmode

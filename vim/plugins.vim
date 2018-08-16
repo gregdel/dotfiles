@@ -23,6 +23,8 @@ Plug 'lilydjwg/colorizer'
 Plug 'Valloric/ListToggle'
 Plug 'junegunn/goyo.vim'
 
+Plug 'vim-latex/vim-latex', { 'for': 'tex' }
+Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
 Plug 'vivien/vim-linux-coding-style', { 'for': 'c' }
 Plug 'vim-scripts/c.vim', { 'for': 'c' }
 Plug 'hashivim/vim-terraform', { 'for': 'terraform' }
