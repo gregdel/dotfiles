@@ -22,6 +22,7 @@ Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'lilydjwg/colorizer'
 Plug 'Valloric/ListToggle'
 Plug 'junegunn/goyo.vim'
+Plug 'vim-utils/vim-man'
 
 Plug 'vim-latex/vim-latex', { 'for': 'tex' }
 Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
