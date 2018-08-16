@@ -201,6 +201,8 @@ augroup filetype_set
     autocmd BufRead,BufNewFile Vagrantfile set filetype=ruby
     " JSON
     autocmd BufRead,BufNewFile *.json set filetype=json syntax=javascript
+    " C header files
+    autocmd BufRead,BufNewFile *.h set filetype=c
 augroup END
 
 " autocmd paste mode
