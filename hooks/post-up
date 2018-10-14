@@ -1,35 +1,32 @@
-#!/bin/bash
+#!/bin/sh
 
 # Required folders
 mkdir -p "$HOME/.config"
 mkdir -p "$HOME/.local/bin"
 
 # Neovim
-if [ ! -L "$HOME/.config/nvim" ]; then
-    ln -s "$HOME/.vim" "$HOME/.config/nvim"
-fi
-if [ ! -L "$HOME/.vim/init.vim" ]; then
-    ln -s "$HOME/.vimrc" "$HOME/.vim/init.vim"
-fi
+[ -L "$HOME/.config/nvim" ] || ln -s "$HOME/.vim" "$HOME/.config/nvim"
+[ -L "$HOME/.vim/init.vim" ] || ln -s "$HOME/.vimrc" "$HOME/.vim/init.vim"
 
 # Install vim plugins
-if type nvim &> /dev/null; then
+if type nvim > /dev/null; then
     nvim -u "$HOME/.vim/plugins.vim" +PlugInstall +PlugClean! +qa
 else
     vim -u "$HOME/.vim/plugins.vim" +PlugInstall +PlugClean! +qa
 fi
 
+# Install tmux plugins
+"$HOME"/.tmux/plugins/tpm/bin/install_plugins
+
 # Create the required files for mutt
-if [ -L "$HOME/.mutt" ]; then
+[ -L "$HOME/.mutt" ] && {
     mkdir -p "$HOME/.mutt/cache"
     mkdir -p "$HOME/.mutt/tmp"
     touch "$HOME/.mutt/certificates"
-fi
+}
 
 # Create the required directory for mpd
-if [ -L "$HOME/.mpdconf" ]; then
-    mkdir -p "$HOME/.mpd"
-fi
+[ -L "$HOME/.mpdconf" ] && mkdir -p "$HOME/.mpd"
 
 # z
 touch "$HOME/.z"
