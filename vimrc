@@ -312,7 +312,7 @@ let g:UltiSnipsEditSplit    = 'vertical'
 let g:UltiSnipsListSnippets = '<S-Tab>'
 
 " Markdown
-let g:vim_markdown_folding_disabled = 0
+let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_override_foldtext = 0
 
 " Airline
