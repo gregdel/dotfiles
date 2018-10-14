@@ -48,5 +48,10 @@
     default = tracking
 [core]
     editor = vim
-[http]
-	cookiefile = /home/greg/.gitcookies
+[sendemail]
+    from = Grégoire Delattre <greg@quimbo.fr>
+    smtpuser =
+    smtpserver = "/usr/bin/msmtp"
+    smtpencryption = tls
+    chainreplyto = false
+    confirm = auto
