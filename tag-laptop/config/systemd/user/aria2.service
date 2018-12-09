@@ -1,0 +1,10 @@
+[Unit]
+Description=Aria2 Service
+After=network.target
+
+[Service]
+ExecStartPre=/usr/sbin/touch %h/.config/aria2/session.lock
+ExecStart=/usr/bin/aria2c --enable-rpc --save-session %h/.config/aria2/session.lock --input-file %h/.config/aria2/session.lock --conf-path=%h/.config/aria2/aria2.conf
+
+[Install]
+WantedBy=default.target
