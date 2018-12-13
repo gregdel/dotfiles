@@ -2,6 +2,8 @@
 
 TERMINAL=${TERMINAL:-st}
 
-selected=$(man -k . -s 1 | awk '{print $1}' | rofi -p " "  -dmenu)
+selected=$(man -k . | sed 's/^\([^ ]*\) (\(.\)).*/\2 \1/' | grep -E '^[0-9]+' | sort -n | rofi -p " "  -dmenu)
+
+[ "$selected" ] || exit 0
 
 "$TERMINAL" -e zsh -i -c "man $selected"
