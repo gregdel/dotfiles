@@ -23,6 +23,7 @@ Plug 'lilydjwg/colorizer'
 Plug 'Valloric/ListToggle'
 Plug 'junegunn/goyo.vim'
 Plug 'vim-utils/vim-man'
+Plug 'https://git.zx2c4.com/password-store', { 'rtp': 'contrib/vim/readact_pass.vim' }
 
 Plug 'vim-latex/vim-latex', { 'for': 'tex' }
 Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
@@ -43,3 +44,7 @@ Plug 'tpope/vim-rails', { 'for': 'ruby' }
 Plug 'wannesm/wmgraphviz.vim', { 'for': 'dot' }
 
 call plug#end()
+
+" Manually loading this plugin because it's not a classic plugin directory
+" structure
+source $HOME/.vim/plugged/password-store/contrib/vim/redact_pass.vim
