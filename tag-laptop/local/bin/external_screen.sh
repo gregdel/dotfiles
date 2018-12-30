@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 export DISPLAY=:0
 SCREEN_COUNT=$(xrandr | grep -w connected -c)
@@ -25,4 +25,4 @@ i3-msg restart
 feh --randomize --bg-fill "$HOME/pictures/Wallpapers"
 
 # shellcheck disable=1091
-source /home/greg/.xinitrc
+. /home/greg/.xinitrc
