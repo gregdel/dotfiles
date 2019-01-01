@@ -1,0 +1,7 @@
+rofi.show:run
+rofi.theme:.config/rofi/theme.rasi
+rofi.terminal:st
+rofi.ssh-client:mosh -n
+rofi.sort:true
+rofi.levenshtein-sort:false
+rofi.matching:fuzzy
