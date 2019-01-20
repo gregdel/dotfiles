@@ -1,0 +1,5 @@
+[Unit]
+Description=compton
+
+[Service]
+ExecStart=/usr/bin/compton --config %h/.config/compton/compton.conf

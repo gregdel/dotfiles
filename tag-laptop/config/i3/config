@@ -202,5 +202,4 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 exec xrandr --dpi 166
-exec --no-startup-id feh --randomize --bg-fill $HOME/pictures/Wallpapers
-exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+exec ~/.local/bin/graphical-services.sh

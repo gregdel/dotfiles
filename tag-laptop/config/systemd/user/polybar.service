@@ -1,0 +1,7 @@
+[Unit]
+Description=Start polybar
+
+[Service]
+Restart=on-abnormal
+ExecStart=/usr/sbin/polybar laptop
+ExecReload=/usr/sbin/polybar -r laptop

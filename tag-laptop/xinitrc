@@ -4,15 +4,12 @@ export XDG_CONFIG_HOME=$HOME/.config
 
 FONTDIR="$HOME/.local/share/fonts"
 RESOURCES="$HOME/.Xresources"
-RESOURCES_DIR="$HOME/.Xresources.d"
 
 # Fonts
 xset +fp "$FONTDIR"
 
 # Load xresources
-if [ -f "$RESOURCES" ] && [ -d "$RESOURCES_DIR" ]; then
-	xrdb -I"$RESOURCES_DIR" -load "$RESOURCES"
-fi
+[ -f "$RESOURCES" ] && xrdb -load "$RESOURCES"
 
 # use right alt as compose key and caps lock as control
 setxkbmap -option compose:ralt -option ctrl:nocaps
@@ -25,16 +22,9 @@ export GDK_SCALE=2
 export GDK_DPI_SCALE=0.5
 export ELM_SCALE=1.5
 
-# start the xsession target
-if ! systemctl --user is-active xsession.target >/dev/null 2>/dev/null
-then
-	systemctl --user import-environment DISPLAY XAUTHORITY
-	systemctl --user start xsession.target
+systemctl --user import-environment DISPLAY XAUTHORITY
+if command -v dbus-update-activation-environment >/dev/null 2>&1; then
+	dbus-update-activation-environment DISPLAY XAUTHORITY
 fi
 
-# execute i3
-if ! pgrep -x i3 > /dev/null
-then
-	systemctl --user start graphical.target
-	exec i3
-fi
+pgrep i3 || exec i3

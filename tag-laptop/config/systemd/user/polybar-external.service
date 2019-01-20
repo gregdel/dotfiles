@@ -1,0 +1,7 @@
+[Unit]
+Description=Start polybar on external screen
+
+[Service]
+Restart=on-abnormal
+ExecStart=/usr/sbin/polybar external_display
+ExecReload=/usr/sbin/polybar -r laptop

@@ -1,5 +1,93 @@
-#include ".Xresources.d/fonts"
-#include ".Xresources.d/urxvt"
-#include ".Xresources.d/xterm"
-#include ".Xresources.d/rofi"
-#include ".Xresources.d/colors"
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+!             Fonts
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Xft.dpi: 166
+Xft.autohint: 0
+!Xft.lcdfilter:  lcddefault
+!Xft.hintstyle:  hintfull
+!Xft.hinting: 1
+Xft.antialias: 1
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+!             Colors
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Background
+*.background: #101010
+*.foreground: #d0d0d0
+! Black
+*.color0: #000000
+*.color8: #555753
+! Red
+*.color1: #cc0000
+*.color9: #ef2929
+! Green
+*.color2: #4e9a06
+*.color10: #8ae234
+! Yellow
+*.color3: #c4a000
+*.color11: #fce94f
+! Blue
+*.color4: #3465a4
+*.color12: #729fcf
+! Magenta
+*.color5: #75507b
+*.color13: #ad7fa8
+! Cyan
+*.color6: #06989a
+*.color14: #34e2e2
+! White
+*.color7: #d3d7cf
+*.color15: #eeeeec
+! Urls
+*.colorUL: #4682B4
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+!             rxvt
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+URxvt.termName: rxvt-unicode-256color
+
+! Dont use bold
+URxvt.font: xft:DejaVuSansMono Nerd Font Mono:style=Book:size=12
+Urxvt.letterSpace: -1
+
+! No scroll bars
+URxvt.scrollBar: false
+
+! Allow bell
+URxvt.urgentOnBell: true
+
+! Save 10000 to scroll back
+URxvt.saveLines: 10000
+
+! Disable the insanely annoying Ctrl+Shift shortcut that enters ISO14755 mode
+URxvt.iso14755: false
+URxvt.iso14755_52: false
+
+! Extensions
+URxvt.perl-ext-common: default,matcher,custom-clipboard,vtwheel
+
+! Find urls
+URxvt.urlLauncher: /usr/bin/xdg-open
+URxvt.matcher.button: C1
+
+! URL history
+URxvt.keysym.C-Delete: perl:matcher:last
+URxvt.keysym.M-Delete: perl:matcher:list
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+!             xterm
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/* UTF8 */
+xterm*locale: true
+/* Alt key */
+xterm*metaSendsEscape: true
+xterm*saveLines: 10000
+xterm*faceName: DejaVuSansMonoForPowerline Nerd Font:size=12:antialias=false
