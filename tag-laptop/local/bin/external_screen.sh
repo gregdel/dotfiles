@@ -9,8 +9,11 @@ if [ -f "$DOCK_DEVICE" ]; then
 		--output DP2 --off \
 		--output VIRTUAL1 --off
 
-	systemctl --user start polybar-external.service
-	systemctl --user reload i3
+	i3-msg restart
+	systemctl --user stop compton.service
+	systemctl --user restart polybar-external.service
+	systemctl --user restart polybar.service
+	systemctl --user restart wallpaper.service
 	notify-send -i display "Monitor" "External monitor connected"
 else
 	xrandr \
@@ -19,7 +22,10 @@ else
 		--output DP2 --off \
 		--output VIRTUAL1 --off
 
+	i3-msg restart
 	systemctl --user stop polybar-external.service
-	systemctl --user reload i3
+	systemctl --user restart polybar.service
+	systemctl --user restart wallpaper.service
+	systemctl --user start compton.service
 	notify-send -i display "Monitor" "External monitor disconnected"
 fi
