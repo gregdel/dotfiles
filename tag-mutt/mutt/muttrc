@@ -6,7 +6,7 @@ set sleep_time=0
 # Paths ----------------------------------------------
 set alias_file       = ~/.mutt/aliases       # where to store aliases
 set header_cache     = ~/.mutt/cache/headers # where to store headers
-set certificate_file = ~/.mutt/certificates  # where to store certs
+#set certificate_file = ~/.mutt/certificates  # where to store certs
 set signature        = ~/.mutt/sig           # my signature file
 set mailcap_path     = ~/.mailcap            # entries for filetypes
 set tmpdir           = /tmp                  # where to keep temp files
@@ -21,7 +21,7 @@ set quit                 # don't ask, just do!!
 set beep_new             # bell on new mails
 set pipe_decode          # strip headers and eval mimes when piping
 set thorough_search      # strip headers and eval mimes before searching
-set editor         = "vim"
+set editor         = "nvim"
 set shell          = "zsh"
 unset mark_old
 set mail_check_recent=no # keep the folder new if there is a new mail
@@ -35,7 +35,11 @@ hdr_order from: to: cc: date: reply-to: subject: # and in this order
 set quote_regexp = "^( {0,4}[>|:#%]| {0,4}[a-z0-9]+[>|]+)+"
 alternative_order text/plain text/enriched text/html
 
-# Attachements counting
+# Attachements -------------------------------------
+mime_lookup application/octet-stream             # Lookup mime.types to get the proper MIME
+set mime_type_query_command="xdg-mime query filetype %s"        # Search for unkown mime types
+set mime_type_query_first=yes                    # Don't use mime.types
+
 attachments  +A */.*
 attachments  -A application/pgp-signature
 attachments  -A application/pgp-keys
@@ -52,14 +56,14 @@ set index_format  = "%Z|%4C %D %?X?:%X&   ? %-20.20F  %.100s %> %5c%"
 set folder_format = " %2C %t %N %f %> %d "
 set pager_format  = " %b  %Z  %D  From: %f %>  %e/%E  %5c "
 set status_format = " %h  %f  :%?M?%M/?%m%?n? :%n?%?d? :%d?%?F? :%F?%?t? :%t?%?p? :%p? %> %?V? :%V ? %s  %S  %P  %l "
-set attach_format = "%4n  %u%?t? &  ?%?D? &  ?%I  %T%d %> %20m/%-20M  %16e  %?C?%15C&unknown charset?  %6s "
+set attach_format = "%2n  %u%?t? &  ?%?Q?& ?%?D? &  ?%I  %T%d %> %20m/%-20M  %16e  %?C?%15C&unknown charset?  %6s "
 
 # View attachments properly.
 bind attach <return> view-mailcap
 
 # Handle multipart/alternative
 alternative_order text/calendar text/html text/plain text/*
-auto_view text/calendar text/html image/*
+auto_view text/calendar text/html image/* application/pdf
 
 # Source
 source "~/.mutt/charset"

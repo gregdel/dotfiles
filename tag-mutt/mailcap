@@ -8,6 +8,7 @@ video/quicktime; mpv %s
 
 # PDFs
 application/pdf; zathura %s
+application/pdf; pdftotext %s ; copiousoutput
 
 # Calendar invites
 text/calendar; ~/.mutt/scripts/dump-ical.py %s; copiousoutput

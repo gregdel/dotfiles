@@ -12,6 +12,11 @@ color status        color241        color235
 color indicator     color234        color136
 color tree          color136        color234 # arrow in threads
 
+# advanced status colors
+color status        color136        color235 "=[a-z/-]+"
+color status        color33         color235 ":[0-9]+"
+color status        color160        color235 ":[0-9]+"
+
 # basic monocolor screen
 mono  bold          bold
 mono  underline     underline
@@ -61,14 +66,13 @@ color hdrdefault    color240        color234
 color header        color241        color234        "^(From)"
 color header        color33         color234        "^(Subject)"
 
-# body -----------------------------------------------------------------
+# index ----------------------------------------------------------------
 
-# Patch colors
-color body brightred color234 "^-.*"
-color body brightgreen color234 "^[+].*"
-color body brightwhite color234 "^diff --git.*"
-color body brightwhite color234 "^index [a-f0-9].*"
-color body brightyellow color234 "^@@.*"
+color index_subject color142 color234 '~s\(RECOVERY\)'
+color index_subject color142 color234 '~s\(ACKNOWLEDGEMENT\)'
+color index_subject color203 color234 '~s\(PROBLEM\)'
+
+# body -----------------------------------------------------------------
 
 color quoted        color33         color234
 color quoted1       color37         color234
