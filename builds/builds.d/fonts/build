@@ -1,0 +1,44 @@
+#!/bin/sh
+
+set -e
+
+# shellcheck source=/dev/null
+. "$HOME/.dotfiles/builds/lib"
+
+FONT_DIRECTORY=$HOME/.local/share/fonts
+
+FONT_VERSION="2.0.0"
+FONTS_URL="https://raw.githubusercontent.com/ryanoasis/nerd-fonts/$FONT_VERSION/patched-fonts"
+FONTS="
+	DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete%20Mono.ttf
+	Inconsolata/complete/Inconsolata%20Nerd%20Font%20Complete.otf
+"
+
+_install() {
+	if [ -d "$FONT_DIRECTORY" ]; then
+		_log "Nothing to do as $FONT_DIRECTORY folder already exists"
+		exit 0
+	fi
+
+	mkdir -p "$FONT_DIRECTORY"
+	cd "$FONT_DIRECTORY"
+
+	_log "Downloading fonts"
+	for font in $FONTS; do
+		wget "$FONTS_URL/$font"
+	done
+
+	_log "Generating fontscale..."
+	mkfontscale
+
+	_log "Generating fontdir..."
+	mkfontdir
+
+	_log "Loading font folder to X..."
+	xset +fp "$FONT_DIRECTORY"
+}
+
+_uninstall() {
+	_log "Removing $FONT_DIRECTORY"
+	rm -rf "$FONT_DIRECTORY"
+}

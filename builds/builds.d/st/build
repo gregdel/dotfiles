@@ -1,0 +1,36 @@
+#!/bin/sh
+
+set -e
+
+# shellcheck source=/dev/null
+. "$HOME/.dotfiles/builds/lib"
+
+git_url=https://git.suckless.org/st
+git_version=0.8.1
+
+patches="
+	$BUILD_PROJECT_PATH/patches/st-scrollback-0.8.diff
+	$BUILD_PROJECT_PATH/patches/st-scrollback-mouse-0.8.diff
+	$BUILD_PROJECT_PATH/patches/st-scrollback-mouse-altscreen-0.8.diff
+"
+
+_install() {
+	_git_clone "$git_url" "$git_version" "$BUILD_DIR_PATH"
+
+	_log "Copying the config file"
+	cp "$BUILD_PROJECT_PATH/config.h" "$BUILD_DIR_PATH/config.h"
+
+	_log "Appling patches"
+	for p in $patches; do
+		patch -d "$BUILD_DIR_PATH" -p1 < "$p"
+	done
+
+	_log "Building st"
+	make -C "$BUILD_DIR_PATH" clean
+	make -C "$BUILD_DIR_PATH"
+	sudo make -C "$BUILD_DIR_PATH" install
+}
+
+_uninstall() {
+	sudo make -C "$BUILD_DIR_PATH" uninstall
+}
