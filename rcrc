@@ -1,2 +1,2 @@
-EXCLUDES="README.md install*.sh brew.sh builds"
-SYMLINK_DIRS="vim oh-my-zsh mutt sxiv awesome urxvt tmux"
+EXCLUDES="README.md install*.sh"
+SYMLINK_DIRS="vim oh-my-zsh mutt awesome urxvt tmux"

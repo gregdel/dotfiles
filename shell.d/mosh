@@ -1,0 +1,4 @@
+# vim: ft=sh :
+
+# Default mosh timeout of 2 days
+export MOSH_SERVER_NETWORK_TMOUT="172800"

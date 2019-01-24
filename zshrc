@@ -64,7 +64,7 @@ bindkey '^Z' fancy-ctrl-z
 [ -f ~/.zshrc_ps1 ] && . ~/.zshrc_ps1
 
 # Import functions
-[ -f ~/.shell_functions ] && . ~/.shell_functions
+[ -f ~/.shell ] && . ~/.shell
 
 function reload_zsh {
     . ~/.zshrc

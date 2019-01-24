@@ -1,0 +1,3 @@
+# vim: ft=sh :
+
+[ -f "$HOME/.local/bin/z.sh" ] && . "$HOME/.local/bin/z.sh"

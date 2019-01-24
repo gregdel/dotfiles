@@ -1,0 +1,31 @@
+# vim: ft=sh :
+
+git_url=https://git.suckless.org/st
+git_version=0.8.1
+
+patches="
+	$GPKG_PKG_DIR/$GPKG_PKG_NAME/patches/st-scrollback-0.8.diff
+	$GPKG_PKG_DIR/$GPKG_PKG_NAME/patches/st-scrollback-mouse-0.8.diff
+	$GPKG_PKG_DIR/$GPKG_PKG_NAME/patches/st-scrollback-mouse-altscreen-0.8.diff
+"
+
+_gpkg_install() {
+	_gpkg_git_clone "$git_url" "$git_version" "$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
+
+	_gpkg_log_info "Copying the config file"
+	cp "$GPKG_PKG_DIR/$GPKG_PKG_NAME/config.h" "$GPKG_BUILD_DIR/$GPKG_PKG_NAME/config.h"
+
+	_gpkg_log_info "Appling patches"
+	for p in $patches; do
+		patch -d "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" -p1 < "$p"
+	done
+
+	_gpkg_log_info "Building st"
+	_gpkg_make clean
+	_gpkg_make
+	_gpkg_make install
+}
+
+_gpkg_uninstall() {
+	_gpkg_make uninstall
+}

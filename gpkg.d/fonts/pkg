@@ -1,9 +1,4 @@
-#!/bin/sh
-
-set -e
-
-# shellcheck source=/dev/null
-. "$HOME/.dotfiles/builds/lib"
+# vim: ft=sh :
 
 FONT_DIRECTORY=$HOME/.local/share/fonts
 
@@ -14,31 +9,31 @@ FONTS="
 	Inconsolata/complete/Inconsolata%20Nerd%20Font%20Complete.otf
 "
 
-_install() {
+_gpkg_install() {
 	if [ -d "$FONT_DIRECTORY" ]; then
-		_log "Nothing to do as $FONT_DIRECTORY folder already exists"
+		_gpkg_log_info "Nothing to do as $FONT_DIRECTORY folder already exists"
 		exit 0
 	fi
 
 	mkdir -p "$FONT_DIRECTORY"
 	cd "$FONT_DIRECTORY"
 
-	_log "Downloading fonts"
+	_gpkg_log_info "Downloading fonts"
 	for font in $FONTS; do
 		wget "$FONTS_URL/$font"
 	done
 
-	_log "Generating fontscale..."
+	_gpkg_log_info "Generating fontscale..."
 	mkfontscale
 
-	_log "Generating fontdir..."
+	_gpkg_log_info "Generating fontdir..."
 	mkfontdir
 
-	_log "Loading font folder to X..."
+	_gpkg_log_info "Loading font folder to X..."
 	xset +fp "$FONT_DIRECTORY"
 }
 
-_uninstall() {
-	_log "Removing $FONT_DIRECTORY"
+_gpkg_uninstall() {
+	_gpkg_log_info "Removing $FONT_DIRECTORY"
 	rm -rf "$FONT_DIRECTORY"
 }

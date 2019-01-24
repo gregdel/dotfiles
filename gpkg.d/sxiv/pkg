@@ -1,0 +1,19 @@
+# vim: ft=sh :
+
+git_url=https://github.com/muennich/sxiv.git
+git_version=v24
+
+_gpkg_install() {
+	_gpkg_git_clone "$git_url" "$git_version" "$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
+
+	_gpkg_log_info "Copying the config file"
+	cp "$GPKG_PKG_DIR/$GPKG_PKG_NAME/config.def.h" "$GPKG_BUILD_DIR/$GPKG_PKG_NAME/config.h"
+
+	_gpkg_log_info "Building sxiv"
+	_gpkg_make
+	_gpkg_make install
+}
+
+_gpkg_uninstall() {
+	_gpkg_make uninstall
+}

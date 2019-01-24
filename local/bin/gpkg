@@ -1,0 +1,115 @@
+# vim: ft=sh :
+
+set -e
+
+export GPKG_INSTALL_DIR=$HOME/.local
+export GPKG_BUILD_DIR=$HOME/.cache/gpkg
+export GPKG_PKG_DIR="$HOME/.gpkg.d"
+export GPKG_BUILD_LOCAL=0
+export GPKG_PKG_NAME=
+
+[ -d "$GPKG_INSTALL_DIR" ]	|| mkdir -p "$GPKG_INSTALL_DIR"
+[ -d "$GPKG_BUILD_DIR" ]	|| mkdir -p "$GPKG_BUILD_DIR"
+[ -d "$GPKG_PKG_DIR" ]		|| mkdir -p "$GPKG_PKG_DIR"
+
+_gpkg_clean() {
+	unset GPKG_INSTALL_DIR
+	unset GPKG_BUILD_DIR
+	unset GPKG_PKG_DIR
+	unset GPKG_BUILD_LOCAL
+	unset GPKG_PKG_NAME
+}
+
+_gpkg_log_info() {
+	printf "$(tput setaf 5)-->$(tput setaf 2) %s$(tput setaf 7)\n" "$@"
+}
+
+_gpkg_log_error() {
+	printf "$(tput setaf 6)-->$(tput setaf 9) %s$(tput setaf 7)\n" "$@"
+	_gpkg_clean
+	exit 1
+}
+
+_gpkg_make() {
+	export DESTDIR=$GPKG_INSTALL_DIR
+	if [ "$GPKG_BUILD_LOCAL" = 0 ]; then
+		unset DESTDIR
+	fi
+
+	if [ "$1" = "install" ] && [ "$GPKG_BUILD_LOCAL" = 0 ]; then
+		sudo make -C "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" "$@"
+	else
+		make -C "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" "$@"
+	fi
+}
+
+_gpkg_git_clone() {
+	url=$1
+	version=$2
+	path=$3
+	[ "$url" ]		|| _gpkg_log_error "_gpkg_git_clone missing url"
+	[ "$path" ]		|| _gpkg_log_error "_gpkg_git_clone missing path"
+	[ "$version" ]	|| _gpkg_log_error "_gpkg_git_clone missing version"
+
+	if [ -d "$path/.git" ]; then
+		_gpkg_log_info "Updating repo $path"
+		git -C "$path" fetch
+	else
+		_gpkg_log_info "Cloning $url"
+		git clone "$url" "$path"
+	fi
+
+	_gpkg_log_info "Resetting repository to $version"
+	git -C "$path" reset --hard "$version"
+	git -C "$path" clean -fd
+}
+
+_gpkg_usage() {
+	printf "USAGE:\n"
+	printf "\tgpkg { install | uninstall } project_name [--local]\n"
+	printf "\tgpkg list\n"
+	printf "\tgpkg help\n"
+	_gpkg_clean
+	exit 1
+}
+
+_gpkg_list_projects() {
+	printf "PROJECTS:\n"
+	for p in "$GPKG_PKG_DIR"/*; do
+		[ -d "$p" ] || continue
+		printf "\t%s\n" "$(basename "$p")"
+	done
+}
+
+cmd=$1
+[ "$cmd" ] || _gpkg_usage
+
+GPKG_PKG_NAME=$2
+case "$cmd" in
+	install|uninstall)
+		[ "$GPKG_PKG_NAME" ] || _gpkg_usage
+		[ -d "$GPKG_PKG_DIR/$GPKG_PKG_NAME" ] || _gpkg_log_error "invalid package name '$GPKG_PKG_NAME'"
+
+		# Check for local builds
+		if [ "$3" = "--local" ]; then
+			_gpkg_log_info "Local installation"
+			GPKG_BUILD_LOCAL=1
+		else
+			_gpkg_log_info "System wide installation"
+		fi
+
+		. "$GPKG_PKG_DIR/$GPKG_PKG_NAME/pkg"
+
+		_gpkg_log_info "${cmd}ing $GPKG_PKG_NAME"
+		[ "$cmd" = "install" ] && _gpkg_install
+		[ "$cmd" = "uninstall" ] && _gpkg_uninstall
+		;;
+	list)
+		_gpkg_list_projects
+		;;
+	*)
+		_gpkg_usage
+		;;
+esac
+
+_gpkg_clean

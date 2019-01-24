@@ -1,0 +1,8 @@
+# vim: ft=sh :
+
+# Go
+export GOPATH=$HOME/dev/go
+export GOBIN=$HOME/dev/go/bin
+_add_path /usr/local/go/bin
+_add_path "$GOBIN"
+

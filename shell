@@ -1,0 +1,23 @@
+# Shell function for both bash and zsh
+# vim: ft=sh :
+# shellcheck disable=1090
+
+_add_path() {
+	[ -d "$1" ] || return 0
+	export PATH="$1:$PATH"
+}
+
+# Add sbin to the user path
+_add_path /usr/sbin
+_add_path "$HOME/.local/bin"
+_add_path "$HOME/.local/usr/local/bin"
+
+if [ -d "$HOME/.shell.d" ]; then
+	for f in "$HOME/.shell.d"/*; do
+		[ -f "$f" ] && . "$f"
+	done
+	unset f
+fi
+
+# Load the local shell config
+[ -f "$HOME/.shell_local" ] && . "$HOME/.shell_local"

@@ -1,0 +1,31 @@
+# vim: ft=sh :
+
+# Tmux
+alias ta='tmux attach -t'
+
+# Open
+alias o='xdg-open'
+
+# List alias
+alias l='ls'
+alias ll='ls -lh'
+alias la='ls -lah'
+
+# start screen with unicode enabled
+alias screen='screen -U'
+
+# Download with aria2c
+alias dl='aria2c -x 10'
+
+# docker-compose
+alias dc='docker-compose'
+
+# docker-machine
+alias dm='docker-machine'
+
+# systemd --user
+alias sysu='systemctl --user'
+
+mcd() {
+	mkdir -p "$1" && cd "$1" || return;
+}

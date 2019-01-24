@@ -1,0 +1,37 @@
+# vim: ft=sh :
+
+_start_agent() {
+	local pid
+	pid=$(pgrep -u "$USER" 'ssh-agent' | head -n 1)
+	if [ -z "$pid" ]; then
+		# Start the ssh-agent
+		eval "$(ssh-agent -s)" >/dev/null
+		return 0
+	fi
+
+	SSH_AGENT_PID=$pid
+	SSH_AUTH_SOCK=$(find /tmp \
+		-user "$USER" \
+		-type s \
+		-wholename '/tmp/ssh-*/agent.*' 2>/dev/null
+	)
+	export SSH_AUTH_SOCK
+	export SSH_AGENT_PID
+}
+_start_agent
+
+agent() {
+	local key
+	local timeout=10800 # 3h
+	if [ -f ~/.ssh/id_ed25519 ]; then
+		key=~/.ssh/id_ed25519
+	else
+		key=~/.ssh/id_rsa
+	fi
+	ssh-add -t "$timeout" "$key"
+}
+
+killagent() {
+	pgrep -u "$USER" ssh-agent | xargs kill
+	_start_agent
+}
