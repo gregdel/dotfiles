@@ -95,7 +95,7 @@ case "$cmd" in
 			_gpkg_log_info "System wide installation"
 			GPKG_BUILD_LOCAL=0
 		else
-			_gpkg_log_info "Sys installation"
+			_gpkg_log_info "Local installation"
 		fi
 
 		. "$GPKG_PKG_DIR/$GPKG_PKG_NAME/pkg"

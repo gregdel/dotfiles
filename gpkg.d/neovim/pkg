@@ -1,25 +1,21 @@
 # vim: ft=sh :
 
 git_url="https://github.com/neovim/neovim.git"
-git_version="v0.3.0"
+git_version="v0.3.3"
 
 _gpkg_install() {
-	_gpkg_git_clone "$git_url" "$git_version" "$BUILD_DIR_PATH"
-	_gpkg_log "not implemented"
+	_gpkg_git_clone "$git_url" "$git_version" "$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
 
-	# Debian stuff, let's work on this later
-	# # Install dependencies
-	# sudo apt update
-	# sudo apt install -y libtool libtool-bin autoconf automake cmake g++ pkg-config unzip
-
-	# # Make
-	# rm -rf "$BUILD_DIR/build"
-	# make clean
-	# make CMAKE_BUILD_TYPE=Release
-	# # Make install
-	# sudo make install
+	(cd "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" && \
+		make \
+			CMAKE_BUILD_TYPE=Release \
+			CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$GPKG_INSTALL_DIR" \
+		&& make install
+	)
 }
 
 _gpkg_uninstall() {
-	_gpkg_log "not implemented"
+	rm -f "$GPKG_INSTALL_DIR/bin/nvim"
+	rm -rf "$GPKG_INSTALL_DIR/share/nvim"
+	find "$GPKG_INSTALL_DIR" -iname "*nvim*" -delete
 }
