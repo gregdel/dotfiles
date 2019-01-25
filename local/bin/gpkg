@@ -5,7 +5,7 @@ set -e
 export GPKG_INSTALL_DIR=$HOME/.local
 export GPKG_BUILD_DIR=$HOME/.cache/gpkg
 export GPKG_PKG_DIR="$HOME/.gpkg.d"
-export GPKG_BUILD_LOCAL=0
+export GPKG_BUILD_LOCAL=1
 export GPKG_PKG_NAME=
 
 [ -d "$GPKG_INSTALL_DIR" ]	|| mkdir -p "$GPKG_INSTALL_DIR"
@@ -66,7 +66,7 @@ _gpkg_git_clone() {
 
 _gpkg_usage() {
 	printf "USAGE:\n"
-	printf "\tgpkg { install | uninstall } project_name [--local]\n"
+	printf "\tgpkg { install | uninstall } project_name [--system]\n"
 	printf "\tgpkg list\n"
 	printf "\tgpkg help\n"
 	_gpkg_clean
@@ -91,11 +91,11 @@ case "$cmd" in
 		[ -d "$GPKG_PKG_DIR/$GPKG_PKG_NAME" ] || _gpkg_log_error "invalid package name '$GPKG_PKG_NAME'"
 
 		# Check for local builds
-		if [ "$3" = "--local" ]; then
-			_gpkg_log_info "Local installation"
-			GPKG_BUILD_LOCAL=1
-		else
+		if [ "$3" = "--system" ]; then
 			_gpkg_log_info "System wide installation"
+			GPKG_BUILD_LOCAL=0
+		else
+			_gpkg_log_info "Sys installation"
 		fi
 
 		. "$GPKG_PKG_DIR/$GPKG_PKG_NAME/pkg"
