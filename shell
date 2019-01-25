@@ -10,6 +10,7 @@ _add_path() {
 # Add sbin to the user path
 _add_path /usr/sbin
 _add_path "$HOME/.local/bin"
+_add_path "$HOME/.local/usr/bin"
 _add_path "$HOME/.local/usr/local/bin"
 
 if [ -d "$HOME/.shell.d" ]; then

@@ -2,26 +2,25 @@
 
 set -e
 
-# shellcheck source=/dev/null
-. "$HOME/.dotfiles/builds/lib"
-
 git_url="https://github.com/neomutt/neomutt.git"
 git_version="neomutt-20180716"
 
-_install() {
-	_git_clone "$git_url" "$git_version" "$BUILD_DIR_PATH"
+_gpkg_install() {
+	_gpkg_git_clone "$git_url" "$git_version" "$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
 
-	(cd "$BUILD_DIR_PATH" && \
+	(cd "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" && \
 		./configure \
+		--bdb \
 		--disable-doc \
-		--tokyocabinet \
 		--sasl \
+		--quiet \
 	)
 
-	make -C "$BUILD_DIR_PATH" clean
-	make -C "$BUILD_DIR_PATH"
+	_gpkg_make clean
+	_gpkg_make
+	_gpkg_make install
 }
 
-_uninstall() {
-	_log "not implemented"
+_gpkg_uninstall() {
+	_gpkg_make uninstall
 }
