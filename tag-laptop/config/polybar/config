@@ -46,7 +46,7 @@ font-0 = Inconsolata Nerd Font:size=20:antialias=true;0
 
 modules-left = i3
 modules-center = date
-modules-right = ovh syncthing volume xbacklight wlan battery
+modules-right = ovh syncthing mpd volume xbacklight wlan battery
 
 # Disable tray
 tray-position =
@@ -207,5 +207,19 @@ animation-charging-3 = 
 animation-charging-4 = 
 animation-charging-foreground = ${colors.foreground-alt}
 animation-charging-framerate = 1500
+
+[module/mpd]
+type = internal/mpd
+host = 127.0.0.1
+port = 6600
+
+label-song = %artist% - %title%
+label-time = (%elapsed%/%total%)
+
+format-playing = ﱘ <label-song> <label-time>
+format-paused = 
+format-stopped = ﱘ
+format-online = ﱘ
+format-offline = ﱙ
 
 ; vim:ft=dosini

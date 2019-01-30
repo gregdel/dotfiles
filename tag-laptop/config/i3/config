@@ -135,6 +135,9 @@ bindsym Mod1+l resize grow width 10 px or 10ppt
 bindsym XF86AudioRaiseVolume exec pamixer --unmute --increase 5
 bindsym XF86AudioLowerVolume exec pamixer --unmute --decrease 5
 bindsym XF86AudioMute exec pamixer --toggle-mute
+bindsym XF86AudioPlay exec mpc toggle
+bindsym XF86AudioPrev exec mpc next
+bindsym XF86AudioNext exec mpc prev
 
 # Screen switch
 bindsym XF86Search exec ~/.local/bin/external_screen.sh
