@@ -1,0 +1,139 @@
+#!/bin/sh
+
+bluetooth_id=$(rfkill list bluetooth --noheadings --output ID)
+state_file="/sys/class/rfkill/rfkill$bluetooth_id/state"
+
+devices="
+	ue-boom 88:C6:26:19:2D:D3
+	bose 04:52:C7:C6:E2:91
+"
+
+_usage() {
+	echo "Usage $(basename "$0"):"
+	echo "$(basename "$0") { start | stop | status | ls | is-active | connect [device_name] | disconnect }"
+	exit 1
+}
+
+_rfkill() {
+	rfkill list bluetooth --noheadings --output SOFT,HARD
+}
+
+_service_status() {
+	if systemctl is-active bluetooth >/dev/null; then
+		echo "Bluetooth service is enabled"
+		return 0
+	else
+		echo "Bluetooth service is disabled"
+		return 1
+	fi
+}
+
+_device_status() {
+	if [ "$(cat "$state_file")" = 0 ]; then
+		echo "Bluetooth device is disabled"
+		return 1
+	else
+		echo "Bluetooth device is enabled"
+		return 0
+	fi
+}
+
+_status() {
+	_service_status && _device_status && return 0
+	return 1
+}
+
+_is_active() {
+	_status >/dev/null && exit 0
+	exit 1
+}
+
+_ls() {
+	echo "Devices:"
+	echo "$devices" | while read -r name mac; do
+		[ "$name" ] || continue
+		echo "* $name ($mac)"
+	done
+}
+
+_start_stop_service() {
+	sudo systemctl "$1" bluetooth
+}
+
+_start_stop_device() {
+	rfkill "$1" bluetooth
+}
+
+_update() {
+	if [ "$1" = "start" ]; then
+		_device_status || _start_stop_device "unblock"
+		_service_status || _start_stop_service "start"
+	else
+		_device_status && _start_stop_device "block"
+		_service_status && _start_stop_service "stop"
+	fi
+}
+
+_start() {
+	echo "Starting bluetooth..."
+	_update "start"
+}
+
+_stop() {
+	echo "Stopping bluetooth..."
+	_update "stop"
+}
+
+_connect() {
+	[ "$1" ] || _usage
+
+	# This is ugly...
+	tmp_file=$(mktemp)
+	echo "$devices" > "$tmp_file"
+	device_mac=
+	while read -r name mac; do
+		[ "$name" != "$1" ] && continue
+		device_mac=$mac
+		break
+	done < "$tmp_file"
+	rm "$tmp_file"
+
+	if [ -z "$device_mac" ]; then
+		echo "Invalid device name: $1"
+		exit 1
+	fi
+
+	_start
+	echo "Connecting to $name ($device_mac)"
+
+	bluetoothctl power on
+	bluetoothctl agent on
+	bluetoothctl default-agent
+	sleep 2
+	bluetoothctl connect "$device_mac"
+}
+
+_disconnect() {
+	bluetoothctl power off
+	bluetoothctl agent off
+	_stop
+}
+
+case "$1" in
+	status)
+		_status ;;
+	start)
+		_start ;;
+	stop)
+		_stop ;;
+	is-active)
+		_is_active ;;
+	ls)
+		_ls ;;
+	connect)
+		_connect "$2" ;;
+	disconnect)
+		_disconnect ;;
+	*)
+		_usage ;;
+esac
