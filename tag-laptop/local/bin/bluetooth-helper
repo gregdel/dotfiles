@@ -10,7 +10,7 @@ devices="
 
 _usage() {
 	echo "Usage $(basename "$0"):"
-	echo "$(basename "$0") { start | stop | status | ls | is-active | connect [device_name] | disconnect }"
+	echo "$(basename "$0") { start | stop | status | ls | is-active | connect [device_name] | disconnect | polybar }"
 	exit 1
 }
 
@@ -41,6 +41,13 @@ _device_status() {
 _status() {
 	_service_status && _device_status && return 0
 	return 1
+}
+
+_polybar() {
+	output=
+	_service_status >/dev/null && _device_status >/dev/null && output=
+	echo "$output"
+	exit 0
 }
 
 _is_active() {
@@ -128,6 +135,8 @@ case "$1" in
 		_stop ;;
 	is-active)
 		_is_active ;;
+	polybar)
+		_polybar ;;
 	ls)
 		_ls ;;
 	connect)

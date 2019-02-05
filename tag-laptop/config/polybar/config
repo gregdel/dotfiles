@@ -46,7 +46,7 @@ font-0 = Inconsolata Nerd Font:size=20:antialias=true;0
 
 modules-left = i3
 modules-center = date
-modules-right = ovh syncthing mpd volume xbacklight wlan battery
+modules-right = ovh bluetooth syncthing mpd volume xbacklight wlan battery
 
 # Disable tray
 tray-position =
@@ -144,6 +144,11 @@ exec = pgrep -x vpnc
 interval = 10
 label =  OVH
 format-underline = ${colors.primary}
+
+[module/bluetooth]
+type = custom/script
+exec = ~/.local/bin/bluetooth-helper polybar
+interval = 10
 
 [module/syncthing]
 type = custom/script
