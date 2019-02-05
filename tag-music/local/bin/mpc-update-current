@@ -1,0 +1,36 @@
+#!/bin/sh
+set -e
+
+MUSIC_DIR=$(readlink -f ~/music)
+file=$(mpc current -f %file%)
+[ "$file" ] || exit 0
+
+case "$file" in
+	*downloads*)
+		new=1
+		file_path="$file"
+		;;
+	*)
+		new=0
+		file_path="$MUSIC_DIR/$file"
+		;;
+esac
+file_dir=$(dirname "$file_path")
+
+title=$(mpc current -f %title%)
+album=$(mpc current -f %album%)
+artist=$(mpc current -f %artist%)
+
+echo "File: $file_path"
+echo "File directory: $file_dir"
+echo "Artist: $artist"
+echo "Album: $album"
+echo "Title: $title"
+
+if [ "$new" = 0 ]; then
+	echo "Updating tags..."
+	beet import -t "$file_dir"
+else
+	echo "Importing new song..."
+	beet import -t "$file_path"
+fi

@@ -1,0 +1,57 @@
+# General settings
+mpd_host = ~/.mpd/socket
+ncmpcpp_directory = ~/.mpd/ncmpcpp
+lyrics_directory = ~/.mpd/ncmpcpp/.lyrics
+mpd_music_dir = ~/music
+mpd_crossfade_time = 5
+browser_display_mode = columns
+mouse_support = no
+search_engine_default_search_mode = 2
+external_editor = neovim
+use_console_editor = yes
+execute_on_song_change = "mpc-notify"
+display_bitrate = yes
+
+# Syle
+progressbar_look = 
+
+# Colors
+colors_enabled = yes
+empty_tag_color = 75_current
+header_window_color = 75_current
+volume_color = 238:b
+state_line_color = 250_current
+state_flags_color = 250_current:b
+main_window_color = 250_current
+color1 = 250_current
+color2 = 250_current
+progressbar_color = 238:b
+progressbar_elapsed_color = 75:b
+statusbar_color = 75_current
+statusbar_time_color = 75_current:b
+player_state_color = 75_current:b
+alternative_ui_separator_color = 75_current:b
+window_border_color = 75_current
+active_window_border = 75_current
+
+# Statuses
+song_columns_list_format = "(25)[250_current]{a} (25)[250_current]{t} (40)[250_current]{b} (5)[250_current]{l}(15)[250_current]{g} "
+
+
+song_list_format = {%a - }{%t}|{$8%f$9}$R{$3(%l)$9}
+song_status_format = {{%a{ "%b"{ (%y)}} - }{%t}}|{%f}
+song_library_format = {%n - }{%t}|{%f}
+alternative_header_first_line_format = $b$1$aqqu$/a$9 {%t}|{%f} $1$atqq$/a$9$/b
+alternative_header_second_line_format = {{$4$b%a$/b$9}{ - $7%b$9}{ ($4%y$9)}}|{%D}
+current_item_prefix = $(75_current)$r
+current_item_suffix = $/r$(end)
+current_item_inactive_column_prefix = $(250_current)$r
+current_item_inactive_column_suffix = $/r$(end)
+now_playing_prefix = $b
+now_playing_suffix = $/b
+browser_playlist_prefix = "$2playlist$9 "
+selected_item_prefix = $6
+selected_item_suffix = $9
+modified_item_prefix = $3> $9
+
+# vim: set ft=conf :

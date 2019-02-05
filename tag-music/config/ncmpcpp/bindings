@@ -10,8 +10,15 @@ def_key "ctrl-d"
 
 def_key "h"
     previous_column
+def_key "h"
+    jump_to_parent_directory
+
 def_key "l"
     next_column
+def_key "l"
+    enter_directory
+def_key "l"
+    play_item
 
 def_key "."
     show_lyrics
@@ -22,7 +29,18 @@ def_key "N"
     previous_found_item
 
 def_key "g"
-  move_home
+    move_home
 
 def_key "G"
-  move_end
+    move_end
+
+def_key "d"
+    delete_playlist_items
+
+def_key "b"
+    run_external_command "st -e zsh -c mpc-update-current"
+
+def_key "m"
+    add_item_to_playlist
+
+# vim: set ft=conf :

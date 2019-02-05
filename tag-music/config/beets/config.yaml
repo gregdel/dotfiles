@@ -1,0 +1,26 @@
+directory: ~/music/Library/
+library: ~/music/beets_db.blb
+plugins:
+  - chroma
+  - fetchart
+  - embedart
+  - fromfilename
+  - lastgenre
+  - mpdupdate
+  - duplicates
+  - edit
+
+import:
+  move: yes
+
+fetchart:
+  auto: yes
+  sources: amazon filesystem coverart albumart
+
+embedart:
+  auto: yes
+  remove_art_file: yes
+
+mpd:
+    host: localhost
+    port: 6600

@@ -1,0 +1,30 @@
+#!/bin/sh
+set -e
+
+MUSIC_DIR=~/music
+COVER_FILE=/tmp/mpd_cover.jpg
+
+file=$(mpc current -f %file%)
+[ "$file" ] || exit 0
+
+file_path="$MUSIC_DIR/$file"
+file_dir=$(dirname "$file_path")
+
+[ -f "$COVER_FILE" ] && rm "$COVER_FILE"
+
+icon="$COVER_FILE"
+if [ -f "$file_dir/cover.jpg" ]; then
+	cp "$file_dir/cover.jpg" "$COVER_FILE"
+else
+	if ! ffmpeg -i "$file_path" "$COVER_FILE" >/dev/null 2>/dev/null; then
+		# Fallback icon
+		icon="blueman-headset"
+	fi
+fi
+
+notify-send \
+	--icon "$icon" \
+	--urgency normal \
+	--expire-time=5000 \
+	"Now playing" \
+	"$(mpc current -f 'Artist: %artist%\nTitle: %title%\nAlbum: %album%')"
