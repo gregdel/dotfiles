@@ -1,0 +1,15 @@
+#!/bin/sh
+
+_usage() {
+	echo "Usage: $(basename "$0") file.flac [...file.flac]"
+	exit 1
+}
+
+while [ -n "$1" ]; do
+	filename=$(basename -s .flac "$1")
+	[ -f "$filename.flac" ] || _usage
+	shift
+
+	echo "Converting '$filename' to mp3"
+	ffmpeg -i "$filename.flac" -f wav - | lame -V 2 --noreplaygain - "$filename.mp3"
+done
