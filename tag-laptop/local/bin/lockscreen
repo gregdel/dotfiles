@@ -1,4 +1,7 @@
 #!/bin/sh
+set -e
+
+wallpaper_dir="$HOME/pictures/wallpapers"
 
 insidecolor=#00000000
 ringcolor=#ffffffff
@@ -25,10 +28,10 @@ _log_err() {
 }
 
 _usage() {
-	echo "$(basename "$0") [ update file_name | lock | install | uninstall ]"
+	echo "$(basename "$0") [ set file_name | choose | lock | install | uninstall ]"
 }
 
-_update() {
+_set() {
 	[ -f "$1" ] || _log_err "Invalid file $1"
 	[ -d "$LOCK_IMAGE_DIR" ] || mkdir -p "$LOCK_IMAGE_DIR"
 
@@ -106,9 +109,18 @@ _uninstall() {
 	sudo systemctl daemon-reload
 }
 
+_choose() {
+	chosen=$(find "$wallpaper_dir" -type f | sxiv -ftio)
+	[ "$chosen" ] || exit 0
+	_set "$chosen"
+}
+
 case "$1" in
-	update)
-		_update "$2"
+	set)
+		_set "$2"
+		;;
+	choose)
+		_choose "$2"
 		;;
 	lock)
 		_lock

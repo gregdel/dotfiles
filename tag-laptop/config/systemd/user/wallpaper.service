@@ -4,4 +4,4 @@ Description=Setup wallpaper
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/bin/feh --bg-fill %h/pictures/Wallpapers/current_wallpaper
+ExecStart=/bin/feh --bg-fill %h/.cache/wallpaper/wallpaper

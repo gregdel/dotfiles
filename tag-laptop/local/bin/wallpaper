@@ -1,0 +1,42 @@
+#!/bin/sh
+set -e
+
+wallpaper_dir="$HOME/pictures/wallpapers"
+current_wallpaper_dir="$HOME/.cache/wallpaper"
+
+_log_err() {
+	echo "$1"
+	exit 1
+}
+
+_usage() {
+	echo "$(basename "$0") [ choose | set file_name ]"
+	exit 1
+}
+
+_choose() {
+	chosen=$(find "$wallpaper_dir" -type f | sxiv -ftio)
+	[ "$chosen" ] || exit 0
+	_set "$chosen"
+}
+
+_set() {
+	[ -d "$current_wallpaper_dir" ] || mkdir -p "$current_wallpaper_dir"
+	[ -f "$1" ] || _log_err "Invalid wallaper file $1"
+	location=$(readlink -f "$1")
+	ln -sf "$location" "$current_wallpaper_dir/wallpaper"
+	systemctl --user restart wallpaper
+	notify-send -i blueman-laptop "Wallpaper updated"
+}
+
+case "$1" in
+	choose)
+		_choose
+		;;
+	set)
+		_set "$2"
+		;;
+	*)
+		_usage
+		;;
+esac
