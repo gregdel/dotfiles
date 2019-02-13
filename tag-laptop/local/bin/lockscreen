@@ -1,0 +1,125 @@
+#!/bin/sh
+
+insidecolor=#00000000
+ringcolor=#ffffffff
+keyhlcolor=#d23c3dff
+bshlcolor=#d23c3dff
+separatorcolor=#00000000
+insidevercolor=#00000000
+insidewrongcolor=#d23c3dff
+ringvercolor=#ffffffff
+ringwrongcolor=#ffffffff
+verifcolor=#ffffffff
+timecolor=#ffffffff
+datecolor=#ffffffff
+font="sans-serif"
+locktext='Type password to unlock...'
+
+LOCK_IMAGE_DIR="$HOME/.cache/lockscreen"
+LOCK_IMAGE="$LOCK_IMAGE_DIR/lock.png"
+UNIT_FILE=/etc/systemd/system/suspend@.service
+
+_log_err() {
+	echo "$1"
+	exit 1
+}
+
+_usage() {
+	echo "$(basename "$0") [ update file_name | lock | install | uninstall ]"
+}
+
+_update() {
+	[ -f "$1" ] || _log_err "Invalid file $1"
+	[ -d "$LOCK_IMAGE_DIR" ] || mkdir -p "$LOCK_IMAGE_DIR"
+
+	resolution=$(xrandr | grep '\*' | cut -d' ' -f4)
+	convert "$1" \
+		-resize "${resolution}^" \
+		"$LOCK_IMAGE"
+
+	notify-send -i blueman-laptop "Lock screen updated"
+}
+
+_lock() {
+	i3lock \
+		--tiling \
+		--ignore-empty-password \
+		--clock \
+		--timestr="%H:%M" \
+		--refresh-rate=60 \
+		--image "$LOCK_IMAGE" \
+		--timepos="x+110:h-70" \
+		--datepos="x+43:h-45" \
+		--clock \
+		--date-align 1 \
+		--datestr "$locktext" \
+		--insidecolor "$insidecolor" \
+		--ringcolor "$ringcolor" \
+		--line-uses-inside \
+		--keyhlcolor "$keyhlcolor" \
+		--bshlcolor "$bshlcolor" \
+		--separatorcolor "$separatorcolor" \
+		--insidevercolor "$insidevercolor" \
+		--insidewrongcolor "$insidewrongcolor" \
+		--ringvercolor "$ringvercolor" \
+		--ringwrongcolor "$ringwrongcolor" \
+		--indpos "x+280:h-70" \
+		--radius 20 \
+		--ring-width 4 \
+		--veriftext "" \
+		--wrongtext "" \
+		--verifcolor "$verifcolor" \
+		--timecolor "$timecolor" \
+		--datecolor "$datecolor" \
+		--time-font "$font" \
+		--date-font "$font" \
+		--layout-font "$font" \
+		--verif-font "$font" \
+		--wrong-font "$font" \
+		--noinputtext "" \
+		--force-clock
+}
+
+_install() {
+	cat <<-EOF | sudo tee "$UNIT_FILE"
+	[Unit]
+	Description=User suspend lock
+	Before=sleep.target
+
+	[Service]
+	User=%I
+	Type=forking
+	Environment=DISPLAY=:0
+	ExecStart=/home/%I/.local/bin/lockscreen lock
+
+	[Install]
+	WantedBy=sleep.target
+	EOF
+
+	sudo systemctl daemon-reload
+	sudo systemctl enable "suspend@$USER"
+}
+
+_uninstall() {
+	sudo systemctl disable "suspend@$USER"
+	sudo rm "$UNIT_FILE"
+	sudo systemctl daemon-reload
+}
+
+case "$1" in
+	update)
+		_update "$2"
+		;;
+	lock)
+		_lock
+		;;
+	install)
+		_install
+		;;
+	uninstall)
+		_uninstall
+		;;
+	*)
+		_usage
+		;;
+esac
