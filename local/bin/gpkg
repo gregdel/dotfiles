@@ -56,7 +56,7 @@ _gpkg_git_clone() {
 		git -C "$path" fetch
 	else
 		_gpkg_log_info "Cloning $url"
-		git clone "$url" "$path"
+		git clone --recursive "$url" "$path"
 	fi
 
 	_gpkg_log_info "Resetting repository to $version"
