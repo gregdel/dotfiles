@@ -5,6 +5,7 @@ git_version=0.8.1
 
 patches="
 	$GPKG_PKG_DIR/$GPKG_PKG_NAME/patches/st-anysize-0.8.1.diff
+	$GPKG_PKG_DIR/$GPKG_PKG_NAME/patches/st-externalpipe-0.8.1.diff
 	$GPKG_PKG_DIR/$GPKG_PKG_NAME/patches/st-scrollback-0.8.diff
 	$GPKG_PKG_DIR/$GPKG_PKG_NAME/patches/st-scrollback-mouse-0.8.diff
 	$GPKG_PKG_DIR/$GPKG_PKG_NAME/patches/st-scrollback-mouse-altscreen-0.8.diff
@@ -18,6 +19,7 @@ _gpkg_install() {
 
 	_gpkg_log_info "Appling patches"
 	for p in $patches; do
+		_gpkg_log_info "Appling $p"
 		patch -d "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" -p1 < "$p"
 	done
 
