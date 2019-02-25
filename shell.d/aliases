@@ -3,9 +3,6 @@
 # Tmux
 alias ta='tmux attach -t'
 
-# Open
-alias o='xdg-open'
-
 # List alias
 alias l='ls'
 alias ll='ls -lh'

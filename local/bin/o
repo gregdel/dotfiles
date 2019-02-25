@@ -1,0 +1,60 @@
+# vim: ft=sh :
+set -e
+
+[ "$1" ] || exec nnn
+
+PARENT_COMMAND=$(ps -o comm= $PPID)
+_term_choose() {
+	case "$PARENT_COMMAND" in
+		nnn) st -e "$@" ;;
+		*)   "$@"       ;;
+	esac
+}
+
+_log() {
+	case "$PARENT_COMMAND" in
+		nnn) notify-send -i deepin-terminal "Open" "$@" ;;
+		*)   echo "$@"               ;;
+	esac
+}
+
+_open_file() {
+	file_path=$(readlink -f "$1")
+	mime=$(file --brief --mime-type "$file_path")
+	case "$mime" in
+		image/gif)
+			sxiv -a "$@"
+			;;
+		image/svg)
+			gthumb "$@"
+			;;
+		image/*)
+			sxiv "$@"
+			;;
+		audio/*)
+			mpv "$@"
+			;;
+		video/*)
+			mpv "$@"
+			;;
+		text/*)
+			_term_choose nvim "$*"
+			;;
+		application/pdf)
+			zathura "$@"
+			;;
+		*)
+			_log "Unknown mime $mime"
+			;;
+	esac
+}
+
+case "$1" in
+	http*)
+		chromium "$@"
+		;;
+	*)
+		_open_file "$@"
+		;;
+
+esac
