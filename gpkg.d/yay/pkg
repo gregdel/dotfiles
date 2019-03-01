@@ -1,0 +1,18 @@
+# vim: ft=sh :
+
+bin_version=9.1.0
+bin_url="https://github.com/Jguer/yay/releases/download/v$bin_version/yay_${bin_version}_x86_64.tar.gz"
+bin_name=yay
+bin_path="$GPKG_INSTALL_DIR/bin/$bin_name"
+
+_gpkg_install() {
+	tmp_dir=$(mktemp -d)
+	_gpkg_log_info "Downloading $bin_name version $bin_version"
+	curl -L "$bin_url" | tar xzv -C "$tmp_dir" "yay_${bin_version}_x86_64/$bin_name"
+	mv "$tmp_dir/yay_${bin_version}_x86_64/$bin_name" "$bin_path"
+	rm -rf "$tmp_dir"
+}
+
+_gpkg_uninstall() {
+	rm "$bin_path"
+}
