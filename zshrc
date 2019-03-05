@@ -1,4 +1,4 @@
-autoload -U compinit colors vcs_info
+autoload -U compinit colors
 colors
 compinit
 
@@ -55,17 +55,27 @@ function reload_zsh {
     rehash
 }
 
-# vcs_info
-zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:git*' formats "%s  %r/%S %b (%a) %m%u%c "
-zstyle ':vcs_info:*' stagedstr '%F{yellow}*%f '
-zstyle ':vcs_info:*' unstagedstr '%F{green}*%f '
-zstyle ':vcs_info:git:*' check-for-changes true
-zstyle ':vcs_info:git*' formats "%F{blue}%b%f %u%c"
+_git_prompt() {
+    local git_cmd=$(git status --porcelain --branch --ahead-behind --column 2>/dev/null)
+    [ "$git_cmd" ] || return 0
+
+    local branch
+    case "$git_cmd" in
+        *no\ branch*) branch=$(git describe --tags --always)    ;;
+        *)            branch=$(git rev-parse --abbrev-ref HEAD) ;;
+    esac
+
+    local output="%F{blue}$branch%f"
+    case "$git_cmd" in *M\ \ *)  output="$output %F{yellow}✗%f"  ;; esac
+    case "$git_cmd" in *\ M\ *)  output="$output %F{green}✗%f"   ;; esac
+    case "$git_cmd" in *\?\?*)   output="$output %F{blue}…%f"    ;; esac
+    case "$git_cmd" in *ahead*)  output="$output %F{green}↑%f"   ;; esac
+    case "$git_cmd" in *behind*) output="$output %F{green}↓%f"   ;; esac
+
+    echo "$output"
+}
 
 _setup_prompt() {
-  vcs_info
-
   _vim_mode='\❯'
   [ "x$KEYMAP" = "xvicmd" ] && _vim_mode='\❮'
 
@@ -75,7 +85,7 @@ _setup_prompt() {
   PS1="%B%(!.%F{red}root.%F{green}%n)@%m%f %F{blue}%~%f %F{red}%${_vim_mode}${_ssh_agent} %f%b"
 
   # Git prompt
-  RPROMPT="%B$vcs_info_msg_0_%b"
+  RPROMPT="%B$(_git_prompt)%b"
 }
 _setup_prompt
 
