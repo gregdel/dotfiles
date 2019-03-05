@@ -1,36 +1,26 @@
-################
-#   oh-my-zsh
-################
-# Path to your oh-my-zsh configuration.
-ZSH=$HOME/.oh-my-zsh
+autoload -U compinit colors vcs_info
+colors
+compinit
 
-# Disable auto updates
-DISABLE_UPDATE_PROMPT=true
-DISABLE_AUTO_UPDATE="true"
+# Completion
+# Complete aliases
+setopt COMPLETE_ALIASES
+zstyle ':completion:*' menu select
+zstyle ':completion::complete:*' gain-privileges 1
 
-# oh-my-zsh plugins
-plugins=(
-    docker
-    docker-compose
-    git-prompt
-    vi-mode
-    pass
-    taskwarrior
-)
-
-source $ZSH/oh-my-zsh.sh
-################
-# / oh-my-zsh
-################
+# Report command running time if it is more than 3 seconds
+REPORTTIME=3
+# Keep a lot of history
+HISTFILE=~/.zhistory
+HISTSIZE=5000
+SAVEHIST=5000
+# Do not keep duplicate commands in history
+setopt HIST_IGNORE_ALL_DUPS
+# Do not remember commands that start with a whitespace
+setopt HIST_IGNORE_SPACE
 
 # Bind jk keys to escape insert mode
 bindkey -M viins 'jk' vi-cmd-mode
-
-# Fix backspace on Debian
-bindkey "^?" backward-delete-char
-
-# Fix delete key on OSX
-bindkey "\e[3~" delete-char
 
 # Ctrl-R
 bindkey '^R' history-incremental-search-backward
@@ -60,13 +50,47 @@ fancy-ctrl-z () {
 zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
 
-# Import ps1 / rps1
-[ -f ~/.zshrc_ps1 ] && . ~/.zshrc_ps1
-
-# Import functions
-[ -f ~/.shell ] && . ~/.shell
-
 function reload_zsh {
     . ~/.zshrc
     rehash
 }
+
+# vcs_info
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:git*' formats "%s  %r/%S %b (%a) %m%u%c "
+zstyle ':vcs_info:*' stagedstr '%F{yellow}*%f '
+zstyle ':vcs_info:*' unstagedstr '%F{green}*%f '
+zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git*' formats "%F{blue}%b%f %u%c"
+
+_setup_prompt() {
+  vcs_info
+
+  _vim_mode='\❯'
+  [ "x$KEYMAP" = "xvicmd" ] && _vim_mode='\❮'
+
+  _ssh_agent=
+  ssh-add -L >/dev/null && _ssh_agent=❯
+
+  PS1="%B%(!.%F{red}root.%F{green}%n)@%m%f %F{blue}%~%f %F{red}%${_vim_mode}${_ssh_agent} %f%b"
+
+  # Git prompt
+  RPROMPT="%B$vcs_info_msg_0_%b"
+}
+_setup_prompt
+
+# Vi mode
+zle-keymap-select () {
+ _setup_prompt
+  zle reset-prompt
+}
+
+zle -N zle-keymap-select
+zle-line-init () {
+  zle -K viins
+}
+zle -N zle-line-init
+bindkey -v
+
+# Import functions
+[ -f ~/.shell ] && . ~/.shell
