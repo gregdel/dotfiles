@@ -22,12 +22,12 @@ hide_edge_borders both
 for_window [class="^.*"] border pixel  0
 
 # Gaps
-gaps inner 15
-gaps outer 0
+gaps inner 10
+gaps outer 1
 
 # Only use gaps if there is more than one container
-smart_gaps on
-smart_borders on
+# smart_gaps on
+# smart_borders on
 
 # start a terminal
 bindsym $mod+Shift+Return exec urxvt

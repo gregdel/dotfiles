@@ -165,7 +165,7 @@
     max_icon_size = 128
 
     # Paths to default icons.
-    icon_path = /usr/share/icons/Papirus/48x48/status/:/usr/share/icons/Papirus/48x48/devices/
+    icon_path = /usr/share/icons/Papirus/48x48/status/:/usr/share/icons/Papirus/48x48/devices/:/usr/share/icons/Papirus/48x48/categories/
 
     ### History ###
 
