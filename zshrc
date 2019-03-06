@@ -39,65 +39,65 @@ setopt append_history no_inc_append_history no_share_history
 
 # Ctrl-z to go back to vi after Ctrl-z
 fancy-ctrl-z () {
-  if [[ $#BUFFER -eq 0 ]]; then
-    BUFFER="fg"
-    zle accept-line
-  else
-    zle push-input
-    zle clear-screen
-  fi
+	if [[ $#BUFFER -eq 0 ]]; then
+		BUFFER="fg"
+		zle accept-line
+	else
+		zle push-input
+		zle clear-screen
+	fi
 }
 zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
 
 function reload_zsh {
-    . ~/.zshrc
-    rehash
+	. ~/.zshrc
+	rehash
 }
 
 _git_prompt() {
-    local git_cmd=$(git status --porcelain --branch --ahead-behind --column 2>/dev/null)
-    [ "$git_cmd" ] || return 0
+	local git_cmd=$(git status --porcelain --branch --ahead-behind --column 2>/dev/null)
+	[ "$git_cmd" ] || return 0
 
-    local branch
-    case "$git_cmd" in
-        *no\ branch*) branch=$(git describe --tags --always)    ;;
-        *)            branch=$(git rev-parse --abbrev-ref HEAD) ;;
-    esac
+	local branch
+	case "$git_cmd" in
+		*no\ branch*)	branch=$(git describe --tags --always)		;;
+		*)				branch=$(git rev-parse --abbrev-ref HEAD)	;;
+	esac
 
-    local output="%F{blue}$branch%f"
-    case "$git_cmd" in *M\ \ *)  output="$output %F{yellow}✗%f"  ;; esac
-    case "$git_cmd" in *\ M\ *)  output="$output %F{green}✗%f"   ;; esac
-    case "$git_cmd" in *\?\?*)   output="$output %F{blue}…%f"    ;; esac
-    case "$git_cmd" in *ahead*)  output="$output %F{green}↑%f"   ;; esac
-    case "$git_cmd" in *behind*) output="$output %F{green}↓%f"   ;; esac
+	local output="%F{blue}$branch%f"
+	case "$git_cmd" in *M\ \ *)  output="$output %F{yellow}✗%f"  ;; esac
+	case "$git_cmd" in *\ M\ *)  output="$output %F{green}✗%f"   ;; esac
+	case "$git_cmd" in *\?\?*)   output="$output %F{blue}…%f"    ;; esac
+	case "$git_cmd" in *ahead*)  output="$output %F{green}↑%f"   ;; esac
+	case "$git_cmd" in *behind*) output="$output %F{green}↓%f"   ;; esac
 
-    echo "$output"
+	echo "$output"
 }
 
 _setup_prompt() {
-  _vim_mode='\❯'
-  [ "x$KEYMAP" = "xvicmd" ] && _vim_mode='\❮'
+	_vim_mode='\❯'
+	[ "x$KEYMAP" = "xvicmd" ] && _vim_mode='\❮'
 
-  _ssh_agent=
-  ssh-add -L >/dev/null && _ssh_agent=❯
+	_ssh_agent=
+	ssh-add -L >/dev/null && _ssh_agent=❯
 
-  PS1="%B%(!.%F{red}root.%F{green}%n)@%m%f %F{blue}%~%f %F{red}%${_vim_mode}${_ssh_agent} %f%b"
+	PS1="%B%(!.%F{red}root.%F{green}%n)@%m%f %F{blue}%~%f %F{red}%${_vim_mode}${_ssh_agent} %f%b"
 
-  # Git prompt
-  RPROMPT="%B$(_git_prompt)%b"
+	# Git prompt
+	RPROMPT="%B$(_git_prompt)%b"
 }
 _setup_prompt
 
 # Vi mode
 zle-keymap-select () {
- _setup_prompt
-  zle reset-prompt
+	_setup_prompt
+	zle reset-prompt
 }
 
 zle -N zle-keymap-select
 zle-line-init () {
-  zle -K viins
+	zle -K viins
 }
 zle -N zle-line-init
 bindkey -v
