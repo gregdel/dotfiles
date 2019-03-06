@@ -1,13 +1,13 @@
 # Images
 #image/*; w3m -no-mouse -o auto_image=TRUE -o ext_image_viewer=0 %s
-image/*; feh --auto-zoom %s
+image/*; o %s
 image/*; img2txt -d fstein -W 100 %s ; copiousoutput;
 
 # Video
-video/quicktime; mpv %s
+video/*; o %s
 
 # PDFs
-application/pdf; zathura %s
+application/pdf; o %s
 application/pdf; pdftotext %s ; copiousoutput
 
 # Calendar invites
@@ -18,10 +18,7 @@ text/html; links -html-assume-codepage utf-8 -html-numbered-links 1 %s; nametemp
 text/html; links -html-assume-codepage utf-8 -html-numbered-links 1 -dump %s; nametemplate=%s.html; copiousoutput
 
 # Plain
-text/plain; nvim %s
-
-# Diff
-text/x-diff; nvim %s
+text/*; o %s
 
 # Office documents
 application/msword; libreoffice %s
