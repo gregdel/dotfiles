@@ -56,7 +56,7 @@ function reload_zsh {
 }
 
 _git_prompt() {
-	local git_cmd=$(git status --porcelain --branch --ahead-behind --column 2>/dev/null)
+	local git_cmd=$(git status --porcelain --branch 2>/dev/null)
 	[ "$git_cmd" ] || return 0
 
 	local branch
