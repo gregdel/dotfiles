@@ -76,16 +76,16 @@ _git_prompt() {
 }
 
 _setup_prompt() {
-	local _vim_mode='\❯'
-	[ "x$KEYMAP" = "xvicmd" ] && _vim_mode='\❮'
+	local _vim_mode='%F{red}%(!.#.❯)%f'
+	[ "x$KEYMAP" = "xvicmd" ] && _vim_mode='%(!.%F{green}#.%F{green}❮)%f'
 
 	local _ssh_agent=
-	ssh-add -L >/dev/null && _ssh_agent=❯
+	ssh-add -L >/dev/null && _ssh_agent='%F{green}•%f '
 
 	local _remote_connection=
 	[ "$SSH_CONNECTION" ] && _remote_connection='%(!.%F{red}root.%F{green}%n)@%m%f '
 
-	PS1="%B${_remote_connection}%F{blue}%~%f %F{red}%${_vim_mode}${_ssh_agent} %f%b"
+	PS1="%B${_ssh_agent}${_remote_connection}%F{blue}%~%f %F{red}${_vim_mode} %f%b"
 
 	# Git prompt
 	RPROMPT="%B$(_git_prompt)%b"
