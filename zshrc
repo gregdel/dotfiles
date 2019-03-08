@@ -67,6 +67,7 @@ _git_prompt() {
 
 	local output="%F{blue}$branch%f"
 	case "$git_cmd" in *M\ \ *)  output="$output %F{yellow}✗%f"  ;; esac
+	case "$git_cmd" in *R\ \ *)  output="$output %F{yellow}→%f"  ;; esac
 	case "$git_cmd" in *\ M\ *)  output="$output %F{green}✗%f"   ;; esac
 	case "$git_cmd" in *\?\?*)   output="$output %F{blue}…%f"    ;; esac
 	case "$git_cmd" in *ahead*)  output="$output %F{green}↑%f"   ;; esac
