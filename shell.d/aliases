@@ -1,5 +1,10 @@
 # vim: ft=sh :
 
+# cd
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
 # Tmux
 alias ta='tmux attach -t'
 
