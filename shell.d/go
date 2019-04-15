@@ -4,5 +4,6 @@
 export GOPATH=$HOME/dev/go
 export GOBIN=$HOME/dev/go/bin
 _add_path /usr/local/go/bin
+_add_path "$HOME/.local/go/bin"
 _add_path "$GOBIN"
 
