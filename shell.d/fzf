@@ -7,7 +7,7 @@ fpass() {
 		| sed "s;$path_dir/;;" \
 		| fzf --reverse --tac)
 	[ "$password" ] || return 0
-	pass -c "$password"
+	pass "$password"
 }
 
 j() {
