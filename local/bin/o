@@ -43,6 +43,9 @@ _open_file() {
 		application/pdf)
 			zathura "$@"
 			;;
+		application/vnd.tcpdump.pcap)
+			wireshark-gtk "$@"
+			;;
 		*)
 			_log "Unknown mime $mime"
 			;;
