@@ -1,6 +1,6 @@
 # vim: ft=sh :
 
-bin_version=0.17.5
+bin_version=0.18.0
 bin_url="https://github.com/junegunn/fzf-bin/releases/download/$bin_version/fzf-$bin_version-linux_amd64.tgz"
 bin_name=fzf
 bin_path="$GPKG_INSTALL_DIR/bin/$bin_name"
