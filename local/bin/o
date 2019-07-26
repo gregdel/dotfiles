@@ -51,7 +51,9 @@ _open_file() {
 
 case "$1" in
 	http*)
-		chromium "$@"
+		browser="chromium"
+		[ "$BROWSER" ] && browser=$BROWSER
+		$browser "$@"
 		;;
 	*)
 		_open_file "$@"
