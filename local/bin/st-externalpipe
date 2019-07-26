@@ -1,5 +1,6 @@
 #!/bin/sh
-tmpfile=$(mktemp /tmp/st-edit.XXXXXX)
-trap  'rm "$tmpfile"' 0 1 15
-cat > "$tmpfile"
-st -e "$EDITOR" "$tmpfile"
+set -e
+
+regex='(((http|https|ftp|gopher)|mailto)[.:][^ >"\t]*|www\.[-a-z0-9.]+)[^ .,;\t>">\):]'
+url=$(grep -Po "$regex" | tac | rofi -dmenu -p "Select URL:") || exit 0
+o "$url"
