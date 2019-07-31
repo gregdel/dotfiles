@@ -310,7 +310,7 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
 " Ultisnip
 let g:UltiSnipsEditSplit    = 'vertical'
-let g:UltiSnipsListSnippets = '<S-Tab>'
+let g:UltiSnipsExpandTrigger="<tab>"
 
 " Markdown
 let g:vim_markdown_folding_disabled = 1
