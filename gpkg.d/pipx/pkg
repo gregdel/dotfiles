@@ -1,0 +1,12 @@
+# vim: ft=sh :
+
+bin_name=pipx
+
+_gpkg_install() {
+	_gpkg_log_info "Downloading $bin_name"
+	python3 -m pip install --user "$bin_name"
+}
+
+_gpkg_uninstall() {
+	python3 -m pip uninstall --user "$bin_name"
+}

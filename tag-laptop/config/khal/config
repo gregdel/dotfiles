@@ -1,0 +1,26 @@
+[calendars]
+[[home]]
+path = ~/.calendars/23f13af1-67c0-4bb3-a678-c2ca09f6ea0b/
+priority = 20
+color = light blue
+
+[[birthdays]]
+path = ~/.calendars/anniversaires/
+priority = 20
+color = dark red
+
+[[work]]
+path = ~/.calendars/ovh/
+priority = 20
+color = light green
+
+[default]
+default_calendar = home
+highlight_event_days = True
+
+[locale]
+timeformat = %H:%M
+dateformat = %d/%m/%Y
+longdateformat = %d/%m/%Y
+datetimeformat = %d/%m/%Y %H:%M
+longdatetimeformat = %d/%m/%Y %H:%M

@@ -1,0 +1,12 @@
+# vim: ft=sh :
+
+bin_name=vdirsyncer
+
+_gpkg_install() {
+	_gpkg_log_info "Downloading $bin_name"
+	pipx install "$bin_name"
+}
+
+_gpkg_uninstall() {
+	pipx uninstall --user "$bin_name"
+}

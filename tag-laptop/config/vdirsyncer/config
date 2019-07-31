@@ -1,0 +1,38 @@
+[general]
+status_path = "~/.vdirsyncer/status/"
+
+# Contacts
+[storage contacts_local]
+type = "filesystem"
+path = "~/.contacts/"
+fileext = ".vcf"
+
+[storage contacts_remote]
+type = "carddav"
+url = "https://cloud.quimbo.fr/remote.php/dav/"
+username = "greg"
+password.fetch = ["command", "pass", "www/cloud.quimbo.fr"]
+
+[pair contacts]
+a = "contacts_local"
+b = "contacts_remote"
+collections = ["from a", "from b"]
+
+# Calendars
+[storage calendars_local]
+type = "filesystem"
+path = "~/.calendars/"
+fileext = ".ics"
+
+[storage calendars_remote]
+type = "caldav"
+url = "https://cloud.quimbo.fr/remote.php/dav/"
+username = "greg"
+password.fetch = ["command", "pass", "www/cloud.quimbo.fr"]
+
+[pair calendars]
+a = "calendars_local"
+b = "calendars_remote"
+collections = ["from a", "from b"]
+metadata = ["displayname", "color"]
+
