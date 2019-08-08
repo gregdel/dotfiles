@@ -1,0 +1,6 @@
+Log notice stderr
+DataDirectory /tmp/tor
+ControlSocket /tmp/tor/control_socket
+DNSPort 9053
+AutomapHostsOnResolve 1
+AutomapHostsSuffixes .onion

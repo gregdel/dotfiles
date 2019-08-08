@@ -2,6 +2,10 @@
 # vim: ft=sh :
 # shellcheck disable=1090
 
+_log_err() {
+	echo "$1"
+}
+
 _add_path() {
 	[ -d "$1" ] || return 0
 	export PATH="$1:$PATH"
