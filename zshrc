@@ -1,12 +1,13 @@
-autoload -U compinit colors
-colors
-compinit
+# Colors
+autoload -U colors && colors
 
 # Completion
-# Complete aliases
+autoload -U compinit
 setopt COMPLETE_ALIASES
 zstyle ':completion:*' menu select
 zstyle ':completion::complete:*' gain-privileges 1
+zmodload zsh/complist
+compinit
 
 # Report command running time if it is more than 3 seconds
 REPORTTIME=3
@@ -20,7 +21,20 @@ setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_IGNORE_SPACE
 
 # Bind jk keys to escape insert mode
+bindkey -v
 bindkey -M viins 'jk' vi-cmd-mode
+bindkey -M menuselect '^h' vi-backward-char
+
+# Use vim keys in tab complete menu:
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -v '^?' backward-delete-char
+
+# Edit line in vim with ctrl-e:
+autoload edit-command-line; zle -N edit-command-line
+bindkey '^e' edit-command-line
 
 # Ctrl-R
 bindkey '^R' history-incremental-search-backward
@@ -104,7 +118,6 @@ zle-line-init () {
 	zle -K viins
 }
 zle -N zle-line-init
-bindkey -v
 
 # Import functions
 [ -f ~/.shell ] && . ~/.shell
