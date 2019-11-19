@@ -21,7 +21,6 @@ Plug 'lilydjwg/colorizer'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
-Plug 'SirVer/ultisnips'
 
 Plug 'vim-latex/vim-latex', { 'for': 'tex' }
 Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
@@ -31,8 +30,8 @@ Plug 'brookhong/cscope.vim', { 'for': 'c' }
 Plug 'ekalinin/Dockerfile.vim', { 'for': 'Dockerfile' }
 Plug 'fatih/vim-go', { 'for': 'go' }
 Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
-Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
-Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
+Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
+Plug 'MaxMEllon/vim-jsx-pretty', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'tmhedberg/matchit', { 'for': 'javascript' }
 Plug 'tpope/vim-endwise', { 'for': ['lua', 'ruby', 'sh', 'zsh', 'vim'] }
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }

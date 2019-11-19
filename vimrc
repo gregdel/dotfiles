@@ -303,7 +303,7 @@ let g:lt_location_list_toggle_map = '<leader>w'
 " Ale
 let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '⚠'
-let g:ale_linters = {'go': ['go build', 'gofmt', 'golint', 'gosimple', 'go vet'] }
+let g:ale_linters = {'go': ['go build', 'gofmt', 'golint', 'go vet'] }
 " let g:ale_linters = {'go': ['gometalinter']}
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
