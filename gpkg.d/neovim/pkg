@@ -1,21 +1,24 @@
 # vim: ft=sh :
 
-git_url="https://github.com/neovim/neovim.git"
-git_version="v0.3.8"
+version="v0.4.3"
+bin_url="https://github.com/neovim/neovim/releases/download/$version/nvim.appimage"
+bin_path="$HOME/.local/bin/nvim"
+cache_dir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
 
 _gpkg_install() {
-	_gpkg_git_clone "$git_url" "$git_version" "$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
+	_gpkg_uninstall
 
-	(cd "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" && \
-		make \
-			CMAKE_BUILD_TYPE=Release \
-			CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$GPKG_INSTALL_DIR" \
-		&& make install
+	mkdir -p "$cache_dir"
+
+	(cd "$cache_dir" && \
+		wget "$bin_url" && \
+		chmod u+x nvim.appimage && \
+		./nvim.appimage --appimage-extract && \
+		ln -s "$(readlink -f ./squashfs-root/usr/bin/nvim)" "$bin_path"
 	)
 }
 
 _gpkg_uninstall() {
-	rm -f "$GPKG_INSTALL_DIR/bin/nvim"
-	rm -rf "$GPKG_INSTALL_DIR/share/nvim"
-	find "$GPKG_INSTALL_DIR" -iname "*nvim*" -delete
+	[ -L "$bin_path" ] && rm "$bin_path"
+	rm -rf "$cache_dir"
 }
