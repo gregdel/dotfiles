@@ -70,7 +70,7 @@ function reload_zsh {
 }
 
 _git_prompt() {
-	local git_cmd=$(git status --porcelain --branch 2>/dev/null)
+	git_cmd=$(git status --porcelain --branch 2>/dev/null)
 	[ "$git_cmd" ] || return 0
 
 	local branch
@@ -95,7 +95,7 @@ _setup_prompt() {
 	[ "x$KEYMAP" = "xvicmd" ] && _vim_mode='%(!.%F{green}#.%F{green}❮)%f'
 
 	local _ssh_agent=
-	ssh-add -L >/dev/null && _ssh_agent='%F{green}•%f '
+	ssh-add -L >/dev/null 2>/dev/null && _ssh_agent='%F{green}•%f '
 
 	local _remote_connection=
 	[ "$SSH_CONNECTION" ] && _remote_connection='%(!.%F{red}root.%F{green}%n)@%m%f '
