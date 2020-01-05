@@ -39,6 +39,8 @@ Plug 'tpope/vim-rails', { 'for': 'ruby' }
 Plug 'wannesm/wmgraphviz.vim', { 'for': 'dot' }
 Plug 'https://git.zx2c4.com/password-store', { 'rtp': 'contrib/vim/readact_pass.vim' }
 
+Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
+
 call plug#end()
 
 " Manually loading this plugin because it's not a classic plugin directory

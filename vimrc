@@ -240,8 +240,19 @@ augroup END
 " Edit vimrc
 nmap <leader>v :tabedit $MYVIMRC<CR>
 
-" Open NERTree if vim start with no file
-autocmd vimenter * if !argc() | let g:nerdtree_tabs_open_on_console_startup=1 | endif
+function! s:CustomVimEnter()
+    if exists('g:started_by_firenvim')
+        let w:airline_disabled = 1
+        set laststatus=0
+        return
+    endif
+
+    if !argc()
+        " Open NERTree if vim start with no file
+        let g:nerdtree_tabs_open_on_console_startup=1
+    endif
+endfunction
+autocmd vimenter * call s:CustomVimEnter()
 
 " Open NERDTree Tabs quick toogle
 nmap <leader>n :NERDTreeTabsToggle<CR>
@@ -351,6 +362,12 @@ let g:livepreview_previewer = 'zathura'
 " statusline
 set laststatus=2 "always visible
 set noshowmode
+
+" firenvim
+augroup firenvim
+    autocmd!
+    au BufEnter *golang.org*.txt set filetype=go
+augroup END
 
 " Source local vimrc
 if filereadable(glob("~/.vimrc.local"))
