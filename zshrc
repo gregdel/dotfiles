@@ -4,9 +4,12 @@ autoload -U colors && colors
 # Completion
 autoload -U compinit
 setopt COMPLETE_ALIASES
+setopt NO_LIST_AMBIGUOUS
 zstyle ':completion:*' menu select
 zstyle ':completion::complete:*' gain-privileges 1
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zmodload zsh/complist
+
 compinit
 
 # Report command running time if it is more than 3 seconds
