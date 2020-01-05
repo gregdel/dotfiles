@@ -28,7 +28,7 @@ Plug 'vivien/vim-linux-coding-style', { 'for': 'c' }
 Plug 'chazy/cscope_maps', { 'for': 'c' }
 Plug 'brookhong/cscope.vim', { 'for': 'c' }
 Plug 'ekalinin/Dockerfile.vim', { 'for': 'Dockerfile' }
-Plug 'fatih/vim-go', { 'for': 'go' }
+Plug 'fatih/vim-go', { 'for': ['go', 'gomod'] }
 Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
 Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'MaxMEllon/vim-jsx-pretty', { 'for': ['javascript', 'javascript.jsx'] }
