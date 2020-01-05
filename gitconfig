@@ -47,7 +47,7 @@
 [push]
     default = tracking
 [core]
-    editor = vim
+    editor = nvim
 [sendemail]
     from = Grégoire Delattre <greg@quimbo.fr>
     smtpuser =
