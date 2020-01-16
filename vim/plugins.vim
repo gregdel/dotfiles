@@ -1,7 +1,7 @@
 call plug#begin('~/.vim/plugged')
 
 " Plugins
-Plug 'drewtempelmeyer/palenight.vim'
+Plug 'fatih/molokai'
 Plug 'Raimondi/delimitMate'
 Plug 'godlygeek/tabular'
 Plug 'scrooloose/nerdtree'

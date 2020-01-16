@@ -7,16 +7,8 @@ if !has("nvim")
 
     " colors
     if $TERM == "xterm-256color" || $TERM == "screen-256color"
-            set t_Co=256
+        set t_Co=256
     endif
-endif
-
-if (has("nvim"))
-  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-endif
-
-if (has("termguicolors"))
-  set termguicolors
 endif
 
 " Load plugins
@@ -29,9 +21,7 @@ set mouse=
 
 filetype plugin indent on
 syntax on
-set background=dark
-colorscheme palenight
-let g:palenight_terminal_italics=1
+colorscheme molokai
 
 " Backspace
 set backspace=indent,eol,start
@@ -109,6 +99,14 @@ match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 " Highlight trailing spaces
 highlight ExtraWhitespace term=reverse ctermbg=12
 au BufNewFile,BufRead * :match ExtraWhitespace /\s\+$/
+
+" Spelling colors
+hi clear SpellBad
+hi SpellBad cterm=italic,bold,underline ctermfg=208
+hi clear SpellCap
+hi SpellCap cterm=italic ctermfg=208
+hi clear SpellRare
+hi SpellRare ctermfg=200
 
 " Show all kinds of stuff
 set ruler           " Show the cursor position
@@ -330,7 +328,7 @@ let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_override_foldtext = 0
 
 " Airline
-let g:airline_theme='palenight'
+let g:airline_theme='badwolf'
 let g:airline_powerline_fonts=1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_close_button = 0
