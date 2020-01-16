@@ -1,6 +1,6 @@
 #!/bin/sh
 
-bluetooth_id=$(rfkill list bluetooth --noheadings --output ID)
+bluetooth_id=$(rfkill list bluetooth --noheadings --output ID | sed 's/ //')
 state_file="/sys/class/rfkill/rfkill$bluetooth_id/state"
 
 devices="

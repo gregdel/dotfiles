@@ -10,10 +10,15 @@ if [ -f "$DOCK_DEVICE" ]; then
 		--output VIRTUAL1 --off
 
 	i3-msg restart
+	sleep 5
+
 	systemctl --user stop compton.service
 	systemctl --user restart polybar-external.service
 	systemctl --user restart polybar.service
 	systemctl --user restart wallpaper.service
+
+	~/.xinitrc
+
 	notify-send -i display "Monitor" "External monitor connected"
 else
 	xrandr \
