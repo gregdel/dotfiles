@@ -10,7 +10,7 @@ _gpkg_install() {
 
 	(cd "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" && \
 		./configure \
-		--bdb \
+		--tokyocabinet \
 		--disable-doc \
 		--sasl \
 		--quiet \
