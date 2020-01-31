@@ -103,7 +103,10 @@ _setup_prompt() {
 	local _remote_connection=
 	[ "$SSH_CONNECTION" ] && _remote_connection='%(!.%F{red}root.%F{green}%n)@%m%f '
 
-	PS1="%B${_ssh_agent}${_remote_connection}%F{blue}%~%f %F{red}${_vim_mode} %f%b"
+	local _bg_jobs=
+	[ "$(jobs | wc -l)" != "0" ] && _bg_jobs='%F{yellow}%f '
+
+	PS1="%B${_ssh_agent}${_remote_connection}%F{blue}%~%f ${_bg_jobs}%F{red}${_vim_mode} %f%b"
 
 	# Git prompt
 	RPROMPT="%B$(_git_prompt)%b"
