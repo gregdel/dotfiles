@@ -1,0 +1,23 @@
+snippet pmain "main package"
+	package main
+
+	import (
+		"fmt"
+		"os"
+	)
+
+	func main() {
+		if err := run(); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	}
+
+	func run() error {
+	    ${0}
+
+	    return nil
+	}
+
+snippet pp "pretty print"
+	pretty.Println(${0:string})
