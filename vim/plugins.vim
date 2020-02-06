@@ -27,6 +27,8 @@ Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'garbas/vim-snipmate'
 
+Plug 'pearofducks/ansible-vim', { 'for': ['yaml.ansible', 'ansible_hosts'] }
+Plug 'nfnty/vim-nftables', { 'for': 'nftables' }
 Plug 'vim-latex/vim-latex', { 'for': 'tex' }
 Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
 Plug 'vivien/vim-linux-coding-style', { 'for': 'c' }
