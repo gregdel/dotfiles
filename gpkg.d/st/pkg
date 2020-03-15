@@ -1,15 +1,7 @@
 # vim: ft=sh :
 
 git_url=https://git.suckless.org/st
-git_version=0.8.1
-
-patches="
-	$GPKG_PKG_DIR/$GPKG_PKG_NAME/patches/st-anysize-0.8.1.diff
-	$GPKG_PKG_DIR/$GPKG_PKG_NAME/patches/st-externalpipe-0.8.1.diff
-	$GPKG_PKG_DIR/$GPKG_PKG_NAME/patches/st-scrollback-0.8.diff
-	$GPKG_PKG_DIR/$GPKG_PKG_NAME/patches/st-scrollback-mouse-0.8.diff
-	$GPKG_PKG_DIR/$GPKG_PKG_NAME/patches/st-scrollback-mouse-altscreen-0.8.diff
-"
+git_version=51e19ea
 
 _gpkg_install() {
 	_gpkg_git_clone "$git_url" "$git_version" "$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
@@ -18,9 +10,9 @@ _gpkg_install() {
 	cp "$GPKG_PKG_DIR/$GPKG_PKG_NAME/config.h" "$GPKG_BUILD_DIR/$GPKG_PKG_NAME/config.h"
 
 	_gpkg_log_info "Appling patches"
-	for p in $patches; do
+	for p in "$GPKG_PKG_DIR/$GPKG_PKG_NAME/patches/"*; do
 		_gpkg_log_info "Appling $p"
-		patch -d "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" -p1 < "$p"
+		git -C "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" apply --ignore-whitespace "$p"
 	done
 
 	_gpkg_log_info "Building st"
