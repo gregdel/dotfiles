@@ -2,12 +2,19 @@
 
 FONT_DIRECTORY=$HOME/.local/share/fonts
 
-FONT_VERSION="2.0.0"
+FONT_VERSION="2.1.0"
 FONTS_URL="https://raw.githubusercontent.com/ryanoasis/nerd-fonts/$FONT_VERSION/patched-fonts"
 FONTS="
 	DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete%20Mono.ttf
 	Inconsolata/complete/Inconsolata%20Nerd%20Font%20Complete.otf
 "
+
+EMOJI_FONT_VERSION=12.0.1
+EMOJI_FONT_NAME="TwitterColorEmoji-SVGinOT-Linux-$EMOJI_FONT_VERSION.tar.gz"
+EMOJI_FONT_BASE_URL="https://github.com/eosrei/twemoji-color-font/releases/download/v$EMOJI_FONT_VERSION"
+EMOJI_FONT_URL="$EMOJI_FONT_BASE_URL/$EMOJI_FONT_NAME"
+EMOJI_FONT_NAME="TwitterColorEmoji-SVGinOT.ttf"
+EMOJI_FONT_PATH="TwitterColorEmoji-SVGinOT-Linux-$EMOJI_FONT_VERSION/TwitterColorEmoji-SVGinOT.ttf"
 
 _gpkg_install() {
 	if [ -d "$FONT_DIRECTORY" ]; then
@@ -16,7 +23,10 @@ _gpkg_install() {
 	fi
 
 	mkdir -p "$FONT_DIRECTORY"
-	cd "$FONT_DIRECTORY"
+	cd "$FONT_DIRECTORY" || return
+
+	_gpkg_log_info "Downloading emoji font"
+	curl -SsL "$EMOJI_FONT_URL" | tar xvzO "$EMOJI_FONT_PATH" > "$FONT_DIRECTORY/$EMOJI_FONT_NAME"
 
 	_gpkg_log_info "Downloading fonts"
 	for font in $FONTS; do
