@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+url_file="$HOME/.urls"
+
+selection="$(rofi -dmenu < "$url_file")"
+[ "$selection" ] || exit 1
+
+url=${selection##* }
+o "$url"
