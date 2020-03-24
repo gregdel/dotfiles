@@ -116,7 +116,7 @@ bindsym $mod+Shift+0 move container to workspace $ws10
 bindsym $mod+o move workspace to output right
 
 # w000t
-bindsym Mod1+w exec /home/greg/.local/bin/w000t.sh
+bindsym Mod1+w exec w000t
 
 # rofi
 bindsym Mod1+r exec rofi -show run

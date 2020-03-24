@@ -1,0 +1,55 @@
+#!/bin/sh
+
+set -e
+
+TOKEN=$(cat "$HOME"/.local/etc/w000t/token)
+ICON_PATH="$HOME/pictures/stuff/w000t.jpg"
+
+_send_notification() {
+	notify-send \
+		--expire-time 5000 \
+		--app-name w000t \
+		--icon "$ICON_PATH" \
+		"w000t" "$1"
+}
+
+[ -z "$TOKEN" ] && {
+	_send_notification "Failed to read w000t token"
+	exit 1
+}
+
+selection=$(xclip -o)
+query_data=$(jq -n -c \
+	--arg long_url "$selection" \
+	--arg token "$TOKEN" \
+	'{
+		w000t: {
+			long_url: $long_url,
+		},
+		token: $token,
+	}'
+)
+
+result=$(curl \
+	--silent \
+	--show-error \
+	--max-time 10 \
+	-H "Content-Type: application/json" \
+	-d "$query_data" \
+	https://w000t.me/w000ts.text)
+
+
+if [ -n "$result" ]; then
+	content_type=$(curl \
+		--max-time 10 \
+		--head \
+		--show-error \
+		--silent \
+		--location \
+		"$result" | grep -i 'Content-Type:' | tail -n 1)
+	echo "$result" | xclip -i
+	_send_notification "$result \n$content_type"
+else
+	_send_notification "Failed to get the w000t :("
+	exit 1
+fi
