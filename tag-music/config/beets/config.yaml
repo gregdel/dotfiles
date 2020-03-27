@@ -9,6 +9,7 @@ plugins:
   - mpdupdate
   - duplicates
   - edit
+  - smartplaylist
 
 import:
   move: yes
@@ -16,6 +17,13 @@ import:
 fetchart:
   auto: yes
   sources: amazon filesystem coverart albumart
+
+smartplaylist:
+  relative_to: ~/music/
+  playlist_dir: ~/music/playlists/
+  playlists:
+    - name: new.m3u
+      query: 'added:2020'
 
 embedart:
   auto: yes
