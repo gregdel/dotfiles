@@ -5,8 +5,8 @@ FONT_DIRECTORY=$HOME/.local/share/fonts
 FONT_VERSION="2.1.0"
 FONTS_URL="https://raw.githubusercontent.com/ryanoasis/nerd-fonts/$FONT_VERSION/patched-fonts"
 FONTS="
-	DejaVuSansMono/Regular/complete/DejaVu%20Sans%20Mono%20Nerd%20Font%20Complete%20Mono.ttf
-	Inconsolata/complete/Inconsolata%20Nerd%20Font%20Complete.otf
+	FiraCode/Retina/complete/Fira%20Code%20Retina%20Nerd%20Font%20Complete%20Mono.otf
+	FiraCode/Retina/complete/Fira%20Code%20Retina%20Nerd%20Font%20Complete.otf
 "
 
 EMOJI_FONT_VERSION=12.0.1

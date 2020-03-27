@@ -44,7 +44,7 @@ padding-right = 1
 module-margin-left = 2
 module-margin-right = 1
 
-font-0 = Inconsolata Nerd Font:size=20:antialias=true;0
+font-0 = FiraCode Nerd Font:size=17:antialias=true;0
 
 modules-left = i3
 modules-center =
