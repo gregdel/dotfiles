@@ -142,7 +142,7 @@ label-disconnected-foreground = ${colors.foreground-alt}
 
 [module/ovh]
 type = custom/script
-exec = pgrep -x vpnc
+exec = pgrep -x openconnect
 interval = 10
 label =  OVH
 format-underline = ${colors.primary}
@@ -194,7 +194,7 @@ format-charging = <animation-charging> <label-charging>
 format-charging-underline = ${colors.ok}
 label-charging = %percentage%% %time%
 
-format-full-prefix = ""
+format-full-prefix = " "
 format-full-prefix-foreground = ${colors.ok}
 format-full-underline = ${self.format-charging-underline}
 
@@ -202,18 +202,18 @@ format-discharging = <ramp-capacity> <label-discharging>
 format-discharging-underline = ${colors.primary}
 label-discharging = %percentage%% %time%
 
-ramp-capacity-0 = 
-ramp-capacity-1 = 
-ramp-capacity-2 = 
-ramp-capacity-3 = 
-ramp-capacity-4 = 
+ramp-capacity-0 = " "
+ramp-capacity-1 = " "
+ramp-capacity-2 = " "
+ramp-capacity-3 = " "
+ramp-capacity-4 = " "
 ramp-capacity-foreground = ${colors.foreground}
 
-animation-charging-0 = 
-animation-charging-1 = 
-animation-charging-2 = 
-animation-charging-3 = 
-animation-charging-4 = 
+animation-charging-0 = " "
+animation-charging-1 = " "
+animation-charging-2 = " "
+animation-charging-3 = " "
+animation-charging-4 = " "
 animation-charging-foreground = ${colors.foreground-alt}
 animation-charging-framerate = 1500
 

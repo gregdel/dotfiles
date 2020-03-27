@@ -1,6 +1,7 @@
 #!/bin/sh
 
 export XDG_CONFIG_HOME=$HOME/.config
+export XDG_CONFIG_DIR=$XDG_CONFIG_HOME
 
 FONTDIR="$HOME/.local/share/fonts"
 RESOURCES="$HOME/.Xresources"

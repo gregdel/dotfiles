@@ -125,6 +125,7 @@ bindsym Mod1+m exec ~/.local/bin/man-rofi
 bindsym Mod1+p exec ~/.local/bin/rofi-pass --open
 bindsym Mod1+Tab exec rofi -show window
 bindsym Mod1+u exec urls-rofi
+bindsym Mod1+Shift+u exec st -e $EDITOR ~/.urls
 
 # window resizing
 bindsym Mod1+h resize shrink width 10 px or 10ppt
