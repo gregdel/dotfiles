@@ -1,0 +1,80 @@
+{
+    "layer": "top",
+    "height": 25,
+    "format-time": "{H}h{m}",
+    "modules-left": ["sway/workspaces", "sway/mode", "custom/media"],
+    "modules-center": [],
+    "modules-right": ["custom/ovh", "custom/bluetooth", "custom/syncthing", "pulseaudio", "backlight", "network", "battery", "clock"],
+    "sway/workspaces": {
+        "disable-scroll": true
+    },
+    "sway/mode": {
+        "format": "<span style=\"italic\">{}</span>"
+    },
+    "clock": {
+        "format": "{:%H:%M %d/%m/%Y}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+    "backlight": {
+        "format": "{percent}% {icon}",
+        "format-icons": ["", "", ""],
+        "on-scroll-up": "light -A 5",
+        "on-scroll-down": "light -U 5"
+    },
+    "battery": {
+        "interval": 30,
+        "states": {
+            "full": 100,
+            "good": 98,
+            "warning": 20,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}% {time}",
+        "format-full": "{icon} {capacity}%",
+        "format-time": "{H}h{M}",
+        "format-icons": [" ", " ", " ", " ", " "]
+    },
+    "network": {
+        "interval": 10,
+        "interface": "wlp58s0",
+        "format-wifi": " {essid} ({signalStrength}%)",
+        "format-disconnected": "Disconnected ⚠"
+    },
+    "custom/syncthing": {
+        "interval": 5,
+        "max-length": 3,
+        "format": "{}",
+        "exec": "~/.config/polybar/syncthing.sh status; true",
+        "on-click-right": "~/.config/polybar/syncthing.sh open",
+        "on-click": "~/.config/polybar/syncthing.sh toggle"
+    },
+    "custom/bluetooth": {
+        "interval": 10,
+        "max-length": 3,
+        "format": "{}",
+        "exec": "bluetooth-helper polybar"
+    },
+    "custom/ovh": {
+        "interval": 10,
+        "format": " OVH",
+        "exec": "pgrep -x openconnect"
+    },
+    "pulseaudio": {
+        "format": "{volume}% {icon} {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    }
+}

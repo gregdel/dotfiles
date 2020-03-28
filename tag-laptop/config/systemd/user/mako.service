@@ -1,0 +1,10 @@
+[Unit]
+Description=Lightweight Wayland notification daemon
+Documentation=man:mako(1)
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.Notifications
+ExecCondition=/bin/sh -c '[ -n "$WAYLAND_DISPLAY" ]'
+ExecStart=/usr/sbin/mako
+ExecReload=/usr/sbin/makoctl reload

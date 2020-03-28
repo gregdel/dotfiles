@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 _help() {
 	echo "$0 [start|stop|status|toggle]"
@@ -16,7 +17,7 @@ _status() {
 }
 
 _open() {
-	xdg-open http://localhost:8384
+	o http://localhost:8384
 }
 
 _start() {

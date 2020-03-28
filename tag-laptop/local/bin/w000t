@@ -4,6 +4,13 @@ set -e
 
 TOKEN=$(cat "$HOME"/.local/etc/w000t/token)
 ICON_PATH="$HOME/pictures/stuff/w000t.jpg"
+SELECTION=
+
+if [ "$WAYLAND_DISPLAY" ]; then
+	SELECTION="$(wl-paste --primary)"
+else
+	SELECTION="$(xclip -o)"
+fi
 
 _send_notification() {
 	notify-send \
@@ -18,9 +25,8 @@ _send_notification() {
 	exit 1
 }
 
-selection=$(xclip -o)
 query_data=$(jq -n -c \
-	--arg long_url "$selection" \
+	--arg long_url "$SELECTION" \
 	--arg token "$TOKEN" \
 	'{
 		w000t: {

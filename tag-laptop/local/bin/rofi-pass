@@ -2,6 +2,22 @@
 
 PASSDIR="$HOME/.password-store/"
 
+_clipboard() {
+	if [ "$WAYLAND_DISPLAY" ]; then
+		wl-copy --paste-once --trim-newline
+	else
+		xclip -i
+	fi
+}
+
+_rofi() {
+	if [ "$WAYLAND_DISPLAY" ]; then
+		wofi --dmenu "$@"
+	else
+		rofi -dmenu "$@"
+	fi
+}
+
 list_pass() {
 	find "$PASSDIR" -type f -name '*.gpg' \
 		| sed 's/.gpg//' \
@@ -9,18 +25,7 @@ list_pass() {
 		| sort
 }
 
-get_url() {
-	pass show "$1" \
-		| grep -i url \
-		| awk '{ print $2 }'
-}
-
-selected=$(list_pass | rofi -p " " -dmenu)
+selected=$(list_pass | _rofi -p " ")
 [ "$selected" ] || exit 0
 
-pass -c "$selected"
-
-[ "$1" = "--open" ] && {
-	url=$(get_url "$selected")
-	[ "$url" ] && xdg-open "$url"
-}
+pass "$selected" | head -n 1 | _clipboard

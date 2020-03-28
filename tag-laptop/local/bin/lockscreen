@@ -43,7 +43,7 @@ _set() {
 	notify-send -i blueman-laptop "Lock screen updated"
 }
 
-_lock() {
+_lock_i3() {
 	i3lock \
 		--tiling \
 		--ignore-empty-password \
@@ -83,6 +83,43 @@ _lock() {
 		--force-clock
 }
 
+_lock_sway() {
+	swaylock \
+		--ignore-empty-password \
+		--show-failed-attempts \
+		--daemonize \
+		--image "$LOCK_IMAGE" \
+		--scaling "fill" \
+		--font "$font" \
+		--inside-color "$insidecolor" \
+		--ring-color "$ringcolor" \
+		--line-uses-inside \
+		--key-hl-color "$keyhlcolor" \
+		--bs-hl-color "$bshlcolor" \
+		--separator-color "$separatorcolor" \
+		--inside-ver-color "$insidevercolor" \
+		--inside-wrong-color "$insidewrongcolor" \
+		--ring-ver-color "$ringvercolor" \
+		--ring-wrong-color "$ringwrongcolor" \
+		--indicator-radius 20 \
+		--indicator-x-position "60" \
+		--indicator-y-position "850" \
+		--indicator-thickness "4" \
+		--text-ver-color "$verifcolor"
+}
+
+_lock() {
+	if [ "$SYSTEMD_LOCK" = "1" ]; then
+		SWAYLOCK="$(find /run/user/1000/ -name "sway-ipc*.sock" -type s 2>/dev/null || true)"
+		export SWAYLOCK
+	fi
+	if [ "$WAYLAND_DISPLAY" ]; then
+		_lock_sway
+	else
+		_lock_i3
+	fi
+}
+
 _install() {
 	cat <<-EOF | sudo tee "$UNIT_FILE"
 	[Unit]
@@ -92,7 +129,10 @@ _install() {
 	[Service]
 	User=%I
 	Type=forking
+	Environment=SYSTEMD_LOCK=1
 	Environment=DISPLAY=:0
+	Environment=WAYLAND_DISPLAY=wayland-0
+	Environment=XDG_RUNTIME_DIR=/run/user/1000
 	ExecStart=/home/%I/.local/bin/lockscreen lock
 
 	[Install]

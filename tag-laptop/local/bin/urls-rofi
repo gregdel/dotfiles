@@ -1,9 +1,17 @@
 #!/bin/sh
 set -e
 
+_rofi() {
+	if [ "$WAYLAND_DISPLAY" ]; then
+		wofi --dmenu
+	else
+		rofi -dmenu
+	fi
+}
+
 url_file="$HOME/.urls"
 
-selection="$(rofi -dmenu < "$url_file")"
+selection="$(_rofi < "$url_file")"
 [ "$selection" ] || exit 1
 
 url=${selection##* }

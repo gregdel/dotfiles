@@ -23,13 +23,21 @@ _open_file() {
 	mime=$(file --brief --mime-type "$file_path")
 	case "$mime" in
 		image/gif)
-			sxiv -a "$@"
+			if [ "$WAYLAND_DISPLAY" ]; then
+				imv "$@"
+			else
+				sxiv -a "$@"
+			fi
 			;;
 		image/svg)
 			gthumb "$@"
 			;;
 		image/*)
-			sxiv "$@"
+			if [ "$WAYLAND_DISPLAY" ]; then
+				imv "$@"
+			else
+				sxiv "$@"
+			fi
 			;;
 		audio/*)
 			mpv "$@"
@@ -54,7 +62,7 @@ _open_file() {
 
 case "$1" in
 	http*)
-		browser="chromium"
+		browser="firefox"
 		[ "$BROWSER" ] && browser=$BROWSER
 		$browser "$@"
 		;;

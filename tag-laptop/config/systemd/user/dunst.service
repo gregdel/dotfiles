@@ -5,5 +5,6 @@ Documentation=man:dunst(1)
 [Service]
 Restart=on-abnormal
 Type=dbus
+ExecCondition=/bin/sh -c '[ -z "$WAYLAND_DISPLAY" ]'
 BusName=org.freedesktop.Notifications
 ExecStart=/usr/bin/dunst

@@ -1,0 +1,9 @@
+style=.config/wofi/style.css
+matching=fuzzy
+insensitive=true
+term=termite
+allow_images=true
+allow_markup=true
+hide_scroll=true
+key_up=Control_L-k
+key_down=Control_L-j

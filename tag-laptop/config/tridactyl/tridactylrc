@@ -1,0 +1,29 @@
+guiset_quiet statuspanel right
+
+" Reset conf before loading
+sanitise tridactyllocal tridactylsync
+
+" General Settings
+set storageloc local
+set theme dark
+set editorcmd st -e nvim
+set smoothscroll true
+set yankto both
+set allowautofocus false
+set putfrom selection
+
+" Binds
+bind / fillcmdline find
+bind ? fillcmdline find -?
+bind n findnext 1
+bind N findnext -1
+bind ,<Space> nohlsearch
+bind ,s source ~/.config/tridactyl/tridactylrc
+
+bindurl giphy.com f hint -Jci a > img
+
+bindurl www.google.com f hint -Jc .rc > .r > a
+bindurl www.google.com F hint -Jbc .rc>.r>a
+
+fixamo_quiet
+" vim: set filetype=tridactyl
