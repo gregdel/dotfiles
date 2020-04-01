@@ -64,6 +64,10 @@ case "$1" in
 	http*)
 		browser="firefox"
 		[ "$BROWSER" ] && browser=$BROWSER
+		if [ "$WAYLAND_DISPLAY" ]; then
+			con_id=$(swaymsg -t get_tree | jq -r "..|try select(.app_id == \"$browser\").id")
+			swaymsg "[con_id=$con_id]" focus
+		fi
 		$browser "$@"
 		;;
 	*)
