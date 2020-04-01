@@ -1,19 +1,21 @@
+// vim: ft=json
 {
     "layer": "top",
-    "height": 25,
+    "height": 30,
     "format-time": "{H}h{m}",
     "modules-left": ["sway/workspaces", "sway/mode", "custom/media"],
-    "modules-center": [],
-    "modules-right": ["custom/ovh", "custom/bluetooth", "custom/syncthing", "pulseaudio", "backlight", "network", "battery", "clock"],
+    "modules-center": ["clock"],
+    "modules-right": ["custom/ovh", "custom/bluetooth", "custom/syncthing", "pulseaudio", "backlight", "network", "battery"],
     "sway/workspaces": {
-        "disable-scroll": true
+        "disable-scroll": true,
+        "format": "{name}"
     },
     "sway/mode": {
         "format": "<span style=\"italic\">{}</span>"
     },
     "clock": {
-        "format": "{:%H:%M %d/%m/%Y}",
-        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+        "format": "{:%a %d %b - %H:%M}",
+        "tooltip": false
     },
     "backlight": {
         "format": "{percent}% {icon}",

@@ -75,6 +75,16 @@
     background: #191919;
 }
 
+#clock {
+    font-weight: bold;
+}
+
+#clock tooltip {
+    border: 2px solid #EBEBEB;
+    border-color: #EBEBEB;
+    background: #191919;
+}
+
 #network.disconnected {
     color: #B03131;
 }
@@ -93,6 +103,8 @@
 }
 
 #workspaces button.urgent {
+    color: #B03131;
+    border: 3px solid red;
     background-color: #B03131;
 }
 
