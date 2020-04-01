@@ -15,19 +15,13 @@ client.background       #3F3F3F
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
-# Hide borders on the edges
-hide_edge_borders both
-
-# Borders
+# No borders by default
 default_border none
+default_floating_border none
 
 # Gaps
 gaps inner 10
 gaps outer 1
-
-# Only use gaps if there is more than one container
-# smart_gaps on
-# smart_borders on
 
 # start a terminal
 bindsym $mod+Return exec termite
@@ -141,21 +135,15 @@ bindsym XF86AudioPlay exec mpc toggle
 bindsym XF86AudioPrev exec mpc next
 bindsym XF86AudioNext exec mpc prev
 
+# Toggle the laptop screen
+# bindsym XF86Search exec swaymsg output eDP-1 toggle
+
 # screen brightness controls
 bindsym XF86MonBrightnessUp exec light -A 5
 bindsym XF86MonBrightnessDown exec light -U 5
 
 # windows specific configurations
-for_window [class="urxvt"] border none
-for_window [class="mpv"] floating enable border none
-
-# dropdown terminal
-for_window [instance="dropdown"] floating enable
-for_window [instance="dropdown"] resize set 50 ppt 50 ppt
-for_window [instance="dropdown"] border pixel 5
-for_window [instance="dropdown"] move scratchpad
-# exec --no-startup-id st -n dropdown
-bindsym $mod+u [instance="dropdown"] scratchpad show; [instance="dropdown"] move position center
+for_window [app_id="mpv"] floating enable
 
 # Gaps control
 set $mode_gaps Gaps: (o) outer, (i) inner
@@ -197,10 +185,7 @@ mode "$mode_gaps_outer" {
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
-# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
-bindsym $mod+Shift+r restart
-# exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit sway?' -b 'Yep !' 'swaymsg exit'
 
 # Always running
 set $gnome-schema org.gnome.desktop.interface
