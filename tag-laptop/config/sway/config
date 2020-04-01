@@ -5,7 +5,7 @@ set $mod Mod4
 font pango:Monospace 9
 
 # class                 border  backgr. text    indicator child_border
-client.focused          #5294e2 #22242D #F0DFAF #5294e2   #5294e2
+client.focused          #b58900 #b58900 #eee8d5 #b58900   #b58900
 client.focused_inactive #3F3F3F #383C4A #D3DAE3 #484e50   #5f676a
 client.unfocused        #3F3F3F #383C4A #D3DAE3 #484e50   #5f676a
 client.urgent           #CC9393 #CC9393 #ffffff #CC9393   #CC9393
@@ -115,10 +115,11 @@ bindsym Mod1+w exec w000t
 bindsym Ctrl+Space exec makoctl dismiss
 
 # wofi
-bindsym Mod1+r exec wofi --show run
-bindsym Mod1+m exec ~/.local/bin/man-rofi
-bindsym Mod1+p exec ~/.local/bin/rofi-pass --open
-bindsym Mod1+u exec urls-rofi
+for_window [title="gofi"] floating enable; border pixel 2
+bindsym Mod1+r exec gofi termite binaries
+bindsym Mod1+m exec gofi termite man
+bindsym Mod1+p exec gofi termite pass
+bindsym Mod1+u exec gofi termite urls
 bindsym Mod1+Shift+u exec termite -e "nvim /home/greg/.urls"
 
 # window resizing

@@ -1,0 +1,74 @@
+#!/bin/sh
+
+GOFI_MODE=${GOFI_MODE:-sway}
+
+_run() {
+	selection=$(_fzf </dev/stdin)
+	[ "$selection" ] || return 0
+	case "$GOFI_MODE" in
+		sway)     swaymsg exec "$@" "$selection" ;;
+		exec)     exec "$@" "$selection"         ;;
+		exec-raw) exec "$@" $selection           ;;
+		echo)     echo "$selection"              ;;
+	esac
+}
+
+_fzf() {
+	fzf \
+		--reverse \
+		--color "dark,hl:33,hl+:37,fg+:235,bg+:136,fg+:254" \
+		--color "info:254,prompt:37,spinner:108,pointer:235,marker:235"
+}
+
+_pass() {
+	export GOFI_MODE=exec
+	path_dir=$HOME/.password-store
+	find "$path_dir" \
+		-type f \
+		-name '*.gpg' \
+		| sed "s/.gpg//" \
+		| sed "s;$path_dir/;;" \
+		| _run pass -c
+}
+
+_urls() {
+	export GOFI_MODE=echo
+	selection="$(_run < "$HOME/.urls")"
+	url=${selection##* }
+	[ "$url" ] && o "$url"
+}
+
+_man() {
+	export GOFI_MODE=exec-raw
+	man -k . \
+		| sed 's/^\([^ ]*\) (\(.\)).*/\2 \1/' \
+		| grep -E '^[0-9]+' \
+		| sort -n \
+		| _run man
+}
+
+_binaries() {
+	find \
+		$(echo "$PATH" | sed 's/:/ /g') \
+		-printf "%f\n" \
+		-type f \
+		-type l \
+		| sort -u \
+		| _run
+}
+
+_termite() {
+	mode=$1
+	termite \
+		--title "gofi" \
+		--exec "/bin/zsh -c 'GOFI_MODE=sway gofi $mode'"
+}
+
+case "$1" in
+	binaries) _binaries     ;;
+	man)      _man          ;;
+	pass)     _pass         ;;
+	urls)     _urls         ;;
+	termite)  _termite "$2" ;;
+	*)        _run "$@"     ;;
+esac
