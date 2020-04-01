@@ -1,15 +1,23 @@
 # vim: ft=sh :
 
-bin_version=0.18.0
+bin_version=0.21.0
 bin_url="https://github.com/junegunn/fzf-bin/releases/download/$bin_version/fzf-$bin_version-linux_amd64.tgz"
 bin_name=fzf
 bin_path="$GPKG_INSTALL_DIR/bin/$bin_name"
 
+man_file="fzf.1"
+man_dir="$HOME/.local/share/man/man1/"
+man_path="$man_dir/$man_file"
+man_url="https://raw.githubusercontent.com/junegunn/fzf/$bin_version/man/man1/fzf.1"
+
 _gpkg_install() {
 	_gpkg_log_info "Downloading $bin_name version $bin_version"
 	curl -L "$bin_url" | tar xzv -C "$GPKG_INSTALL_DIR/bin" "$bin_name"
+	[ -d "$man_dir" ] && mkdir -p "$man_dir"
+	curl -L "$man_url" > "$man_path"
 }
 
 _gpkg_uninstall() {
 	rm "$bin_path"
+	rm "$man_path"
 }
