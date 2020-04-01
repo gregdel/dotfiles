@@ -1,7 +1,6 @@
 call plug#begin('~/.vim/plugged')
 
 " Plugins
-Plug 'fatih/molokai'
 Plug 'Raimondi/delimitMate'
 Plug 'godlygeek/tabular'
 Plug 'scrooloose/nerdtree'
@@ -21,6 +20,8 @@ Plug 'lilydjwg/colorizer'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
+" Plug 'altercation/vim-colors-solarized'
+Plug 'lifepillar/vim-solarized8'
 
 " Snippets
 Plug 'MarcWeber/vim-addon-mw-utils'
@@ -45,6 +46,7 @@ Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-rails', { 'for': 'ruby' }
 Plug 'wannesm/wmgraphviz.vim', { 'for': 'dot' }
 Plug 'https://git.zx2c4.com/password-store', { 'rtp': 'contrib/vim/readact_pass.vim' }
+Plug 'https://github.com/tridactyl/vim-tridactyl', { 'for': 'tridactyl' }
 
 call plug#end()
 

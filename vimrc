@@ -1,3 +1,4 @@
+" TODO: check the latest default in vim 8
 if !has("nvim")
     " Make vim more capable
     set nocompatible
@@ -9,6 +10,42 @@ if !has("nvim")
     if $TERM == "xterm-256color" || $TERM == "screen-256color"
         set t_Co=256
     endif
+
+    " Show all kinds of stuff
+    set ruler           " Show the cursor position
+    set shortmess=atI   " Don’t show the intro message when starting Vim
+    set showmode        " Show the current mode
+    set showcmd         " Show the (partial) command as it’s being typed
+    set lazyredraw      " redraw only when we need to
+
+    " statusline
+    set laststatus=2 "always visible
+    set noshowmode
+
+    " History
+    set history=1000    " much more history than base
+    set undolevels=1000 " much more undo
+
+    " No mouse
+    set mouse=
+
+    " Menu completion
+    set wildmenu
+
+    " Backspace
+    set backspace=indent,eol,start
+
+    " Format options no automatic wraping, gq wrap to 80
+    set textwidth=0
+    set formatoptions=cq
+    set wrapmargin=0
+    set wrap
+
+    " Highlight search while typing
+    set hlsearch
+
+    " Don’t add empty newlines at the end of files
+    set noeol
 endif
 
 " Load plugins
@@ -16,15 +53,11 @@ if filereadable(expand("~/.vim/plugins.vim"))
     source ~/.vim/plugins.vim
 endif
 
-" No mouse
-set mouse=
-
 filetype plugin indent on
-syntax on
-colorscheme molokai
-
-" Backspace
-set backspace=indent,eol,start
+syntax enable
+set background=dark
+set termguicolors
+colorscheme solarized8
 
 " Change mapleader
 let mapleader=","
@@ -32,10 +65,6 @@ let mapleader=","
 " Easy qwerty
 nnoremap ; :
 vnoremap ; :
-
-" History
-set history=1000    " much more history than base
-set undolevels=1000 " much more undo
 
 " Backups, swap and undo files
 set backup                                      " Enable backups
@@ -57,9 +86,6 @@ endif
 " Don't try to highlight lines longer than 800 characters.
 set synmaxcol=800
 
-" Command completion
-set wildmenu
-
 " Indentation
 set expandtab       "Tabs to spaces
 set smarttab
@@ -76,9 +102,6 @@ set wrap
 
 " Q => gq
 map Q gq
-
-" Menu completion
-set wildmenu
 
 " Scrolloff
 set scrolloff=5
@@ -100,29 +123,12 @@ match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 highlight ExtraWhitespace term=reverse ctermbg=12
 au BufNewFile,BufRead * :match ExtraWhitespace /\s\+$/
 
-" Spelling colors
-hi clear SpellBad
-hi SpellBad cterm=italic,bold,underline ctermfg=208
-hi clear SpellCap
-hi SpellCap cterm=italic ctermfg=208
-hi clear SpellRare
-hi SpellRare ctermfg=200
-
-" Show all kinds of stuff
-set ruler           " Show the cursor position
-set shortmess=atI   " Don’t show the intro message when starting Vim
-set showmode        " Show the current mode
-set title           " Show the filename in the window titlebar
-set showcmd         " Show the (partial) command as it’s being typed
-set lazyredraw      " redraw only when we need to
+" Show the filename in the window titlebar
+set title
 
 " Search
 set ignorecase      " Ignore case of searches
 set smartcase       " Search with case only if needed
-set hlsearch        " Highlight search while typing
-
-" Don’t add empty newlines at the end of files
-set noeol
 
 " jk or kj to quit insert mode
 imap jk <Esc>
@@ -192,19 +198,6 @@ if has('nvim')
     tnoremap <Esc> <C-\><C-n>
 endif
 
-
-" autocmd filetype group
-augroup filetype_set
-    " Clear the autocmd
-    autocmd!
-    " Vagrantfile
-    autocmd BufRead,BufNewFile Vagrantfile set filetype=ruby
-    " JSON
-    autocmd BufRead,BufNewFile *.json set filetype=json syntax=javascript
-    " C header files
-    autocmd BufRead,BufNewFile *.h set filetype=c
-augroup END
-
 " autocmd paste mode
 augroup paste_helper
     " Clear the autocmd
@@ -221,11 +214,9 @@ augroup vim_help
     au BufWinEnter *.txt if &ft == 'help' | wincmd L | endif
 augroup END
 
-" autocmd config group
+" Delete spaces at the end of the lines on save
 augroup config
-    " Clear the autocmd
     autocmd!
-    " Delete spaces at the end of the lines on save
     autocmd BufWrite * %s/\s\+$//ge
 augroup END
 
@@ -239,12 +230,6 @@ augroup END
 nmap <leader>v :tabedit $MYVIMRC<CR>
 
 function! s:CustomVimEnter()
-    if exists('g:started_by_firenvim')
-        let w:airline_disabled = 1
-        set laststatus=0
-        return
-    endif
-
     if !argc()
         " Open NERTree if vim start with no file
         let g:nerdtree_tabs_open_on_console_startup=1
@@ -278,21 +263,6 @@ let g:NERDTreeDirArrows=0
 let g:NERDTreeShowBookmarks=1
 let g:NERDTreeShowHidden=1
 
-" Syntastic
-let g:syntastic_check_on_wq=0
-let g:syntastic_error_symbol='✗'
-let g:syntastic_warning_symbol='⚠'
-let g:syntastic_enable_perl_checker = 1
-let g:syntastic_ruby_checkers = ['mri', 'rubocop']
-let g:syntastic_ruby_rubocop_args = "-R"
-let g:syntastic_go_checkers = ['go', 'gofmt', 'golint' , 'govet']
-let g:syntastic_lua_checkers = ["luac", "luacheck"]
-let g:syntastic_lua_luacheck_args = "--no-unused-args"
-let g:syntastic_javascript_eslint_exe='$(npm bin)/eslint'
-let g:syntastic_javascript_checkers = ["eslint"]
-let g:syntastic_always_populate_loc_list = 1
-noremap <leader>e :Errors<CR>
-
 " Go vim - :help go-settings
 let g:go_fmt_command = "goimports"
 let g:go_play_open_browser = 0
@@ -307,10 +277,6 @@ let g:go_template_autocreate = 1
 " Delimate
 let delimitMate_expand_cr = 2
 
-" ListToggle
-let g:lt_quickfix_list_toggle_map = '<leader>q'
-let g:lt_location_list_toggle_map = '<leader>w'
-
 " Ale
 let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '⚠'
@@ -319,16 +285,14 @@ let g:ale_linters = {'go': ['go build', 'gofmt', 'golint', 'go vet'] }
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
-" Ultisnip
-let g:UltiSnipsEditSplit    = 'vertical'
-let g:UltiSnipsExpandTrigger="<tab>"
-
 " Markdown
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_override_foldtext = 0
 
 " Airline
-let g:airline_theme='badwolf'
+let g:airline_solarized_bg='dark'
+let g:airline_theme='solarized'
+" let g:airline_theme='solarized_flood'
 let g:airline_powerline_fonts=1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_close_button = 0
@@ -356,16 +320,6 @@ let g:jsx_ext_required = 0 " Allow JSX in normal JS files
 
 " vim-latex-live-preview
 let g:livepreview_previewer = 'zathura'
-
-" statusline
-set laststatus=2 "always visible
-set noshowmode
-
-" firenvim
-augroup firenvim
-    autocmd!
-    au BufEnter *golang.org*.txt set filetype=go
-augroup END
 
 " Source local vimrc
 if filereadable(glob("~/.vimrc.local"))
