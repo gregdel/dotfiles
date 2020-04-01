@@ -53,6 +53,9 @@ if filereadable(expand("~/.vim/plugins.vim"))
     source ~/.vim/plugins.vim
 endif
 
+if $TERM == "tmux-256color"
+    let g:solarized_termtrans = 1
+endif
 filetype plugin indent on
 syntax enable
 set background=dark
