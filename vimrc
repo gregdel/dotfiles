@@ -53,14 +53,11 @@ if filereadable(expand("~/.vim/plugins.vim"))
     source ~/.vim/plugins.vim
 endif
 
-if $TERM == "tmux-256color"
-    let g:solarized_termtrans = 1
-endif
 filetype plugin indent on
 syntax enable
 set background=dark
-set termguicolors
-colorscheme solarized8
+let g:molokai_original = 1
+colorscheme molokai
 
 " Change mapleader
 let mapleader=","
@@ -293,9 +290,7 @@ let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_override_foldtext = 0
 
 " Airline
-let g:airline_solarized_bg='dark'
-let g:airline_theme='solarized'
-" let g:airline_theme='solarized_flood'
+let g:airline_theme='badwolf'
 let g:airline_powerline_fonts=1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_close_button = 0

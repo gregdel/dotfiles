@@ -1,6 +1,7 @@
 call plug#begin('~/.vim/plugged')
 
 " Plugins
+Plug 'fatih/molokai'
 Plug 'Raimondi/delimitMate'
 Plug 'godlygeek/tabular'
 Plug 'scrooloose/nerdtree'
@@ -20,8 +21,6 @@ Plug 'lilydjwg/colorizer'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
-" Plug 'altercation/vim-colors-solarized'
-Plug 'lifepillar/vim-solarized8'
 
 " Snippets
 Plug 'MarcWeber/vim-addon-mw-utils'
