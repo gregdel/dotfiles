@@ -56,7 +56,6 @@ endif
 filetype plugin indent on
 syntax enable
 set background=dark
-let g:molokai_original = 1
 colorscheme molokai
 
 " Change mapleader
@@ -278,6 +277,8 @@ let g:go_template_autocreate = 1
 let delimitMate_expand_cr = 2
 
 " Ale
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '⚠'
 let g:ale_linters = {
 \   'go': ['go build', 'gofmt', 'golint', 'go vet'],
 \   'js': ['eslint'],
