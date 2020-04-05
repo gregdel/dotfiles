@@ -1,5 +1,3 @@
-.DS_Store
-*~
 vim/.netrwhist
 vim/init.vim
 vim/files/*
@@ -9,4 +7,5 @@ vim/spell/*.spl
 vim/spell/*.sug
 tag-mutt/mutt/cache/*
 tag-mutt/mutt/tmp/*
-tmux/*
+tmux/plugins/*
+!tmux/plugins/tpm
