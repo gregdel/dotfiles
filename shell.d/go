@@ -1,6 +1,6 @@
 # vim: ft=sh :
+_check_command go || return
 
-# Go
 export GOPATH=$HOME/dev/go
 export GOBIN=$HOME/dev/go/bin
 _add_path /usr/local/go/bin

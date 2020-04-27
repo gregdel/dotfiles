@@ -11,6 +11,10 @@ _add_path() {
 	export PATH="$1:$PATH"
 }
 
+_check_command() {
+    command -v "$1" >/dev/null 2>/dev/null
+}
+
 # Add sbin to the user path
 _add_path /usr/sbin
 _add_path "$HOME/.local/bin"
