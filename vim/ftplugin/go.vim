@@ -16,3 +16,6 @@ noremap <leader>f :call go#textobj#Function('i')<CR>zf
 
 " Go dock in a vertical split
 nmap K <Plug>(go-doc-vertical)
+
+" ALE
+let b:ale_linters = ['go build', 'gofmt', 'golint', 'go vet']
