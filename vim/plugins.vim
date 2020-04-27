@@ -27,6 +27,7 @@ Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'garbas/vim-snipmate'
 
+Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'pearofducks/ansible-vim', { 'for': ['yaml.ansible', 'ansible_hosts'] }
 Plug 'nfnty/vim-nftables', { 'for': 'nftables' }
 Plug 'vim-latex/vim-latex', { 'for': 'tex' }
