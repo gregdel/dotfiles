@@ -78,8 +78,9 @@ _git_prompt() {
 
 	local branch
 	case "$git_cmd" in
-		*no\ branch*)	branch=$(git describe --tags --always)		;;
-		*)				branch=$(git rev-parse --abbrev-ref HEAD)	;;
+		*No\ commits\ yet*) branch="[no commits yet]"                   ;;
+		*no\ branch*)       branch=$(git describe --tags --always)      ;;
+		*)                  branch=$(git rev-parse --abbrev-ref HEAD)   ;;
 	esac
 
 	local output="%F{blue}$branch%f"
