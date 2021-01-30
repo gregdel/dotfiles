@@ -35,3 +35,12 @@ alias mutt='cd $HOME/downloads && neomutt -n'
 mcd() {
 	mkdir -p "$1" && cd "$1" || return;
 }
+
+compress-image() {
+	convert \
+		-strip \
+		-interlace Plane \
+		-gaussian-blur 0.05 \
+		-quality 85% \
+		"$1" "$2"
+}
