@@ -49,9 +49,6 @@
 [core]
     editor = nvim
 [sendemail]
-    from = Grégoire Delattre <greg@quimbo.fr>
-    smtpuser =
     smtpserver = "/usr/bin/msmtp"
-    smtpencryption = tls
-    chainreplyto = false
     confirm = auto
+    annotate = yes
