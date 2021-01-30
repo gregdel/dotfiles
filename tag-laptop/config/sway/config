@@ -15,16 +15,18 @@ client.background       #3F3F3F
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
-# No borders by default
-default_border none
-default_floating_border none
+# Borders
+smart_borders on
+default_border pixel 2
+default_floating_border pixel 2
 
 # Gaps
+smart_gaps on
 gaps inner 10
 gaps outer 1
 
 # start a terminal
-bindsym $mod+Return exec termite
+bindsym $mod+Return exec alacritty
 
 # kill focused window
 bindsym $mod+q kill
@@ -115,12 +117,12 @@ bindsym Mod1+w exec w000t
 bindsym Ctrl+Space exec makoctl dismiss
 
 # wofi
-for_window [title="gofi"] floating enable; border pixel 2
-bindsym Mod1+r exec gofi termite binaries
-bindsym Mod1+m exec gofi termite man
-bindsym Mod1+p exec gofi termite pass
-bindsym Mod1+u exec gofi termite urls
-bindsym Mod1+Shift+u exec termite -e "nvim /home/greg/.urls"
+for_window [title="^gofi$"] floating enable; border pixel 2
+bindsym Mod1+r exec gofi window binaries
+bindsym Mod1+m exec gofi window man
+bindsym Mod1+p exec gofi window pass
+bindsym Mod1+u exec gofi window urls
+bindsym Mod1+Shift+u exec gofi window edit ~/.urls
 
 # window resizing
 bindsym Mod1+h resize shrink width 10 px or 10ppt
@@ -137,7 +139,7 @@ bindsym XF86AudioPrev exec mpc next
 bindsym XF86AudioNext exec mpc prev
 
 # Toggle the laptop screen
-# bindsym XF86Search exec swaymsg output eDP-1 toggle
+bindsym XF86Search exec external_screen.sh
 
 # screen brightness controls
 bindsym XF86MonBrightnessUp exec light -A 5
@@ -145,6 +147,8 @@ bindsym XF86MonBrightnessDown exec light -U 5
 
 # windows specific configurations
 for_window [app_id="mpv"] floating enable
+for_window [app_id="firefox"] [title="^Extension:.+"] floating enable
+no_focus [class="com-eteks-sweethome3d-SweetHome3D" instance="sun-awt-X11-XWindowPeer"]
 
 # Gaps control
 set $mode_gaps Gaps: (o) outer, (i) inner
@@ -221,10 +225,9 @@ input "1739:30383:DLL075B:01_06CB:76AF_Touchpad" {
 
 output "eDP-1" {
     scale 2
-    scale_filter linear
-    bg /home/greg/.cache/wallpaper/wallpaper fill
+    bg /home/greg/.cache/wallpaper/wallpaper-laptop.jpg fill
 }
 
 output "DP-1" {
-    bg /home/greg/.cache/wallpaper/wallpaper fill
+    bg /home/greg/.cache/wallpaper/wallpaper-other.jpg fill
 }

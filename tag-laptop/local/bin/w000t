@@ -7,10 +7,20 @@ ICON_PATH="$HOME/pictures/stuff/w000t.jpg"
 SELECTION=
 
 if [ "$WAYLAND_DISPLAY" ]; then
-	SELECTION="$(wl-paste --primary)"
+	SELECTION="$(wl-paste)"
+	# TODO check this shit
+	# SELECTION="$(wl-paste --primary)"
 else
 	SELECTION="$(xclip -o)"
 fi
+
+_set_clipboard() {
+	if [ "$WAYLAND_DISPLAY" ]; then
+		wl-copy --primary "$1"
+	else
+		echo "$1" | xclip -i
+	fi
+}
 
 _send_notification() {
 	notify-send \
@@ -53,7 +63,7 @@ if [ -n "$result" ]; then
 		--silent \
 		--location \
 		"$result" | grep -i 'Content-Type:' | tail -n 1)
-	echo "$result" | xclip -i
+	_set_clipboard "$result"
 	_send_notification "$result \n$content_type"
 else
 	_send_notification "Failed to get the w000t :("

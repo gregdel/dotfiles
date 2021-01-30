@@ -1,14 +1,16 @@
 #!/bin/sh
-
 GOFI_MODE=${GOFI_MODE:-sway}
 
 _run() {
 	selection=$(_fzf </dev/stdin)
-	[ "$selection" ] || return 0
+	[ "$selection" ] || return 1
+
 	case "$GOFI_MODE" in
-		sway)     swaymsg exec "$@" "$selection" ;;
+		sway)     swaymsg exec "$* $selection"   ;;
 		exec)     exec "$@" "$selection"         ;;
-		exec-raw) exec "$@" $selection           ;;
+		exec-raw)
+		          # shellcheck disable=SC2086
+		          exec "$@" $selection           ;;
 		echo)     echo "$selection"              ;;
 	esac
 }
@@ -16,19 +18,24 @@ _run() {
 _fzf() {
 	fzf \
 		--reverse \
-		--color "dark,hl:33,hl+:37,fg+:235,bg+:136,fg+:254" \
-		--color "info:254,prompt:37,spinner:108,pointer:235,marker:235"
+		--color fg:252,bg:233,hl:67,fg+:252,bg+:235,hl+:81 \
+		--color info:144,prompt:161,spinner:135,pointer:135,marker:118
 }
 
 _pass() {
-	export GOFI_MODE=exec
+	export GOFI_MODE=echo
 	path_dir=$HOME/.password-store
-	find "$path_dir" \
+	selected=$(find "$path_dir" \
 		-type f \
 		-name '*.gpg' \
 		| sed "s/.gpg//" \
 		| sed "s;$path_dir/;;" \
-		| _run pass -c
+		| _run
+	)
+	[ "$selected" ] || return
+	pass "$selected" \
+		| head -n 1 \
+		| wl-copy --trim-newline --paste-once --foreground
 }
 
 _urls() {
@@ -48,6 +55,7 @@ _man() {
 }
 
 _binaries() {
+	# shellcheck disable=SC2046
 	find \
 		$(echo "$PATH" | sed 's/:/ /g') \
 		-printf "%f\n" \
@@ -57,11 +65,27 @@ _binaries() {
 		| _run
 }
 
-_termite() {
+_edit() {
+	shift
+	"$EDITOR" "$@"
+}
+
+_window() {
+	shift
 	mode=$1
-	termite \
+	shift
+	alacritty \
 		--title "gofi" \
-		--exec "/bin/zsh -c 'GOFI_MODE=sway gofi $mode'"
+		--command gofi "$mode" "$*"
+}
+
+_usage() {
+	echo "gofi [window] binaries - launch a program"
+	echo "gofi [window] man      - search through man pages"
+	echo "gofi [window] pass     - search and copy pass from password store"
+	echo "gofi [window] edit     - edit a file"
+	echo "gofi [window] url      - search and open URLs stored in $HOME/.urls"
+	exit 1
 }
 
 case "$1" in
@@ -69,6 +93,7 @@ case "$1" in
 	man)      _man          ;;
 	pass)     _pass         ;;
 	urls)     _urls         ;;
-	termite)  _termite "$2" ;;
-	*)        _run "$@"     ;;
+	edit)     _edit "$@"    ;;
+	window)   _window "$@"  ;;
+	*)        _usage        ;;
 esac

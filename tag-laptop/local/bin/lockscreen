@@ -106,6 +106,9 @@ _lock_sway() {
 		--indicator-y-position "850" \
 		--indicator-thickness "4" \
 		--text-ver-color "$verifcolor"
+
+	# TODO: find a better solution
+	systemctl --user restart mako
 }
 
 _lock() {

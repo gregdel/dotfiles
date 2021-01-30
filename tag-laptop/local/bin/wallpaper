@@ -26,27 +26,45 @@ _choose() {
 	_set "$chosen"
 }
 
+_set_x_wallpaper() {
+	[ "$WAYLAND_DISPLAY" ] && return 0
+	systemctl --user restart wallpaper
+}
+
+_set_wayland_wallpaper() {
+	[ -z "$WAYLAND_DISPLAY" ] && return 0
+
+	blur=10
+	bar_size=30
+
+	# Resize the wallpaper and add blur (laptop dimensions)
+	convert "$current_wallpaper" \
+		-gravity center -resize 3200x1800^ -extent 3200x1800 \
+		+gravity -region "3200x$(( bar_size * 2 ))+0+0" -gaussian-blur "${blur}x${blur}" \
+		"$current_wallpaper_dir/wallpaper-laptop.jpg"
+
+	# Resize the wallpaper and add blur for other screens
+	convert "$current_wallpaper" \
+		-gravity center -resize 1920x1080^ -extent 1920x1080 \
+		+gravity -region 1920x30+0+0 -gaussian-blur "${blur}x${blur}"  \
+		"$current_wallpaper_dir/wallpaper-other.jpg"
+
+	swaymsg output "*" bg "$current_wallpaper_dir/wallpaper-other.jpg" fill
+	swaymsg output "eDP-1" bg "$current_wallpaper_dir/wallpaper-laptop.jpg" fill
+}
+
 _set() {
 	[ -d "$current_wallpaper_dir" ] || mkdir -p "$current_wallpaper_dir"
-	[ -f "$1" ] || _log_err "Invalid wallaper file $1"
+	[ -f "$1" ] || _log_err "Invalid wallpaper file $1"
 	location=$(readlink -f "$1")
 	ln -sf "$location" "$current_wallpaper"
-	if [ "$WAYLAND_DISPLAY" ]; then
-		swaymsg output "*" bg "$current_wallpaper" fill
-	else
-		systemctl --user restart wallpaper
-	fi
+	_set_x_wallpaper
+	_set_wayland_wallpaper
 	notify-send -i blueman-laptop "Wallpaper updated"
 }
 
 case "$1" in
-	choose)
-		_choose
-		;;
-	set)
-		_set "$2"
-		;;
-	*)
-		_usage
-		;;
+	choose) _choose   ;;
+	set)    _set "$2" ;;
+	*)      _usage    ;;
 esac
