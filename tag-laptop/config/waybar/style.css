@@ -25,7 +25,7 @@
 }
 
 #waybar {
-    background: rgba(0, 43, 54, 0.8);
+    background: rgba(0, 0, 0, 0.5);
     color: #eee8d5;
     font-family: FiraCode Nerd Font;
     font-size: 13px;
@@ -87,21 +87,22 @@
     color: #eee8d5;
     padding-top: 2px;
     border-bottom: 2px solid transparent;
+    background-color: transparent;
     padding-left: 10px;
     padding-right: 10px;
 }
 
 #workspaces button.focused {
-    border-color: #eee8d5;
-    background-color: rgba(0, 43, 54, 0.5);
+    border-color: #eeeeec;
+    background-color: rgba(238, 238, 222, 0.1);
 }
 
 #workspaces button.urgent {
-    color: #B03131;
-    border-color: #B03131;
+    color: #dc322f;
+    border-color: #dc322f;
 }
 
 #custom-ovh {
-    padding-top: 2px;
-    border-bottom: 2px solid #B03131;
+    padding-top: 3px;
+    border-bottom: 3px solid #dc322f;
 }
