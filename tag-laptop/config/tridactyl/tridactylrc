@@ -1,16 +1,18 @@
-guiset_quiet statuspanel right
-
 " Reset conf before loading
 sanitise tridactyllocal tridactylsync
 
+" Home page
+set homepages ["https://google.com"]
+set newtab about:blank
+
 " General Settings
-set storageloc local
+" set storageloc local
 set theme dark
-set editorcmd st -e nvim
+set editorcmd alacritty --title gofi --command zsh -c "nvim %f"
 set smoothscroll true
 set yankto both
 set allowautofocus false
-set putfrom selection
+" set putfrom selection
 
 " Binds
 bind / fillcmdline find
@@ -18,12 +20,16 @@ bind ? fillcmdline find -?
 bind n findnext 1
 bind N findnext -1
 bind ,<Space> nohlsearch
-bind ,s source ~/.config/tridactyl/tridactylrc
+bind ,s source
 
 bindurl giphy.com f hint -Jci a > img
 
-bindurl www.google.com f hint -Jc .rc > .r > a
-bindurl www.google.com F hint -Jbc .rc>.r>a
+" guiset_quiet statuspanel right
+
+blacklistadd app.slack.com
+blacklistadd web.webex.com
+blacklistadd web.whatsapp.com
+blacklistadd mail.google.com/mail
 
 fixamo_quiet
-" vim: set filetype=tridactyl
+" vim: set ft=tridactyl
