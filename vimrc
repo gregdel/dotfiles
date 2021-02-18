@@ -299,6 +299,9 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_lint_on_insert_leave = 0
 let g:ale_fix_on_save = 1
 
+nmap <silent> <leader>aj :ALENext<cr>
+nmap <silent> <leader>ak :ALEPrevious<cr>
+
 " Markdown
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_override_foldtext = 0
