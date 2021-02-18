@@ -333,6 +333,9 @@ let g:jsx_ext_required = 0 " Allow JSX in normal JS files
 " vim-latex-live-preview
 let g:livepreview_previewer = 'zathura'
 
+" SnipMate
+let g:snipMate = { 'snippet_version' : 1 }
+
 " Source local vimrc
 if filereadable(glob("~/.vimrc.local"))
     source ~/.vimrc.local
