@@ -32,6 +32,9 @@ alias sysu='systemctl --user'
 # mutt
 alias mutt='cd $HOME/downloads && neomutt -n'
 
+# taskwarrior
+alias t='task'
+
 mcd() {
 	mkdir -p "$1" && cd "$1" || return;
 }
