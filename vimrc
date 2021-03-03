@@ -170,7 +170,7 @@ nnoremap <leader>r :redraw! <CR>
 nmap <leader>l :set list!<CR>
 
 " Shortcut for :Ggrep
-nmap <leader>g :Ggrep
+nnoremap <leader>g :Ggrep<Space>
 cnoremap grep Ggrep
 
 " Toggle spell lang
