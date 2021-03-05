@@ -9,8 +9,8 @@ set completion-ignore-case on
 set editing-mode vi
 set bell-style none
 $if mode=vi
-    set keymap vi-insert       #notice how the "jj" movement is
-    "jk": vi-movement-mode     #after 'set keymap vi-insert'?
+    set keymap vi-insert
+    "jk": vi-movement-mode
 $endif
 
 # Source me :)
