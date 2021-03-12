@@ -31,11 +31,6 @@ _gpkg_log_error() {
 }
 
 _gpkg_make() {
-	export DESTDIR=$GPKG_INSTALL_DIR
-	if [ "$GPKG_BUILD_LOCAL" = 0 ]; then
-		unset DESTDIR
-	fi
-
 	if [ "$1" = "install" ] && [ "$GPKG_BUILD_LOCAL" = 0 ]; then
 		sudo make -C "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" "$@"
 	else
@@ -44,7 +39,7 @@ _gpkg_make() {
 }
 
 _gpkg_configure() {
-	cd "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" && ./configure --prefix "$HOME/.local"
+	cd "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" && ./configure --prefix "$HOME/.local" "$@"
 }
 
 _gpkg_git_clone() {
@@ -105,7 +100,7 @@ case "$cmd" in
 		. "$GPKG_PKG_DIR/$GPKG_PKG_NAME/pkg"
 
 		_gpkg_log_info "${cmd}ing $GPKG_PKG_NAME"
-		[ "$cmd" = "install" ] && _gpkg_install
+		[ "$cmd" = "install" ]   && _gpkg_install
 		[ "$cmd" = "uninstall" ] && _gpkg_uninstall
 		;;
 	list)

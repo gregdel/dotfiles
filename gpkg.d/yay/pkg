@@ -7,7 +7,7 @@ _gpkg_install() {
 	_gpkg_log_info "Cloning yay PKGBUILD from the AUR..."
 	git clone "$url" "$tmp_dir"
 	_gpkg_log_info "Installing yay..."
-	(cd $tmp_dir && makepkg -si)
+	(cd "$tmp_dir" && makepkg -si)
 	rm -rf "$tmp_dir"
 }
 

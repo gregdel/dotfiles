@@ -9,12 +9,12 @@ _gpkg_install() {
 	buildir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
 	mkdir -p "$buildir"
 	curl -LSs "$url" | tar -C "$buildir" -xz --strip-components=1
-	cd "$buildir" || return
-	./configure --prefix="$HOME/.local" && \
-	make && \
-	make install
+
+	_gpkg_configure
+	_gpkg_make
+	_gpkg_make install
 }
 
 _gpkg_uninstall() {
-	cd "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" && make uninstall
+	_gpkg_make uninstall
 }
