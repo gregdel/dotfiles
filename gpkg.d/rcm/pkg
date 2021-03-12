@@ -1,0 +1,20 @@
+# vim: ft=sh :
+
+version=1.3.4
+filename="rcm-$version"
+url="https://thoughtbot.github.io/rcm/dist/$filename.tar.gz"
+
+_gpkg_install() {
+	_gpkg_log_info "Downloading rcm.."
+	buildir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
+	mkdir -p "$buildir"
+	curl -LSs "$url" | tar -C "$buildir" -xz --strip-components=1
+	cd "$buildir" || return
+	./configure --prefix="$HOME/.local" && \
+	make && \
+	make install
+}
+
+_gpkg_uninstall() {
+	cd "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" && make uninstall
+}

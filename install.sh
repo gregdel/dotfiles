@@ -1,30 +1,15 @@
-#!/bin/bash
+#!/bin/sh
+set -e
 
-function install_rcm()
-{
-    version=1.3.0
-    curl -LO https://thoughtbot.github.io/rcm/dist/rcm-"$version".tar.gz && \
+export RCRC="$HOME/.dotfiles/rcrc"
+export PATH="$HOME/.local/bin:$PATH"
 
-    tar -xvf rcm-"$version".tar.gz && \
-    cd rcm-"$version" && \
-
-    ./configure --prefix="$HOME"/.local && \
-    make && \
-    make install && \
-
-    cd .. && \
-    rm -rf rcm-"$version"*
+_install() {
+	GPKG_PKG_DIR="$(pwd)/gpkg.d" ./local/bin/gpkg install rcm
 }
 
-function initial_setup()
-{
-    env RCRC="$HOME/.dotfiles/rcrc" PATH="$HOME/.local/bin:$PATH" rcup -f -v
-    exec bash
-}
+type rcup >/dev/null 2>/dev/null || _install
 
-# Install rcm if needed
-if ! type rcup 2>/dev/null; then
-    install_rcm
-fi
+rcup -f
 
-initial_setup
+[ "$SHELL" = "/bin/zsh" ] && reload_zsh

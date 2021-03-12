@@ -52,4 +52,6 @@ call plug#end()
 
 " Manually loading this plugin because it's not a classic plugin directory
 " structure
-source $HOME/.vim/plugged/password-store/contrib/vim/redact_pass.vim
+if isdirectory($HOME.'/.vim/plugged/password-store')
+    source $HOME/.vim/plugged/password-store/contrib/vim/redact_pass.vim
+endif

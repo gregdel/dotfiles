@@ -2,9 +2,9 @@
 
 set -e
 
-export GPKG_INSTALL_DIR=$HOME/.local
+export GPKG_INSTALL_DIR="$HOME/.local"
 export GPKG_BUILD_DIR=$HOME/.cache/gpkg
-export GPKG_PKG_DIR="$HOME/.gpkg.d"
+export GPKG_PKG_DIR=${GPKG_PKG_DIR:-"$HOME/.gpkg.d"}
 export GPKG_BUILD_LOCAL=1
 export GPKG_PKG_NAME=
 
@@ -41,6 +41,10 @@ _gpkg_make() {
 	else
 		make -C "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" "$@"
 	fi
+}
+
+_gpkg_configure() {
+	cd "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" && ./configure --prefix "$HOME/.local"
 }
 
 _gpkg_git_clone() {
