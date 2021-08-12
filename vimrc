@@ -322,10 +322,10 @@ function! AirlineInit()
 endfunction
 autocmd User AirlineAfterInit call AirlineInit()
 
-" CtrlP
-nmap <leader>b :CtrlPBuffer<CR>
-nmap <leader>m :CtrlPMRUFiles<CR>
-let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
+" fzf
+nnoremap <silent> <leader>b :Buffers<CR>
+nnoremap <silent> <leader>m :History<CR>
+nnoremap <silent> <C-p> :Files<CR>
 
 " Start interactive EasyAlign in visual mode
 vmap <Enter> :Tabularize /
