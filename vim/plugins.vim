@@ -43,6 +43,7 @@ Plug 'tmhedberg/matchit', { 'for': 'javascript' }
 Plug 'tpope/vim-endwise', { 'for': ['lua', 'ruby', 'sh', 'zsh', 'vim'] }
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-rails', { 'for': 'ruby' }
+Plug 'ziglang/zig.vim', { 'for': 'zig' }
 Plug 'wannesm/wmgraphviz.vim', { 'for': 'dot' }
 Plug 'https://git.zx2c4.com/password-store', { 'rtp': 'contrib/vim/readact_pass.vim' }
 Plug 'https://github.com/tridactyl/vim-tridactyl', { 'for': 'tridactyl' }
