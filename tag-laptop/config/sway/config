@@ -124,6 +124,10 @@ bindsym Mod1+p exec gofi window pass
 bindsym Mod1+u exec gofi window urls
 bindsym Mod1+Shift+u exec gofi window edit ~/.urls
 
+# scratchpad
+for_window [app_id="^scratchpad$"] floating enable; border pixel 2
+bindsym Mod1+y exec scratchpad
+
 # window resizing
 bindsym Mod1+h resize shrink width 10 px or 10ppt
 bindsym Mod1+k resize shrink height 10 px or 10ppt
@@ -135,8 +139,8 @@ bindsym XF86AudioRaiseVolume exec pamixer --unmute --increase 5
 bindsym XF86AudioLowerVolume exec pamixer --unmute --decrease 5
 bindsym XF86AudioMute exec pamixer --toggle-mute
 bindsym XF86AudioPlay exec mpc toggle
-bindsym XF86AudioPrev exec mpc next
-bindsym XF86AudioNext exec mpc prev
+bindsym XF86AudioPrev exec mpc prev
+bindsym XF86AudioNext exec mpc next
 
 # Toggle the laptop screen
 bindsym XF86Search exec external_screen.sh
@@ -216,10 +220,12 @@ input type:keyboard {
 }
 
 input "1739:30383:DLL075B:01_06CB:76AF_Touchpad" {
+    dwt enabled
     click_method clickfinger
     middle_emulation enabled
     pointer_accel 0.2
     scroll_method two_finger
+    tap_button_map lrm
     tap enabled
 }
 
@@ -229,5 +235,6 @@ output "eDP-1" {
 }
 
 output "DP-1" {
+    scale 1
     bg /home/greg/.cache/wallpaper/wallpaper-other.jpg fill
 }
