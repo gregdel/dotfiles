@@ -32,6 +32,7 @@
 }
 
 /* Each module */
+#mpd,
 #battery,
 #custom-syncthing,
 #custom-ovh,
@@ -50,14 +51,23 @@
 /*      Modules settings       */
 /* --------------------------- */
 
+#mpd.playing {
+    border-bottom: 2px solid #FFEAC9;
+}
+
 #battery {
     animation-timing-function: linear;
     animation-iteration-count: infinite;
     animation-direction: alternate;
 }
 
-#battery.full {
-    background-color: #859900;
+#battery.almost-full.charging,
+#battery.full.charging {
+    border-bottom: 2px solid #66DE93;
+}
+
+#battery.charging {
+    border-bottom: 2px solid #FFEAC9;
 }
 
 #battery.warning.discharging {
@@ -105,4 +115,14 @@
 #custom-ovh {
     padding-top: 3px;
     border-bottom: 3px solid #dc322f;
+}
+
+tooltip {
+    font-size: 16px;
+    background-color: rgba(10, 10, 10, 0.9);
+    border: 1px solid rgba(196, 160, 0, 0.5);
+    border-radius: 5px;
+}
+tooltip label {
+    color: #d0d0d0;
 }

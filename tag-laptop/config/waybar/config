@@ -1,11 +1,10 @@
-// vim: ft=json
 {
     "layer": "top",
     "height": 30,
     "format-time": "{H}h{m}",
     "modules-left": ["sway/workspaces", "sway/mode", "custom/media"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/ovh", "custom/bluetooth", "custom/syncthing", "pulseaudio", "backlight", "network", "battery"],
+    "modules-right": ["custom/ovh", "mpd", "custom/bluetooth", "custom/syncthing", "pulseaudio", "backlight", "network", "battery"],
     "sway/workspaces": {
         "disable-scroll": true,
         "format": "{name}"
@@ -27,11 +26,13 @@
         "interval": 30,
         "states": {
             "full": 100,
-            "good": 98,
+            "almost-full": 98,
+            "good": 80,
             "warning": 20,
             "critical": 15
         },
-        "format": "{icon} {capacity}% {time}",
+        "format-charging": "{icon} {capacity}% {time} ",
+        "format-discharging": "{icon} {capacity}% {time}",
         "format-full": "{icon} {capacity}%",
         "format-time": "{H}h{M}",
         "format-icons": [" ", " ", " ", " ", " "]
@@ -40,7 +41,9 @@
         "interval": 10,
         "interface": "wlp58s0",
         "format-wifi": " {essid} ({signalStrength}%)",
-        "format-disconnected": "Disconnected ⚠"
+        "format-disabled": "",
+        "format-disconnected": "",
+        "tooltip-format-wifi": "IP: {ipaddr}/{cidr}\nFreq: {frequency}Mhz"
     },
     "custom/syncthing": {
         "interval": 5,
@@ -60,6 +63,22 @@
         "interval": 10,
         "format": " OVH",
         "exec": "pgrep -x openconnect"
+    },
+    "mpd": {
+        "format": "{stateIcon}{randomIcon} ﱘ",
+        "format-paused": "",
+        "format-disconnected": "",
+        "format-stopped": "",
+        "tooltip-format": "Artist: {artist}\nAlbum: {album}\nTitle: {title}",
+        "tooltip-format-disconnected": "MPD (disconnected)",
+        "on-click": "~/.local/bin/mpc-notify",
+        "interval": 10,
+        "random-icons": {
+            "on": "  "
+        },
+        "state-icons": {
+            "playing": "契"
+        }
     },
     "pulseaudio": {
         "format": "{volume}% {icon} {format_source}",
