@@ -12,7 +12,7 @@ scrolling:
 
 # Font configuration
 font:
-  size: 11.0
+  size: 10.0
   normal:
     family: monospace
     style: Regular
@@ -57,11 +57,19 @@ colors:
 # Live config reload (changes require restart)
 live_config_reload: true
 
-mouse:
-  url:
-    launcher:
-     program: o
-    modifiers: Control
+hints:
+  alphabet: "jfkdls;ahgurieowpq"
+  enabled:
+   - regex: "(https:|http:)\
+             [^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+"
+     command: o
+     post_processing: true
+     mouse:
+       enabled: true
+       mods: Control
+     binding:
+       key: U
+       mods: Control|Shift
 
 key_bindings:
   - { key: Y,     mods: Shift|Control, action: PasteSelection }
