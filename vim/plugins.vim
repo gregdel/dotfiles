@@ -47,6 +47,7 @@ Plug 'ziglang/zig.vim', { 'for': 'zig' }
 Plug 'wannesm/wmgraphviz.vim', { 'for': 'dot' }
 Plug 'https://git.zx2c4.com/password-store', { 'rtp': 'contrib/vim/readact_pass.vim' }
 Plug 'https://github.com/tridactyl/vim-tridactyl', { 'for': 'tridactyl' }
+Plug 'sirtaj/vim-openscad', { 'for': 'openscad' }
 
 call plug#end()
 
