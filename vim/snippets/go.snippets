@@ -14,6 +14,7 @@ snippet pmain "main package"
 	}
 
 	func run() error {
+	    fmt.Println("hello")
 	    ${0}
 
 	    return nil
@@ -21,3 +22,19 @@ snippet pmain "main package"
 
 snippet pp "pretty print"
 	pretty.Println(${0:string})
+
+snippet test "test"
+	func Test${0}(t *testing.T) {
+		tt := []struct {
+			name string
+		}{
+			{
+			    name: "test",
+			},
+		}
+
+		for _, tc := range tt {
+			t.Run(tc.name, func(t *testing.T) {
+			})
+		}
+	}
