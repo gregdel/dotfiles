@@ -66,21 +66,9 @@ nnoremap ; :
 vnoremap ; :
 
 " Backups, swap and undo files
-set backup                                      " Enable backups
-set backupdir=$HOME/.vim/files/backup/
-set backupext=-vimbackup                        " Backup extention
-set backupskip=                                 " Backup everything
-set directory=$HOME/.vim/files/swap//
-set undofile                                    " Keep the undo history
-set undodir=$HOME/.vim/files/undo/
-
-" Create files directory if it does not exist
-if exists('*mkdir') && !isdirectory($HOME.'/.vim/files')
-  call mkdir($HOME.'/.vim/files', "p")
-  call mkdir($HOME.'/.vim/files/backup', "p")
-  call mkdir($HOME.'/.vim/files/swap', "p")
-  call mkdir($HOME.'/.vim/files/undo', "p")
-endif
+set nobackup
+set noswapfile
+set noundofile
 
 " Don't try to highlight lines longer than 800 characters.
 set synmaxcol=800
@@ -92,6 +80,9 @@ set shiftwidth=4
 set softtabstop=4
 set linebreak
 set autoindent
+
+set number
+set relativenumber
 
 " Format options no automatic wraping, gq wrap to 80
 set textwidth=0
@@ -169,10 +160,6 @@ nnoremap <leader>r :redraw! <CR>
 " Shortcut to rapidly toggle `set list`
 nmap <leader>l :set list!<CR>
 
-" Shortcut for :Ggrep
-nnoremap <leader>g :Ggrep<Space>
-cnoremap grep Ggrep
-
 " Toggle spell lang
 nnoremap <leader>s :let &l:spelllang=( &l:spelllang == "en" ? "fr" : "en" )<CR>
 
@@ -219,12 +206,6 @@ augroup trim_trailing_whitespaces
     autocmd BufWrite * %s/\s\+$//ge
 augroup END
 
-" autocmd location list
-augroup locationlist
-    autocmd!
-    autocmd QuickFixCmdPost *grep* cwindow
-augroup END
-
 " Edit vimrc
 nmap <leader>v :tabedit $MYVIMRC<CR>
 
@@ -251,8 +232,9 @@ augroup encrypted
   autocmd BufWritePost,FileWritePost *.gpg u
 augroup END
 
-" Open NERDTree Tabs quick toogle
-nmap <leader>n :NERDTreeTabsToggle<CR>
+" Open NERDTree quick toogles
+nmap <silent><leader>n :NERDTreeToggle<CR>
+nmap <silent><leader>m :NERDTreeMirror<CR>
 
 " Visual Mode */# from Scrooloose
 function! s:VSetSearch()
@@ -299,8 +281,9 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_lint_on_insert_leave = 0
 let g:ale_fix_on_save = 1
 
-nmap <silent> <leader>aj :ALENext<cr>
-nmap <silent> <leader>ak :ALEPrevious<cr>
+nmap <silent><leader>aj :ALENext<cr>
+nmap <silent><leader>ak :ALEPrevious<cr>
+nmap <silent><leader>av :ALEGoToDefinition -vsplit<cr>
 
 " Markdown
 let g:vim_markdown_folding_disabled = 1
@@ -323,9 +306,14 @@ endfunction
 autocmd User AirlineAfterInit call AirlineInit()
 
 " fzf
-nnoremap <silent> <leader>b :Buffers<CR>
-nnoremap <silent> <leader>m :History<CR>
 nnoremap <silent> <C-p> :Files<CR>
+nnoremap <silent> <C-g> :GFiles<CR>
+nnoremap <silent> <C-n> :Buffers<CR>
+nnoremap <silent> <leader>fb :Buffers<CR>
+nnoremap <silent> <leader>fh :History<CR>
+nnoremap <silent> <leader>ff :Files<CR>
+nnoremap <silent> <leader>FF :GFiles<CR>
+nnoremap <silent> <leader>fg :Rg<CR>
 
 " Start interactive EasyAlign in visual mode
 vmap <Enter> :Tabularize /
