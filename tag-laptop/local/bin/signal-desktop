@@ -1,3 +1,4 @@
 #!/bin/sh
 
+export LC_ALL=fr
 /usr/sbin/signal-desktop --enable-features=UseOzonePlatform --ozone-platform=wayland
