@@ -18,8 +18,9 @@ _run() {
 _fzf() {
 	fzf \
 		--reverse \
-		--color fg:252,bg:233,hl:67,fg+:252,bg+:235,hl+:81 \
-		--color info:144,prompt:161,spinner:135,pointer:135,marker:118
+		--no-multi \
+		--color dark,hl:33,hl+:234,fg+:234,bg+:136 \
+		--color info:254,prompt:33,spinner:136,pointer:136,marker:136
 }
 
 _pass() {
