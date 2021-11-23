@@ -4,31 +4,48 @@ plugins:
   - chroma
   - fetchart
   - embedart
+  - lyrics
   - fromfilename
   - lastgenre
   - mpdupdate
   - duplicates
   - edit
   - smartplaylist
+  - spotify
 
 import:
   move: yes
+  write: yes
 
 fetchart:
   auto: yes
   sources: amazon filesystem coverart albumart
 
+embedart:
+  auto: yes
+  compare_threshold: 10
+  remove_art_file: yes
+
 smartplaylist:
+  auto: yes
   relative_to: ~/music/
   playlist_dir: ~/music/playlists/
   playlists:
-    - name: new.m3u
-      query: 'added:2020'
-
-embedart:
-  auto: yes
-  remove_art_file: yes
+  - name: imported_last_week.m3u
+    query: "'added:-7d..' added+"
+  - name: imported_last_month.m3u
+    query: "'added:-31d..' added+"
+  - name: imported_last_year.m3u
+    query: "'added:-1y..' added+"
+  - name: bad_quality.m3u
+    query: "'bitrate:..127000'"
 
 mpd:
-    host: localhost
-    port: 6600
+  host: localhost
+  port: 6600
+
+spotify:
+  source_weight: 0.7
+  mode: open
+  show_failures: on
+  tiebreak: first
