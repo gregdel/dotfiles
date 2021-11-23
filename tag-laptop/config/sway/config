@@ -142,6 +142,9 @@ bindsym XF86AudioPlay exec mpc toggle
 bindsym XF86AudioPrev exec mpc prev
 bindsym XF86AudioNext exec mpc next
 
+# screenshot
+bindsym Print exec screenshot
+
 # Toggle the laptop screen
 bindsym XF86Search exec external_screen.sh
 
