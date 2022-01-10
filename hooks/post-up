@@ -4,15 +4,9 @@
 mkdir -p "$HOME/.config"
 mkdir -p "$HOME/.local/bin"
 
-# Neovim
-[ -L "$HOME/.config/nvim" ]  || ln -s "$HOME/.vim" "$HOME/.config/nvim"
-[ -L "$HOME/.vim/init.vim" ] || ln -s "$HOME/.vimrc" "$HOME/.vim/init.vim"
-
 # Install vim plugins
 plugins_file="$HOME/.vim/plugins.vim"
-if type nvim >/dev/null 2>/dev/null; then
-    nvim -u "$plugins_file" +PlugInstall +PlugClean! +qa
-else
+if type vim >/dev/null 2>/dev/null; then
     vim --not-a-term -u "$plugins_file" +PlugInstall +PlugClean! +qa
 fi
 
