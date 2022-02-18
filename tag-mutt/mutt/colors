@@ -1,4 +1,4 @@
-# vim: filetype=muttrc
+# vim: filetype=neomuttrc
 
 # basic colors ---------------------------------------------------------
 color normal        color241        color234
@@ -65,12 +65,6 @@ color index         color64         color234        "~T"                        
 color hdrdefault    color240        color234
 color header        color241        color234        "^(From)"
 color header        color33         color234        "^(Subject)"
-
-# index ----------------------------------------------------------------
-
-color index_subject color142 color234 '~s\(RECOVERY\)'
-color index_subject color142 color234 '~s\(ACKNOWLEDGEMENT\)'
-color index_subject color203 color234 '~s\(PROBLEM\)'
 
 # body -----------------------------------------------------------------
 

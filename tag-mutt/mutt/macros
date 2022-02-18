@@ -1,4 +1,4 @@
-# vim: filetype=muttrc
+# vim: filetype=neomuttrc
 
 # Urlview to open links in mail bodies
 macro pager \Cu "|urlview<enter>" "call urlview to open links"
@@ -10,4 +10,4 @@ macro index C "<copy-message>?<toggle-mailboxes>" "copy a message to a mailbox"
 macro index \Cn "T~U<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>" "mark all messages as read"
 
 # Go to inbox
-macro index gi "<change-folder>INBOX<enter>" "Go to inbox"
+macro index gi "<change-folder>=INBOX<enter>" "Go to inbox"

@@ -1,10 +1,9 @@
-# vim: filetype=muttrc
+# vim: filetype=neomuttrc
 
 # Index View Options ---------------------------------
-set sort = threads                         # like gmail
-set sort_aux = reverse-last-date-received  # like gmail
-set uncollapse_jump                        # don't collapse on an unread message
-set sort_re                                # thread based on regex
+set use_threads=threads sort=reverse-last-date sort_aux=reverse-last-date
+set uncollapse_jump
+set sort_re
 set reply_regexp = "^(([Rr][Ee]?(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*"
 
 # Index Key Bindings ---------------------------------

@@ -1,4 +1,4 @@
-# vim: filetype=muttrc
+# vim: filetype=neomuttrc
 
 # Pager Key Bindings ---------------------------------
 bind pager k  previous-line

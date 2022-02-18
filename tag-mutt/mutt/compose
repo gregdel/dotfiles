@@ -1,4 +1,4 @@
-# vim: filetype=muttrc
+# vim: filetype=neomuttrc
 
 set realname = "Grégoire Delattre"   # who am i?
 set envelope_from                    # which from?

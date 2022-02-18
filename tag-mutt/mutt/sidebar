@@ -1,4 +1,4 @@
-# vim: filetype=muttrc
+# vim: filetype=neomuttrc
 
 set sidebar_width=35
 set sidebar_visible=yes
@@ -9,7 +9,7 @@ set sidebar_delim_chars="/"
 set sidebar_format="%B%?F? [%F]?%* %?N?%N/?%S"
 
 # Enable extended buffy mode to calculate total, new, and flagged
-# # message counts for each mailbox.
+# message counts for each mailbox.
 set mail_check_stats
 
 color sidebar_ordinary color241 color234

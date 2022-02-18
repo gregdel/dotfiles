@@ -54,7 +54,13 @@ _open_file() {
 		application/vnd.tcpdump.pcap)
 			wireshark-gtk "$@"
 			;;
-		application/vnd.openxmlformats-officedocument.presentation*)
+		application/vnd.openxmlformats-*)
+			libreoffice "$@"
+			;;
+		application/msword)
+			libreoffice "$@"
+			;;
+		application/vnd.oasis.opendocument*)
 			libreoffice "$@"
 			;;
 		*)
