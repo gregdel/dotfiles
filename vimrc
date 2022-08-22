@@ -81,9 +81,6 @@ set softtabstop=4
 set linebreak
 set autoindent
 
-set number
-set relativenumber
-
 " Format options no automatic wraping, gq wrap to 80
 set textwidth=0
 set formatoptions=cq
@@ -184,6 +181,10 @@ if has('nvim')
     tnoremap <Esc> <C-\><C-n>
 endif
 
+augroup otk
+    autocmd BufNewFile,BufRead OTKfile set filetype=sh
+augroup END
+
 " autocmd paste mode
 augroup paste_helper
     " Clear the autocmd
@@ -233,8 +234,7 @@ augroup encrypted
 augroup END
 
 " Open NERDTree quick toogles
-nmap <silent><leader>n :NERDTreeToggle<CR>
-nmap <silent><leader>m :NERDTreeMirror<CR>
+nmap <silent><leader>n :NERDTreeTabsToggle<CR>
 
 " Visual Mode */# from Scrooloose
 function! s:VSetSearch()
@@ -273,17 +273,44 @@ let g:go_template_autocreate = 1
 " Delimate
 let delimitMate_expand_cr = 2
 
+" Todo higlights
+highlight Todo ctermbg=75 ctermfg=234
+
 " Ale
-let g:ale_sign_error = '✗'
-let g:ale_sign_warning = '⚠'
+let g:ale_sign_error = ''
+let g:ale_sign_warning = ''
 let g:ale_lint_on_text_changed = 'never'
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_lint_on_insert_leave = 0
 let g:ale_fix_on_save = 1
 
 nmap <silent><leader>aj :ALENext<cr>
 nmap <silent><leader>ak :ALEPrevious<cr>
 nmap <silent><leader>av :ALEGoToDefinition -vsplit<cr>
+nmap ]a :ALENext<cr>
+nmap [a :ALEPrevious<cr>
+nnoremap gd :ALEGoToDefinition<CR>
+
+highlight SignColumn      ctermbg=234 ctermfg=118
+highlight ALEErrorSign    ctermbg=234 ctermfg=1
+highlight ALEWarningSign  ctermbg=234 ctermfg=3
+highlight ALEError        ctermbg=1   ctermfg=7
+highlight ALEInfo         ctermbg=3   ctermfg=234
+highlight ALEWarning      ctermbg=3   ctermfg=234
+
+" Git gutter
+highlight GitGutterAdd    guifg=#4e9a06 ctermfg=2
+highlight GitGutterChange guifg=#c4a000 ctermfg=3
+highlight GitGutterDelete guifg=#cc0000 ctermfg=1
+let g:gitgutter_set_sign_backgrounds = 1
+
+nmap <leader>gd :GitGutterPreviewHunk<cr>
+nmap <leader>ga :GitGutterStageHunk<cr>
+nmap <leader>gu :GitGutterUndoHunk<cr>
+
+augroup gitgutter_on_save
+    autocmd!
+    autocmd BufWritePost * GitGutter
+augroup END
 
 " Markdown
 let g:vim_markdown_folding_disabled = 1
