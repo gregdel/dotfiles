@@ -23,6 +23,7 @@ vim.opt.autoindent = true
 
 vim.opt.number = true
 vim.opt.relativenumber = true
+vim.opt.signcolumn = "yes"
 
 -- Format options no automatic wraping, gq wrap to 80
 vim.opt.textwidth = 0

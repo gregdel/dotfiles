@@ -3,23 +3,12 @@ require "keymaps"
 require "plugins"
 require "theme"
 require "plugins/lualine"
-require "plugins/nvim-tree"
-require "plugins/comment"
-require "plugins/nvim-treesitter"
-require "plugins/gitsigns"
-require "plugins/telescope"
-require "plugins/nvim-lspconfig"
 require "plugins/null-ls"
+require "plugins/nvim-lspconfig"
+require "plugins/nvim-treesitter"
 
 -- TODO: handle this the neovim way
 vim.cmd [[
-  " Highlight VCS conflict markers
-  match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
-
-  " Highlight trailing spaces
-  highlight ExtraWhitespace term=reverse ctermbg=12
-  au BufNewFile,BufRead * :match ExtraWhitespace /\s\+$/
-
   " autocmd paste mode
   augroup paste_helper
       " Clear the autocmd

@@ -15,7 +15,6 @@ if fn.empty(fn.glob(install_path)) > 0 then
   vim.cmd [[packadd packer.nvim]]
 end
 
-
 -- Autocommand that reloads neovim whenever you save the plugins.lua file
 vim.cmd [[
   augroup packer_user_config
@@ -50,42 +49,44 @@ return packer.startup(function(use)
   use {
     "folke/trouble.nvim",
     requires = "kyazdani42/nvim-web-devicons",
-    config = function()
-      require("trouble").setup {}
-    end
-  }
-
-  use {
-    'kyazdani42/nvim-tree.lua',
-    requires = { 'kyazdani42/nvim-web-devicons' },
-  }
-
-  use {
-    "lewis6991/gitsigns.nvim",
-    requires = { "nvim-lua/plenary.nvim" }
+    require("trouble").setup({
+      auto_close = true,
+    })
   }
 
   use {
     'nvim-telescope/telescope.nvim',
-    requires = { "nvim-lua/plenary.nvim" }
+    requires = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require('telescope').setup{}
+    end
   }
 
   use {
     "jose-elias-alvarez/null-ls.nvim",
-    requires = { "nvim-lua/plenary.nvim" }
+    requires = { "nvim-lua/plenary.nvim" },
   }
 
-  use "ayu-theme/ayu-vim"
-  use "neovim/nvim-lspconfig"
-  use "numToStr/Comment.nvim"
-  use "nvim-treesitter/nvim-treesitter"
-  use "fatih/molokai"
+  use {
+    "norcalli/nvim-colorizer.lua",
+    config = function()
+      require("colorizer").setup {}
+    end
+  }
+
+  use "~/dev/molokai"
+  -- use "fatih/molokai"
   use "godlygeek/tabular"
+  use "neovim/nvim-lspconfig"
+  use "nvim-treesitter/nvim-treesitter"
+  use "preservim/nerdtree"
+  use "tpope/vim-dispatch"
   use "tpope/vim-fugitive"
   use "tpope/vim-repeat"
   use "tpope/vim-surround"
   use "tpope/vim-unimpaired"
-  use "tpope/vim-dispatch"
+  use 'Raimondi/delimitMate'
+  use 'tpope/vim-commentary'
 
   use { "rust-lang/rust.vim",  ft = { "rust" }}
   use { "pearofducks/ansible-vim",  ft = { "yaml.ansible", "ansible_hosts" }}
