@@ -1,7 +1,7 @@
 require('lualine').setup {
   options = {
     icons_enabled = true,
-    theme = 'ayu_mirage',
+    theme = 'OceanicNext',
     component_separators = { left = '', right = ''},
     section_separators = { left = '', right = ''},
     disabled_filetypes = {},
@@ -24,5 +24,5 @@ require('lualine').setup {
     lualine_z = {}
   },
   tabline = {},
-  extensions = {}
+  extensions = {'nerdtree', 'fugitive'}
 }
