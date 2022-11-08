@@ -2,14 +2,11 @@
 
 FONT_DIRECTORY=$HOME/.local/share/fonts
 
-FONT_VERSION="2.1.0"
-FONTS_URL="https://raw.githubusercontent.com/ryanoasis/nerd-fonts/$FONT_VERSION/patched-fonts"
-FONTS="
-	FiraCode/Retina/complete/Fira%20Code%20Retina%20Nerd%20Font%20Complete%20Mono.otf
-	FiraCode/Retina/complete/Fira%20Code%20Retina%20Nerd%20Font%20Complete.otf
-"
+FONT_VERSION="v2.2.2"
+FONT_ZIP_FILE="RobotoMono.zip"
+FONTS_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/$FONT_VERSION/$FONT_ZIP_FILE"
 
-EMOJI_FONT_VERSION=12.0.1
+EMOJI_FONT_VERSION=14.0.2
 EMOJI_FONT_NAME="TwitterColorEmoji-SVGinOT-Linux-$EMOJI_FONT_VERSION.tar.gz"
 EMOJI_FONT_BASE_URL="https://github.com/eosrei/twemoji-color-font/releases/download/v$EMOJI_FONT_VERSION"
 EMOJI_FONT_URL="$EMOJI_FONT_BASE_URL/$EMOJI_FONT_NAME"
@@ -29,9 +26,13 @@ _gpkg_install() {
 	curl -SsL "$EMOJI_FONT_URL" | tar xvzO "$EMOJI_FONT_PATH" > "$FONT_DIRECTORY/$EMOJI_FONT_NAME"
 
 	_gpkg_log_info "Downloading fonts"
-	for font in $FONTS; do
-		wget "$FONTS_URL/$font"
-	done
+	mkdir -p tmpfonts
+	cd tmpfonts || _gpkg_log_eror "Failed to create font directory"
+	wget "$FONTS_URL" || _gpkg_log_eror "Failed to create font directory"
+	unzip "$FONT_ZIP_FILE" || _gpkg_log_eror "Failed to unzip font file"
+	cd .. && find tmpfonts -name '*Windows*' -delete
+	mv tmpfonts/*\.*tf .
+	rm -rf tmpfonts "$FONT_ZIP_FILE"
 
 	_gpkg_log_info "Generating fontscale..."
 	mkfontscale
