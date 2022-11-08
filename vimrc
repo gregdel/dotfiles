@@ -303,6 +303,8 @@ highlight GitGutterChange guifg=#c4a000 ctermfg=3
 highlight GitGutterDelete guifg=#cc0000 ctermfg=1
 let g:gitgutter_set_sign_backgrounds = 1
 
+nmap ]g :GitGutterNextHunk<cr>
+nmap [g :GitGutterPrevHunk<cr>
 nmap <leader>gd :GitGutterPreviewHunk<cr>
 nmap <leader>ga :GitGutterStageHunk<cr>
 nmap <leader>gu :GitGutterUndoHunk<cr>
