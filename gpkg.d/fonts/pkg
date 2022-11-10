@@ -2,16 +2,25 @@
 
 FONT_DIRECTORY=$HOME/.local/share/fonts
 
-FONT_VERSION="v2.2.2"
-FONT_ZIP_FILE="RobotoMono.zip"
-FONTS_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/$FONT_VERSION/$FONT_ZIP_FILE"
+NERD_FONT_VERSION="v2.2.2"
+NERD_FONT_NAMES="Hack FiraCode"
+NERD_FONT_BASE_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/$NERD_FONT_VERSION/"
 
-EMOJI_FONT_VERSION=14.0.2
-EMOJI_FONT_NAME="TwitterColorEmoji-SVGinOT-Linux-$EMOJI_FONT_VERSION.tar.gz"
-EMOJI_FONT_BASE_URL="https://github.com/eosrei/twemoji-color-font/releases/download/v$EMOJI_FONT_VERSION"
-EMOJI_FONT_URL="$EMOJI_FONT_BASE_URL/$EMOJI_FONT_NAME"
-EMOJI_FONT_NAME="TwitterColorEmoji-SVGinOT.ttf"
-EMOJI_FONT_PATH="TwitterColorEmoji-SVGinOT-Linux-$EMOJI_FONT_VERSION/TwitterColorEmoji-SVGinOT.ttf"
+EMOJI_FONT_URL="https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji.ttf"
+
+__nerd_font_install() {
+	local font file url
+	font=$1
+	file="$font.zip"
+	url="$NERD_FONT_BASE_URL/$file"
+	mkdir -p tmpfonts
+	cd tmpfonts                || _gpkg_log_eror "Failed to create font directory"
+	curl -SsL "$url" > "$file" || _gpkg_log_eror "Failed to download the font"
+	unzip -qq "$font.zip"      || _gpkg_log_eror "Failed to unzip font file"
+	cd .. && find tmpfonts -name '*Windows*' -delete
+	mv tmpfonts/*\.*tf .
+	rm -rf tmpfonts "$file"
+}
 
 _gpkg_install() {
 	if [ -d "$FONT_DIRECTORY" ]; then
@@ -23,16 +32,12 @@ _gpkg_install() {
 	cd "$FONT_DIRECTORY" || return
 
 	_gpkg_log_info "Downloading emoji font"
-	curl -SsL "$EMOJI_FONT_URL" | tar xvzO "$EMOJI_FONT_PATH" > "$FONT_DIRECTORY/$EMOJI_FONT_NAME"
+	curl -SsL "$EMOJI_FONT_URL" > "${EMOJI_FONT_URL##*/}"
 
-	_gpkg_log_info "Downloading fonts"
-	mkdir -p tmpfonts
-	cd tmpfonts || _gpkg_log_eror "Failed to create font directory"
-	wget "$FONTS_URL" || _gpkg_log_eror "Failed to create font directory"
-	unzip "$FONT_ZIP_FILE" || _gpkg_log_eror "Failed to unzip font file"
-	cd .. && find tmpfonts -name '*Windows*' -delete
-	mv tmpfonts/*\.*tf .
-	rm -rf tmpfonts "$FONT_ZIP_FILE"
+	for font in $NERD_FONT_NAMES; do
+		_gpkg_log_info "Downloading nerd font $font"
+		__nerd_font_install "$font"
+	done
 
 	_gpkg_log_info "Generating fontscale..."
 	mkfontscale
