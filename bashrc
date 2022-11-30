@@ -1,43 +1,45 @@
 # Bash configuration
+# shellcheck disable=1090
 
-# allow utf8
-stty cs8 -istrip -parenb
-bind 'set convert-meta off'
-bind 'set meta-flag on'
-bind 'set output-meta on'
+color_off="\001$(tput sgr0)\002"
+color_red="\001$(tput setaf 1)\002"
+color_green="\001$(tput setaf 2)\002"
+color_yellow="\001$(tput setaf 3)\002"
+color_blue="\001$(tput setaf 4)\002"
 
-# Import personnal conf
-if [ -f ~/.bashrc_local ]; then
-    source ~/.bashrc_local
-fi
+_git_prompt() {
+	git_cmd=$(git status --porcelain --branch 2>/dev/null)
+	[ "$git_cmd" ] || return 0
 
-# Import my global shell functions
-if [ -f ~/.shell_functions ]; then
-    source ~/.shell_functions
-fi
+	local branch
+	case "$git_cmd" in
+		*No\ commits\ yet*) branch="no commits yet"                   ;;
+		*no\ branch*)       branch=$(git describe --tags --always)    ;;
+		*)                  branch=$(git rev-parse --abbrev-ref HEAD) ;;
+	esac
 
-# Import PS1
-if [ -f ~/.bashrc_ps1 ]; then
-    source ~/.bashrc_ps1
-fi
+	local output="${color_red}$branch${color_off}"
+	case "$git_cmd" in *M\ \ *)  output="$output ${color_yellow}✗${color_off}" ;; esac
+	case "$git_cmd" in *R\ \ *)  output="$output ${color_yellow}→${color_off}" ;; esac
+	case "$git_cmd" in *\ M\ *)  output="$output ${color_green}✗${color_off}"  ;; esac
+	case "$git_cmd" in *\?\?*)   output="$output ${color_blue}…${color_off}"   ;; esac
+	case "$git_cmd" in *ahead*)  output="$output ${color_green}↑${color_off}"  ;; esac
+	case "$git_cmd" in *behind*) output="$output ${color_green}↓${color_off}"  ;; esac
 
-# Set appropriate ls alias
-case $(uname -s) in
-    Darwin|FreeBSD)
-        alias ls="ls -FG"
-        ;;
-    Linux)
-        alias ls="ls --color=always -F"
-        ;;
+	echo -e " ${color_off}[$output]"
+}
+
+PS1="${color_blue}\w"
+PS1+='$(_git_prompt)'
+case "$USER" in
+	(root) PS1+="${color_red} #"   ;;
+	(*)    PS1+="${color_green} ❯" ;;
 esac
+PS1+="$color_off "
 
-# cd aliases
-alias cd..='cd ..'
-alias ..='cd ..'
-alias ...='cd ../../'
-alias ....='cd ../../../'
+[ -f ~/.shell ] && . ~/.shell
+[ -f ~/.bashrc_local ] && . ~/.bashrc_local
 
-# Reload bash configuration
-function reload_bash {
-    source ~/.bashrc
+reload_bash() {
+    . ~/.bashrc
 }

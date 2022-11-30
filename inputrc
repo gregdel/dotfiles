@@ -1,29 +1,28 @@
-set show-all-if-ambiguous on
+# Change the timeout for key sequences as 500ms might be too fast
+set keyseq-timeout 1200
+
+# By default, completions are not highlighted in color.
+set colored-stats on
+set colored-completion-prefix on
 set completion-ignore-case on
+set show-all-if-ambiguous on
 
-# Begin / End of line in screen
-"\e[1~": beginning-of-line
-"\e[4~": end-of-line
-
-# VI mode !!!
+# vi mode
 set editing-mode vi
-set bell-style none
 $if mode=vi
     set keymap vi-insert
     "jk": vi-movement-mode
 $endif
 
-# Source me :)
-"\C-x\C-r": re-read-init-file
-
-# Classic clear screen
 "\C-l": clear-screen
 
 # Search through previous commands
 "\e[A": history-search-backward
 "\e[B": history-search-forward
 
-# Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'
+set bell-style none
+
+# UTF-8 (TODO: check if it's still necessary)
 set input-meta on
 set output-meta on
 set convert-meta off
