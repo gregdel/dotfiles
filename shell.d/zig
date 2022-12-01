@@ -1,0 +1,5 @@
+# vim: ft=sh :
+
+zigdir="$HOME/.local/zig"
+
+[ -d "$zigdir" ] && _add_path "$zigdir"
