@@ -1,0 +1,20 @@
+# vim: ft=sh :
+
+isync_version=1.4.4
+isync_url="https://sourceforge.net/projects/isync/files/isync/$isync_version/isync-$isync_version.tar.gz"
+
+_gpkg_install() {
+	cache_dir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
+	mkdir -p "$cache_dir"
+
+	_gpkg_log_info "Downloading source files"
+	curl -sSL "$isync_url" | tar xz --strip-components=1 -C "$cache_dir"
+
+	_gpkg_configure
+	_gpkg_make
+	_gpkg_make install
+}
+
+_gpkg_uninstall() {
+	_gpkg_make uninstall
+}

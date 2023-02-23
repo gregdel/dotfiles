@@ -1,0 +1,20 @@
+# vim: ft=sh :
+
+git_url=https://github.com/alacritty/alacritty.git
+git_version=v0.11.0
+
+_gpkg_install() {
+	_gpkg_git_clone "$git_url" "$git_version" "$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
+
+	(cd "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" && \
+		CARGO_INCREMENTAL=0 cargo build --release --locked && \
+		ln -sf \
+			"$GPKG_BUILD_DIR/$GPKG_PKG_NAME/target/release/alacritty" \
+			"$HOME/.local/bin/alacritty"
+	)
+}
+
+_gpkg_uninstall() {
+	echo "Not implemented"
+	exit 1
+}

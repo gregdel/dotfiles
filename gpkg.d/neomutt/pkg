@@ -3,18 +3,12 @@
 set -e
 
 git_url="https://github.com/neomutt/neomutt.git"
-git_version="neomutt-20180716"
+git_version="20220429"
 
 _gpkg_install() {
 	_gpkg_git_clone "$git_url" "$git_version" "$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
 
-	(cd "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" && \
-		./configure \
-		--tokyocabinet \
-		--disable-doc \
-		--sasl \
-		--quiet \
-	)
+	_gpkg_configure --lmdb --disable-nls --disable-pgp --disable-idn --disable-doc
 
 	_gpkg_make clean
 	_gpkg_make

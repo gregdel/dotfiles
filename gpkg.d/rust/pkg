@@ -1,0 +1,13 @@
+# vim: ft=sh :
+
+_gpkg_install() {
+	if command -v rustup >/dev/null; then
+		rustup update
+	else
+		curl -sSf https://sh.rustup.rs | sh -s -- --no-modify-path
+	fi
+}
+
+_gpkg_uninstall() {
+	rustup self uninstall
+}

@@ -39,7 +39,7 @@ _gpkg_make() {
 }
 
 _gpkg_configure() {
-	cd "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" && ./configure --prefix "$HOME/.local" "$@"
+	cd "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" && ./configure --prefix="$HOME/.local" "$@"
 }
 
 _gpkg_git_clone() {
