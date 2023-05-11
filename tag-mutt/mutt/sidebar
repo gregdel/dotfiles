@@ -12,12 +12,6 @@ set sidebar_format="%B%?F? [%F]?%* %?N?%N/?%S"
 # message counts for each mailbox.
 set mail_check_stats
 
-color sidebar_ordinary color241 color234
-color sidebar_flagged color241 color234
-color sidebar_new color33 color234
-color sidebar_divider color241 color234
-color sidebar_highlight color234 color33
-
 bind index,pager <down>   sidebar-next
 bind index,pager <up>     sidebar-prev
 bind index,pager <right>  sidebar-open

@@ -20,7 +20,7 @@ set quit                 # don't ask, just do!!
 set beep_new             # bell on new mails
 set pipe_decode          # strip headers and eval mimes when piping
 set thorough_search      # strip headers and eval mimes before searching
-set editor         = "nvim"
+set editor         = "vim"
 set shell          = "zsh"
 unset mark_old
 set mail_check_recent=no # keep the folder new if there is a new mail
@@ -65,7 +65,7 @@ bind attach <return> view-mailcap
 # Source
 source "~/.mutt/charset"
 source "~/.mutt/compose"
-source "~/.mutt/crypto"
+# source "~/.mutt/crypto"
 source "~/.mutt/index"
 source "~/.mutt/macros"
 source "~/.mutt/pager"
