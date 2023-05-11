@@ -5,13 +5,13 @@ mkdir -p "$HOME/.config"
 mkdir -p "$HOME/.local/bin"
 
 # Install vim plugins
-plugins_file="$HOME/.vim/plugins.vim"
 if type vim >/dev/null 2>/dev/null; then
-    vim --not-a-term -u "$plugins_file" +PlugInstall +PlugClean! +qa
+    vim --not-a-term +PlugInstall +PlugClean! +qa
 fi
 
 # Install tmux plugins
-"$HOME/.tmux/plugins/tpm/bin/install_plugins"
+tmux_plugins="$HOME/.tmux/plugins/"
+[ -d "$tmux_plugins/tmux-copycat" ] || "$tmux_plugins/tpm/bin/install_plugins"
 
 # Create the required files for mutt
 [ -L "$HOME/.mutt" ] && {
