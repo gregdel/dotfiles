@@ -1,0 +1,80 @@
+env:
+  # TERM: alacritty
+  TERM: xterm-256color
+
+window:
+  dynamic_padding: true
+  dynamic_title: true
+
+  padding:
+    x: 3
+    y: 3
+
+scrolling:
+  history: 10000
+  multiplier: 3
+
+# Font configuration
+font:
+  size: 12.0
+  normal:
+    family: monospace
+    style: Regular
+  bold:
+    family: monospace
+    style: Bold
+  italic:
+    family: monospace
+    style: Italic
+  bold_italic:
+    family: monospace
+    style: Bold Italic
+
+# Colors (Tomorrow Night Bright)
+colors:
+  primary:
+   background: '#101010'
+   foreground: '#d0d0d0'
+
+  # Normal colors
+  normal:
+   black:   '#000000'
+   red:     '#cc0000'
+   green:   '#4e9a06'
+   yellow:  '#c4a000'
+   blue:    '#3465a4'
+   magenta: '#75507b'
+   cyan:    '#06989a'
+   white:   '#d3d7cf'
+
+  # Bright colors
+  bright:
+    black:   '#555753'
+    red:     '#ef2929'
+    green:   '#8ae234'
+    yellow:  '#fce94f'
+    blue:    '#729fcf'
+    magenta: '#ad7fa8'
+    cyan:    '#34e2e2'
+    white:   '#eeeeec'
+
+# Live config reload (changes require restart)
+live_config_reload: true
+
+hints:
+  alphabet: "jfkdls;ahgurieowpq"
+  enabled:
+   - regex: "(https:|http:)\
+             [^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+"
+     command: o
+     post_processing: true
+     mouse:
+       enabled: true
+       mods: Control
+     binding:
+       key: U
+       mods: Control|Shift
+
+key_bindings:
+  - { key: Y,     mods: Shift|Control, action: PasteSelection }
+  - { key: Space, mods: Shift|Control, action: ToggleViMode   }

@@ -1,0 +1,42 @@
+#!/bin/sh
+set -e
+
+insidecolor=#00000000
+ringcolor=#ffffffff
+keyhlcolor=#d23c3dff
+bshlcolor=#d23c3dff
+separatorcolor=#00000000
+insidevercolor=#00000000
+insidewrongcolor=#d23c3dff
+ringvercolor=#ffffffff
+ringwrongcolor=#ffffffff
+verifcolor=#ffffffff
+timecolor=#ffffffff
+datecolor=#ffffffff
+font="sans-serif"
+locktext='Type password to unlock...'
+
+LOCK_IMAGE="/home/gdelattr/pictures/wallpapers/wallpaper-bike.jpg"
+
+exec swaylock \
+	--ignore-empty-password \
+	--show-failed-attempts \
+	--daemonize \
+	--image "$LOCK_IMAGE" \
+	--scaling "fill" \
+	--font "$font" \
+	--inside-color "$insidecolor" \
+	--ring-color "$ringcolor" \
+	--line-uses-inside \
+	--key-hl-color "$keyhlcolor" \
+	--bs-hl-color "$bshlcolor" \
+	--separator-color "$separatorcolor" \
+	--inside-ver-color "$insidevercolor" \
+	--inside-wrong-color "$insidewrongcolor" \
+	--ring-ver-color "$ringvercolor" \
+	--ring-wrong-color "$ringwrongcolor" \
+	--indicator-radius 20 \
+	--indicator-x-position "40" \
+	--indicator-y-position "1030" \
+	--indicator-thickness "4" \
+	--text-ver-color "$verifcolor"

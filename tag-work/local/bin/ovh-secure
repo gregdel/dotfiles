@@ -1,0 +1,23 @@
+#!/bin/sh
+
+_mute() {
+	"$@" >/dev/null 2>/dev/null
+}
+
+_check_link() {
+	_mute ip link show "$@"
+}
+
+_is_connected() {
+	_check_link cscotun0 && return 0
+	_check_link enx2cea7f330177 && return 0
+	return 1
+}
+
+if _is_connected; then
+	echo " OVH"
+	exit 0
+else
+	echo " OVH"
+	exit 1
+fi

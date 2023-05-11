@@ -1,0 +1,250 @@
+# modkey
+set $mod Mod4
+
+# Font
+font pango:Monospace 9
+
+# class                 border  backgr. text    indicator child_border
+client.focused          #b58900 #b58900 #eee8d5 #b58900   #b58900
+client.focused_inactive #3F3F3F #383C4A #D3DAE3 #484e50   #5f676a
+client.unfocused        #3F3F3F #383C4A #D3DAE3 #484e50   #5f676a
+client.urgent           #CC9393 #CC9393 #ffffff #CC9393   #CC9393
+client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
+client.background       #3F3F3F
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# Borders
+smart_borders on
+default_border pixel 2
+default_floating_border pixel 2
+
+# Gaps
+smart_gaps on
+gaps inner 10
+gaps outer 1
+
+# start a terminal
+bindsym $mod+Return exec alacritty
+bindsym $mod+Shift+Return exec /home/gdelattr/.local/bin/alacritty
+
+# kill focused window
+bindsym $mod+q kill
+
+# change focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# move focused window
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# split in horizontal orientation
+bindsym $mod+g split h
+
+# split in vertical orientation
+bindsym $mod+v split v
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+bindsym $mod+p focus parent
+
+# focus the child container
+bindsym $mod+c focus child
+
+bindsym $mod+Escape workspace back_and_forth
+
+# workspaces
+set $ws1 1
+set $ws2 2
+set $ws3 3
+set $ws4 4
+set $ws5 5
+set $ws6 6
+set $ws7 7
+set $ws8 8
+set $ws9 9
+set $ws10 10
+
+# switch to workspace
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
+
+# Move workspace between outputs
+bindsym $mod+o move workspace to output right
+
+# w000t
+bindsym Mod1+w exec w000t
+
+# mako
+bindsym Ctrl+Space exec dunstctl close
+bindsym Ctrl+Shift+Space exec dunstctl close-all
+
+# wofi
+for_window [title="^gofi$"] floating enable; border pixel 2
+bindsym Mod1+r exec gofi window binaries
+bindsym Mod1+m exec gofi window man
+bindsym Mod1+p exec gofi window pass
+bindsym Mod1+u exec gofi window urls
+bindsym Mod1+Shift+s exec screenshot
+bindsym Mod1+Shift+l exec lockscreen lock
+bindsym Mod1+Shift+e exec external_screen.sh
+bindsym Mod1+Shift+u exec gofi window edit ~/.urls
+
+# scratchpad
+for_window [app_id="^scratchpad$"] floating enable; border pixel 2
+bindsym Mod1+y exec scratchpad
+
+# window resizing
+bindsym Mod1+h resize shrink width 10 px or 10ppt
+bindsym Mod1+k resize shrink height 10 px or 10ppt
+bindsym Mod1+j resize grow height 10 px or 10ppt
+bindsym Mod1+l resize grow width 10 px or 10ppt
+
+# audio controls
+bindsym XF86AudioRaiseVolume exec pulsemixer --unmute --change-volume +5
+bindsym XF86AudioLowerVolume exec pulsemixer --unmute --change-volume -5
+bindsym XF86AudioMute exec pulsemixer --toggle-mute
+
+# screenshot
+bindsym Print exec screenshot
+
+# Toggle the laptop screen
+bindsym XF86Search exec external_screen.sh
+
+# screen brightness controls
+bindsym XF86MonBrightnessUp exec light -A 5
+bindsym XF86MonBrightnessDown exec light -U 5
+
+# windows specific configurations
+for_window [app_id="mpv"] floating enable
+for_window [app_id="pinentry-qt"] floating enable
+for_window [app_id="firefox"] [title="^Extension:.+"] floating enable
+
+assign [app_id="net.gns3.python3"] workspace 6
+
+# Gaps control
+set $mode_gaps Gaps: (o) outer, (i) inner
+set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
+bindsym $mod+Shift+g mode "$mode_gaps"
+
+mode "$mode_gaps" {
+        bindsym o      mode "$mode_gaps_outer"
+        bindsym i      mode "$mode_gaps_inner"
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+mode "$mode_gaps_inner" {
+        bindsym plus  gaps inner current plus 5
+        bindsym minus gaps inner current minus 5
+        bindsym 0     gaps inner current set 0
+
+        bindsym Shift+plus  gaps inner all plus 5
+        bindsym Shift+minus gaps inner all minus 5
+        bindsym Shift+0     gaps inner all set 0
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_outer" {
+        bindsym plus  gaps outer current plus 5
+        bindsym minus gaps outer current minus 5
+        bindsym 0     gaps outer current set 0
+
+        bindsym Shift+plus  gaps outer all plus 5
+        bindsym Shift+minus gaps outer all minus 5
+        bindsym Shift+0     gaps outer all set 0
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit sway?' -b 'Yep !' 'swaymsg exit'
+
+# Always running
+set $gnome-schema org.gnome.desktop.interface
+exec_always {
+    gsettings set $gnome-schema gtk-theme 'Arc-Darker'
+    gsettings set $gnome-schema icon-theme 'Moka'
+    gsettings set $gnome-schema cursor-theme 'Adwaita'
+
+
+    systemctl --user import-environment WAYLAND_DISPLAY
+    systemctl --user start dunst
+    systemctl --user start swayidle
+}
+
+bar {
+    swaybar_command waybar
+}
+
+input '1133:16411:Logitech_M215_2nd_Gen' {
+    scroll_factor 0.2
+}
+
+input type:keyboard {
+    repeat_rate 44
+    repeat_delay 200
+    xkb_options compose:ralt,ctrl:nocaps
+}
+
+input type:touchpad {
+    dwt enabled
+    click_method clickfinger
+    middle_emulation enabled
+    pointer_accel 0.2
+    scroll_method two_finger
+    tap_button_map lrm
+    tap enabled
+}
+
+output "*" {
+    scale 1
+    bg /home/gdelattr/pictures/wallpapers/wallpaper-bike.jpg fill
+}
+
+output "DP-1" {
+    scale 2
+}

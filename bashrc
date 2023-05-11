@@ -1,6 +1,8 @@
 # Bash configuration
 # shellcheck disable=1090
 
+[ -z "$TERM" ] && export TERM=xterm-256color
+
 color_off="\001$(tput sgr0)\002"
 color_red="\001$(tput bold)$(tput setaf 1)\002"
 color_green="\001$(tput bold)$(tput setaf 2)\002"

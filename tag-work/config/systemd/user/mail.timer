@@ -1,0 +1,6 @@
+[Unit]
+Description=Mail timer
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=5min

@@ -7,9 +7,7 @@ ICON_PATH="$HOME/pictures/stuff/w000t.jpg"
 SELECTION=
 
 if [ "$WAYLAND_DISPLAY" ]; then
-	SELECTION="$(wl-paste)"
-	# TODO check this shit
-	# SELECTION="$(wl-paste --primary)"
+	SELECTION="$(wl-paste -p)"
 else
 	SELECTION="$(xclip -o)"
 fi

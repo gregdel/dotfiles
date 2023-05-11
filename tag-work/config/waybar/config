@@ -1,0 +1,75 @@
+{
+    "layer": "top",
+    "height": 30,
+    "format-time": "{H}h{m}",
+    "modules-left": ["sway/workspaces", "sway/mode", "custom/media"],
+    "modules-center": ["clock"],
+    "modules-right": ["custom/ovh", "pulseaudio", "backlight", "network", "battery"],
+    "sway/workspaces": {
+        "disable-scroll": true,
+        "format": "{name}"
+    },
+    "sway/mode": {
+        "format": "<span style=\"italic\">{}</span>"
+    },
+    "clock": {
+        "format": "{:%a %d %b - %H:%M}",
+        "tooltip": false
+    },
+    "backlight": {
+        "format": "{percent}% {icon}",
+        "format-icons": ["", "", ""],
+        "on-scroll-up": "light -A 5",
+        "on-scroll-down": "light -U 5"
+    },
+    "battery": {
+        "interval": 30,
+        "states": {
+            "full": 100,
+            "almost-full": 98,
+            "good": 80,
+            "warning": 20,
+            "critical": 15
+        },
+        "format-charging": "{icon} {capacity}% {time} ",
+        "format-discharging": "{icon} {capacity}% {time}",
+        "format-full": "{icon} {capacity}%",
+        "format-time": "{H}h{M}",
+        "format-icons": [" ", " ", " ", " ", " "]
+    },
+    "network": {
+        "interval": 10,
+        "format-wifi": " {essid} ({signalStrength}%)",
+        "format-ethernet": "{ifname} ",
+        "format-disabled": "",
+        "format-disconnected": "",
+        "tooltip-format-wifi": "IP: {ipaddr}/{cidr}\n",
+        "tooltip-format-ethernet": "IP: {ipaddr}/{cidr}\n",
+        "on-click": "/opt/cisco/anyconnect/bin/vpnui"
+    },
+    "custom/ovh": {
+        "interval": 10,
+        "format": "{}",
+        "on-click": "/opt/cisco/anyconnect/bin/vpnui",
+        "exec-if": "true",
+        "exec": "ovh-secure"
+    },
+    "pulseaudio": {
+        "format": "{volume}% {icon} {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "hdmi": "﴿",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    }
+}

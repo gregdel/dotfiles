@@ -1,0 +1,7 @@
+[Unit]
+Description=Mail deamon
+
+[Service]
+Type=oneshot
+ExecCondition=/home/gdelattr/.local/bin/ovh-secure
+ExecStart=/home/gdelattr/.local/bin/mbsync work
