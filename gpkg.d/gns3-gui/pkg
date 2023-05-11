@@ -1,10 +1,10 @@
 # vim: ft=sh :
 
 bin_name=gns3-gui
-bin_version=2.2.34
+bin_version=2.2.39
 
 _gpkg_install() {
-	_gpkg_log_info "Installing gns3-gui with pipx"
+	_gpkg_log_info "Installing $bin_name with pipx"
 	pipx install "$bin_name==$bin_version"
 	pipx inject "$bin_name" PyQt5
 }

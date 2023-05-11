@@ -1,0 +1,13 @@
+# vim: ft=sh :
+
+bin_name=gns3-server
+bin_version=2.2.39
+
+_gpkg_install() {
+	_gpkg_log_info "Installing $bin_name with pipx"
+	pipx install "$bin_name==$bin_version"
+}
+
+_gpkg_uninstall() {
+	pipx uninstall "$bin_name"
+}
