@@ -46,6 +46,10 @@ if !has("nvim")
 
     " Don’t add empty newlines at the end of files
     set noeol
+
+    runtime ftplugin/man.vim
+    " Display man pages with K
+    nnoremap K <Plug>ManPreGetPage
 endif
 
 " Load plugins
@@ -99,6 +103,9 @@ vmap < <gv
 
 " Insert mode file name completion
 inoremap <c-f> <c-x><c-f>
+
+" Completion with ctrl-n
+set complete=.,w,b,u
 
 " Set encoding
 set encoding=utf-8 nobomb
@@ -182,6 +189,7 @@ if has('nvim')
 endif
 
 augroup otk
+    autocmd!
     autocmd BufNewFile,BufRead OTKfile set filetype=sh
 augroup END
 
@@ -258,6 +266,7 @@ let g:NERDTreeChDirMode=2
 let g:NERDTreeDirArrows=0
 let g:NERDTreeShowBookmarks=1
 let g:NERDTreeShowHidden=1
+let g:NERDTreeMinimalMenu=1
 
 " Go vim - :help go-settings
 let g:go_fmt_command = "goimports"
