@@ -1,105 +1,99 @@
-local opts = { noremap = true, silent = false }
-local opts_silent = { noremap = true, silent = true }
+local opts = { noremap = true, silent = true }
+local opts_verbose = { noremap = true, silent = false }
 
-local function t(str)
-    return vim.api.nvim_replace_termcodes(str, true, true, true)
-end
-
-local term_opts = { silent = true }
-
--- Shorten function name
-local keymap = vim.api.nvim_set_keymap
-
---Remap space as leader key
+-- Remap space as leader key
 vim.g.mapleader = ","
 
--- Modes
---   normal_mode = "n",
---   insert_mode = "i",
---   visual_mode = "v",
---   visual_block_mode = "x",
---   term_mode = "t",
---   command_mode = "c",
-
 -- jk to quit insert mode
-keymap("i", "jk", "<Esc>", opts_silent)
+vim.keymap.set("i", "jk", "<Esc>", opts)
 
 -- Easy qwerty
-keymap("n", ";", ":", opts)
-keymap("v", ";", ":", opts)
-
--- Edit vimrc
-keymap("v", "<Leader>v", ":tabedit $MYVIMRC<CR>", opts)
+vim.keymap.set("n", ";", ":", opts_verbose)
+vim.keymap.set("v", ";", ":", opts_verbose)
 
 -- Window navigation
-keymap("n", t"<C-h>", "<C-w>h", opts)
-keymap("n", t"<C-j>", "<C-w>j", opts)
-keymap("n", t"<C-k>", "<C-w>k", opts)
-keymap("n", t"<C-l>", "<C-w>l", opts)
+vim.keymap.set("n", "<C-h>", "<C-w>h", opts)
+vim.keymap.set("n", "<C-j>", "<C-w>j", opts)
+vim.keymap.set("n", "<C-k>", "<C-w>k", opts)
+vim.keymap.set("n", "<C-l>", "<C-w>l", opts)
 
 -- Better yank
-keymap("n", "Y", "y$", opts)
-keymap("v", "Y", '"zy', opts)
-keymap("v", "P", '"zp', opts)
+vim.keymap.set("n", "Y", "y$", opts)
+vim.keymap.set("v", "Y", '"zy', opts)
+vim.keymap.set("v", "P", '"zp', opts)
 
 -- Easy folding with space
-keymap("n", "<Space>", "za", opts)
-keymap("v", "<Space>", "zf", opts)
+-- vim.keymap.set("n", "<Space>", "za", opts)
+-- vim.keymap.set("v", "<Space>", "zf", opts)
 
--- Navigate tabs / buffers
-keymap("n", "gl", ":tabnext<cr>", opts)
-keymap("n", "gh", ":tabprev<cr>", opts)
-keymap("n", "gL", ":bnext<cr>", opts)
-keymap("n", "gH", ":bprev<cr>", opts)
+-- Bar
+vim.keymap.set("n", "gl", "<Cmd>tabnext<CR>", opts)
+vim.keymap.set("n", "gh", "<Cmd>tabprev<CR>", opts)
+vim.keymap.set("n", "gL", "<Cmd>bnext<CR>", opts)
+vim.keymap.set("n", "gH", "<Cmd>bprev<CR>", opts)
 
 -- Better indent
-keymap("v", ">", ">gv", opts)
-keymap("v", "<", "<gv", opts)
+vim.keymap.set("v", ">", ">gv", opts)
+vim.keymap.set("v", "<", "<gv", opts)
 
 -- Insert mode file name completion
-keymap("i", t"<C-f>", t"<C-x><C-f>", opts)
+vim.keymap.set("i", "<C-f>", "<C-x><C-f>", opts)
 
 -- Paste mode
-keymap("n", "<leader>i", ":set paste<CR>i", opts)
+vim.keymap.set("n", "<leader>i", "<Cmd>set paste<CR>i", opts)
 
 -- Open a new tab the easy way
-keymap("n", "<leader>t", ":tabedit<Space>", opts)
+vim.keymap.set("n", "<leader>t", ":tabedit<Space>", opts_verbose)
 
 -- Redraw screen on demand
-keymap("n", "<leader>r", ":redraw! <CR>", opts)
+vim.keymap.set("n", "<leader>r", "<Cmd>redraw! <CR>", opts)
 
 -- Shortcut to rapidly toggle `set list`
-keymap("n", "<leader>l", ":set list!<CR>", opts)
+vim.keymap.set("n", "<leader>l", "<Cmd>set list!<CR>", opts)
 
--- Toggle spell lang
--- nnoremap <leader>s :let &l:spelllang=( &l:spelllang == "en" ? "fr" : "en" )<CR>
+-- Toggle spelllang
+vim.keymap.set("n", "<leader>s", function()
+  local conf = vim.opt.spelllang:get()
+  local lang = "en"
+  for _ , l in ipairs(conf) do
+    if l == "en" then lang = "fr" end
+  end
+
+  vim.opt.spell = true
+  vim.opt.spelllang = { lang }
+  print("Spell lang set to", lang)
+end, opts)
 
 -- Correct the next word
-keymap("n", "<leader>c", "]s1z=", opts)
+vim.keymap.set("n", "<leader>c", "]s1z=", opts)
 
 -- Use arrows for resizing windows
-keymap("n", "<Left>", "<C-W><", opts)
-keymap("n", "<Right>", "<C-W>>", opts)
-keymap("n", "<Up>", "<C-W>+", opts)
-keymap("n", "<Down>", "<C-W>-", opts)
+vim.keymap.set("n", "<Left>", "<C-W><", opts)
+vim.keymap.set("n", "<Right>", "<C-W>>", opts)
+vim.keymap.set("n", "<Up>", "<C-W>+", opts)
+vim.keymap.set("n", "<Down>", "<C-W>-", opts)
 
 -- Press enter after search to clean highlighting
-keymap("n", "<cr>", ":noh<CR><CR>:<backspace>", opts)
+vim.keymap.set("n", "<cr>", "<Cmd>noh<CR><CR><Cmd><backspace>", opts)
 
 -- Nvim tree
-keymap("n", "<Leader>n", ":NvimTreeToggle<CR>", opts)
+vim.keymap.set("n", "<Leader>n", "<Cmd>NvimTreeToggle<CR>", opts)
 
--- Nvim tree
-keymap("n", "<Leader>d", ":TroubleToggle<CR>", opts_silent)
+-- Trouble
+vim.keymap.set("n", "<Leader>d", "<Cmd>TroubleToggle<CR>", opts)
 
 -- Tabular
-keymap("v", "<Enter>", ":Tabularize /", opts)
+vim.keymap.set("v", "<Enter>", "<Cmd>Tabularize /", opts)
 
 -- Telescope
-keymap("n", t"<C-p>", ":Telescope find_files<CR>", opts_silent)
-keymap("n", t"<C-g>", ":Telescope git_files<CR>", opts_silent)
-keymap("n", t"<C-b>", ":Telescope buffers<CR>", opts_silent)
-keymap("n", t"<C-n>", ":Telescope live_grep<CR>", opts_silent)
+vim.keymap.set("n", "<C-p>", "<Cmd>Telescope find_files<CR>", opts)
+vim.keymap.set("n", "<C-g>", "<Cmd>Telescope git_files<CR>", opts)
+vim.keymap.set("n", "<C-b>", "<Cmd>Telescope buffers<CR>", opts)
+vim.keymap.set("n", "<C-n>", "<Cmd>Telescope live_grep<CR>", opts)
 
--- Nerdtree
-keymap("n", "<leader>n", "<cmd>NERDTreeToggle<CR>", opts_silent)
+-- Gitsigns
+vim.keymap.set("n", "]g", "<Cmd>Gitsigns next_hunk<CR>", opts)
+vim.keymap.set("n", "[g", "<Cmd>Gitsigns prev_hunk<CR>", opts)
+vim.keymap.set("n", "<Leader>gd", "<Cmd>Gitsigns preview_hunk<CR>", opts)
+vim.keymap.set("n", "<Leader>ga", "<Cmd>Gitsigns stage_hunk<CR>", opts)
+vim.keymap.set("n", "<Leader>gu", "<Cmd>Gitsigns reset_hunk<CR>", opts)

@@ -1,3 +1,13 @@
+-- Disable termguicolors
+vim.opt.termguicolors = true
+
+-- disable netrw
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+-- Disable mouse
+vim.opt.mouse = ""
+
 -- Show the filename in the window titlebar
 vim.opt.title = true
 
@@ -21,8 +31,8 @@ vim.opt.softtabstop = 4
 vim.opt.linebreak = true
 vim.opt.autoindent = true
 
-vim.opt.number = true
-vim.opt.relativenumber = true
+vim.opt.number = false
+vim.opt.relativenumber = false
 vim.opt.signcolumn = "yes"
 
 -- Format options no automatic wraping, gq wrap to 80
