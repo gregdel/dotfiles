@@ -30,7 +30,6 @@ font:
     family: monospace
     style: Bold Italic
 
-# Colors (Tomorrow Night Bright)
 colors:
   primary:
    background: '#101010'
