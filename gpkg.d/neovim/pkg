@@ -1,6 +1,6 @@
 # vim: ft=sh :
 
-version="v0.4.3"
+version="v0.9.1"
 bin_url="https://github.com/neovim/neovim/releases/download/$version/nvim.appimage"
 bin_path="$HOME/.local/bin/nvim"
 cache_dir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"

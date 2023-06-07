@@ -1,6 +1,6 @@
 # vim: ft=sh :
 
-version='1.16.2'
+version='1.20.5'
 url="https://dl.google.com/go/go${version}.linux-amd64.tar.gz"
 
 _gpkg_install() {
