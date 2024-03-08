@@ -60,6 +60,23 @@ require("lazy").setup({
     end
   },
   {
+    "folke/zen-mode.nvim",
+    opts = {
+      plugins = {
+        -- disable some global vim options (vim.o...)
+        -- comment the lines to not apply the options
+        options = {
+          enabled = true,
+          ruler = true, -- disables the ruler text in the cmd line area
+          showcmd = true, -- disables the command in the last line of the screen
+          -- you may turn on/off statusline in zen mode by setting 'laststatus'
+          -- statusline will be shown only if 'laststatus' == 3
+          laststatus = 0, -- turn off the statusline in zen mode
+        },
+      },
+    },
+  },
+  {
     "folke/trouble.nvim",
     dependencies = { "kyazdani42/nvim-web-devicons" },
     opts = {
@@ -94,7 +111,7 @@ require("lazy").setup({
     end,
   },
   {
-    "jose-elias-alvarez/null-ls.nvim",
+    "nvimtools/none-ls.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       local formatting = require("null-ls").builtins.formatting
@@ -109,7 +126,7 @@ require("lazy").setup({
           -- go
           formatting.goimports,
           formatting.gofmt,
-          diagnostics.staticcheck,
+          diagnostics.golangci_lint,
           actions.gomodifytags,
           actions.impl,
           -- c
@@ -180,26 +197,31 @@ require("lazy").setup({
   },
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = {
-      ensure_installed = {
-        "c",
-        "css",
-        "dot",
-        "go",
-        "html",
-        "json",
-        "lua",
-        "vim",
-        "vimdoc",
-        "yaml",
-        "zig",
-        "query", -- treesitter playground
-      },
-      sync_install = false,
-      highlight = {
-        enable = true,
-      },
-    },
+    build = ":TSUpdate",
+    config = function ()
+      local configs = require("nvim-treesitter.configs")
+
+      configs.setup({
+        ensure_installed = {
+          "c",
+          "css",
+          "dot",
+          "go",
+          "html",
+          "json",
+          "lua",
+          "vim",
+          "vimdoc",
+          "yaml",
+          "zig",
+          "query", -- treesitter playground
+        },
+        sync_install = false,
+        highlight = {
+          enable = true,
+        },
+      })
+    end,
   },
   {
     "nvim-treesitter/playground",
@@ -279,7 +301,7 @@ require("lazy").setup({
     "fatih/vim-go",
     ft = { "go", "gomod" },
     config = function()
-      --- This is handled by vim-lsp
+      --- This is handled by nvim lsp
       vim.g.go_gopls_enabled = 0
       vim.g.go_code_completion_enabled = 0
       vim.g.go_fmt_autosave = 0

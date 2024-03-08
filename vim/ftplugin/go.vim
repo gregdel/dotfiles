@@ -18,4 +18,6 @@ nmap K <Plug>(go-doc-vertical)
 nmap gD <Plug>(go-def-vertical)
 
 " ALE
-let b:ale_linters = ['go build', 'gofmt', 'golint', 'go vet']
+let b:ale_linters = ['go build', 'gofmt', 'golangci-lint']
+let b:ale_go_golangci_lint_options = "--fast"
+let b:ale_go_golangci_lint_package = 1

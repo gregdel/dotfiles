@@ -1,4 +1,4 @@
--- Disable termguicolors
+-- Colors
 vim.opt.termguicolors = true
 
 -- disable netrw
