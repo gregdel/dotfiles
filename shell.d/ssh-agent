@@ -9,12 +9,17 @@ _start_agent() {
 		return 0
 	fi
 
+	uid=$(id -u)
 	SSH_AGENT_PID=$pid
-	SSH_AUTH_SOCK=$(find /tmp \
-		-user "$USER" \
-		-type s \
-		-wholename '/tmp/ssh-*/agent.*' 2>/dev/null
-	)
+	for file in /tmp/ssh-*/agent.*; do
+		[ -S "$file" ] || continue
+		[ -w "$file" ] || continue
+		file_uid=$(stat -c "%u" "$file")
+		[ "$uid" != "$file_uid" ] && continue
+		SSH_AUTH_SOCK="$file"
+		break
+	done
+
 	export SSH_AUTH_SOCK
 	export SSH_AGENT_PID
 }
