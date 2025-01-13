@@ -13,27 +13,13 @@ alias ls='ls --color=auto'
 alias l='ls --color=auto'
 alias ll='ls --color=auto -lh'
 alias la='ls --color=auto -lah'
+alias lr='ls -laht | head -n 10'
 
 # start screen with unicode enabled
 alias screen='screen -U'
 
-# Download with aria2c
-alias dl='aria2c -x 10'
-
-# docker-compose
-alias dc='docker-compose'
-
-# docker-machine
-alias dm='docker-machine'
-
-# systemd --user
-alias sysu='systemctl --user'
-
 # mutt
 alias mutt='cd $HOME/downloads && neomutt -n'
-
-# taskwarrior
-alias t='task'
 
 mcd() {
 	mkdir -p "$1" && cd "$1" || return;
