@@ -269,17 +269,6 @@ let g:NERDTreeShowBookmarks=1
 let g:NERDTreeShowHidden=1
 let g:NERDTreeMinimalMenu=1
 
-" Go vim - :help go-settings
-let g:go_fmt_command = "goimports"
-let g:go_play_open_browser = 0
-let g:go_fmt_fail_silently = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_doc_command = "godoc"
-let g:go_doc_keywordprg_enabled = 0 " handled by .vim/ftplugin/go.vim
-let g:go_fmt_command = "goimports"
-let g:go_template_autocreate = 1
-
 " Delimate
 let delimitMate_expand_cr = 2
 
@@ -291,13 +280,13 @@ highlight Todo ctermbg=75 ctermfg=234
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_info_str = 'I'
 let g:ale_echo_msg_warning_str = 'W'
-let g:ale_echo_msg_format = '[%linter%] %code: %%s [%severity%]'
+let g:ale_echo_msg_format = '[%linter%:%type%] %code: %%s'
 let g:ale_sign_error = ''
 let g:ale_sign_warning = ''
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_insert_leave = 0
 let g:ale_fix_on_save = 1
-let g:ale_virtualtext_cursor = 0
+let g:ale_virtualtext_cursor = 1
 
 nmap <silent><leader>aj :ALENext<cr>
 nmap <silent><leader>ak :ALEPrevious<cr>

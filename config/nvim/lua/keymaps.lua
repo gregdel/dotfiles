@@ -77,7 +77,10 @@ vim.keymap.set("n", "<Down>", "<C-W>-", opts)
 vim.keymap.set("n", "<cr>", "<Cmd>noh<CR><CR><Cmd><backspace>", opts)
 
 -- Nvim tree
-vim.keymap.set("n", "<Leader>n", "<Cmd>NvimTreeToggle<CR>", opts)
+vim.keymap.set("n", "<Leader>N", "<Cmd>NvimTreeToggle<CR>", opts)
+
+-- Nerdtree
+vim.keymap.set("n", "<Leader>n", "<Cmd>NERDTreeToggle<CR>", opts)
 
 -- Trouble
 vim.keymap.set("n", "<Leader>d", "<Cmd>TroubleToggle<CR>", opts)
@@ -90,6 +93,10 @@ vim.keymap.set("n", "<C-p>", "<Cmd>Telescope find_files<CR>", opts)
 vim.keymap.set("n", "<C-g>", "<Cmd>Telescope git_files<CR>", opts)
 vim.keymap.set("n", "<C-b>", "<Cmd>Telescope buffers<CR>", opts)
 vim.keymap.set("n", "<C-n>", "<Cmd>Telescope live_grep<CR>", opts)
+
+-- ALE
+vim.keymap.set("n", "]a", "<Cmd>ALENext<CR>", opts)
+vim.keymap.set("n", "[a", "<Cmd>ALEPrevious<CR>", opts)
 
 -- Gitsigns
 vim.keymap.set("n", "]g", "<Cmd>Gitsigns next_hunk<CR>", opts)

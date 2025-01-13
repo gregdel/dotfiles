@@ -111,35 +111,36 @@ require("lazy").setup({
     end,
   },
   {
-    "nvimtools/none-ls.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
+    "dense-analysis/ale",
     config = function()
-      local formatting = require("null-ls").builtins.formatting
-      local diagnostics = require("null-ls").builtins.diagnostics
-      local actions = require("null-ls").builtins.code_actions
-
-      require("null-ls").setup({
-        sources = {
-          -- shell
-          diagnostics.shellcheck,
-          actions.shellcheck,
-          -- go
-          formatting.goimports,
-          formatting.gofmt,
-          diagnostics.golangci_lint,
-          actions.gomodifytags,
-          actions.impl,
-          -- c
-          diagnostics.clang_check,
-          -- formatting.clang_format,
-        },
-      })
-    end,
+      vim.g.ale_echo_msg_error_str = 'E'
+      vim.g.ale_echo_msg_info_str = 'I'
+      vim.g.ale_echo_msg_warning_str = 'W'
+      vim.g.ale_echo_msg_format = '[%linter%:%type%] %code: %%s'
+      vim.g.ale_sign_error = ''
+      vim.g.ale_sign_warning = ''
+      vim.g.ale_lint_on_text_changed = 'never'
+      vim.g.ale_lint_on_insert_leave = 0
+      vim.g.ale_fix_on_save = 1
+      vim.g.ale_virtualtext_cursor = 1
+    end
   },
   {
     "norcalli/nvim-colorizer.lua",
     dependencies = { "kyazdani42/nvim-web-devicons" },
     cmd = { "ColorizerToggle" },
+  },
+  {
+    "scrooloose/nerdtree",
+    config = function()
+      vim.g.NERDChristmasTree=1
+      vim.g.NERDTreeAutoDeleteBuffer=1
+      vim.g.NERDTreeChDirMode=2
+      vim.g.NERDTreeDirArrows=0
+      vim.g.NERDTreeShowBookmarks=1
+      vim.g.NERDTreeShowHidden=1
+      vim.g.NERDTreeMinimalMenu=1
+    end
   },
   {
     "nvim-tree/nvim-tree.lua",
@@ -210,6 +211,7 @@ require("lazy").setup({
           "html",
           "json",
           "lua",
+          "make",
           "vim",
           "vimdoc",
           "yaml",
@@ -254,6 +256,7 @@ require("lazy").setup({
           TelescopeBorder = { fg = palette.orange },
           NvimTreeCursorColumn = { bg = palette.base2 },
           NvimTreeCursorLine = { bg = palette.base2 },
+          -- SignColumn = { fg = palette.white, bg = palette.base3 },
         },
       })
     end,
@@ -264,6 +267,7 @@ require("lazy").setup({
       local lsp = require("lspconfig")
       lsp.clangd.setup{}
       lsp.gopls.setup{}
+      lsp.rust_analyzer.setup{}
 
       -- Use LspAttach autocommand to only map the following keys
       -- after the language server attaches to the current buffer
@@ -296,6 +300,83 @@ require("lazy").setup({
         end,
       })
     end
+  },
+  {
+    "olimorris/codecompanion.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    opts = {
+      strategies = {
+        chat = {
+          adapter = "ollama",
+        },
+        inline = {
+          adapter = "ollama",
+        },
+      },
+      adapters = {
+        ollama = function()
+          return require("codecompanion.adapters").extend("ollama", {
+            schema = {
+              model = {
+                -- default = "qwen2.5-coder:32b",
+                default = "deepseek-coder-v2:latest",
+              },
+              num_ctx = {
+                default = 16384,
+              },
+            },
+            env = {
+              url = "https://ollama.quimbo.fr",
+              api_key = "your_key_here",
+            },
+            headers = {
+              ["Content-Type"] = "application/json",
+            },
+            parameters = {
+              sync = true,
+            },
+          })
+        end,
+      },
+    },
+  },
+  {
+    "nomnivore/ollama.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    cmd = { "Ollama" },
+    keys = {
+      -- Sample keybind for prompt menu. Note that the <c-u> is important for selections to work properly.
+      {
+        "<leader>oo",
+        ":<c-u>lua require('ollama').prompt()<cr>",
+        desc = "ollama prompt",
+        mode = { "n", "v" },
+      },
+
+      -- Sample keybind for direct prompting. Note that the <c-u> is important for selections to work properly.
+      {
+        "<leader>oG",
+        ":<c-u>lua require('ollama').prompt('Generate_Code')<cr>",
+        desc = "ollama Generate Code",
+        mode = { "n", "v" },
+      },
+    },
+
+    ---@type Ollama.Config
+    opts = {
+      model = "phi4:14b",
+      -- model = "codellama:7b",
+      -- model = "deepseek-coder-v2:16b",
+      url = "https://ollama.quimbo.fr",
+      -- url = "http://127.0.0.1:11434",
+      serve = { on_start = false },
+      -- View the actual default prompts in ./lua/ollama/prompts.lua
+    }
   },
   {
     "fatih/vim-go",
@@ -342,9 +423,6 @@ require("lazy").setup({
   { "nfnty/vim-nftables"            , ft = { "nftables" }},
   { "vim-latex/vim-latex"           , ft = { "tex" }},
   { "xuhdev/vim-latex-live-preview" , ft = { "tex" }},
-  { "vivien/vim-linux-coding-style" , ft = { "c" }},
-  { "chazy/cscope_maps"             , ft = { "c" }},
-  { "brookhong/cscope.vim"          , ft = { "c" }},
   { "ekalinin/Dockerfile.vim"       , ft = { "Dockerfile" }},
   { "kchmck/vim-coffee-script"      , ft = { "coffee" }},
   { "pangloss/vim-javascript"       , ft = { "javascript", "javascript.jsx" }},

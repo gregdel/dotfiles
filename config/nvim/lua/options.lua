@@ -11,11 +11,11 @@ vim.opt.mouse = ""
 -- Show the filename in the window titlebar
 vim.opt.title = true
 
--- " Search
+-- Search
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
--- " Backups, swap and undo files
+-- Backups, swap and undo files
 vim.opt.backup = false
 vim.opt.swapfile = false
 vim.opt.undofile = false
@@ -48,6 +48,9 @@ vim.opt.scrolloff = 5
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 vim.opt.diffopt.extends = "vertical"
+
+-- Conceal setup
+vim.opt.conceallevel = 2
 
 -- List
 vim.opt.listchars="tab:▸\\ ,eol:¬,trail:·"
