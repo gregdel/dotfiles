@@ -1,0 +1,86 @@
+[colors.bright]
+black = "#555753"
+blue = "#729fcf"
+cyan = "#34e2e2"
+green = "#8ae234"
+magenta = "#ad7fa8"
+red = "#ef2929"
+white = "#eeeeec"
+yellow = "#fce94f"
+
+[colors.normal]
+black = "#000000"
+blue = "#3465a4"
+cyan = "#06989a"
+green = "#4e9a06"
+magenta = "#75507b"
+red = "#cc0000"
+white = "#d3d7cf"
+yellow = "#c4a000"
+
+[colors.primary]
+background = "#101010"
+foreground = "#d0d0d0"
+
+[env]
+TERM = "xterm-256color"
+
+[font]
+size = 10.0
+
+[font.bold]
+family = "monospace"
+style = "Bold"
+
+[font.bold_italic]
+family = "monospace"
+style = "Bold Italic"
+
+[font.italic]
+family = "monospace"
+style = "Italic"
+
+[font.normal]
+family = "monospace"
+style = "Regular"
+
+[hints]
+alphabet = "jfkdls;ahgurieowpq"
+
+[[hints.enabled]]
+command = "o"
+post_processing = true
+regex = "(https:|http:)[^\u0000-\u001F\u007F-<>\"\\s{-}\\^⟨⟩`]+"
+
+[hints.enabled.binding]
+key = "U"
+mods = "Control|Shift"
+
+[hints.enabled.mouse]
+enabled = true
+mods = "Control"
+
+[[keyboard.bindings]]
+action = "PasteSelection"
+key = "Y"
+mods = "Shift|Control"
+
+[[keyboard.bindings]]
+action = "ToggleViMode"
+key = "Space"
+mods = "Shift|Control"
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[window]
+dynamic_padding = true
+dynamic_title = true
+
+[window.padding]
+x = 5
+y = 0
+
+[general]
+live_config_reload = true

@@ -25,7 +25,7 @@
 }
 
 #waybar {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 1);
     color: #eee8d5;
     font-family: Hack Nerd Font;
     font-size: 13px;
@@ -52,7 +52,7 @@
 /* --------------------------- */
 
 #mpd.playing {
-    border-bottom: 2px solid #FFEAC9;
+    border-top: 2px solid #FFEAC9;
 }
 
 #battery {
@@ -63,11 +63,11 @@
 
 #battery.almost-full.charging,
 #battery.full.charging {
-    border-bottom: 2px solid #66DE93;
+    border-top: 2px solid #66DE93;
 }
 
 #battery.charging {
-    border-bottom: 2px solid #FFEAC9;
+    border-top: 2px solid #FFEAC9;
 }
 
 #battery.warning.discharging {
@@ -96,7 +96,7 @@
 #workspaces button {
     color: #eee8d5;
     padding-top: 2px;
-    border-bottom: 2px solid transparent;
+    border-top: 2px solid transparent;
     background-color: transparent;
     padding-left: 10px;
     padding-right: 10px;
@@ -114,7 +114,7 @@
 
 #custom-ovh {
     padding-top: 3px;
-    border-bottom: 3px solid #dc322f;
+    border-top: 3px solid #dc322f;
 }
 
 tooltip {

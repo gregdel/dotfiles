@@ -1,6 +1,7 @@
 {
     "layer": "top",
-    "height": 30,
+    "position": "bottom",
+    "height": 48,
     "format-time": "{H}h{m}",
     "modules-left": ["sway/workspaces", "sway/mode", "custom/media"],
     "modules-center": ["clock"],

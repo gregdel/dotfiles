@@ -235,10 +235,10 @@ input "1739:30383:DLL075B:01_06CB:76AF_Touchpad" {
 
 output "eDP-1" {
     scale 2
-    bg /home/greg/.cache/wallpaper/wallpaper-laptop.jpg fill
+    bg /home/greg/pictures/wallpapers/firewatch.jpg fill
 }
 
 output "DP-1" {
     scale 1
-    bg /home/greg/.cache/wallpaper/wallpaper-other.jpg fill
+    bg /home/greg/pictures/wallpapers/firewatch.jpg fill
 }

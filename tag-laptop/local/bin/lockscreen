@@ -18,8 +18,7 @@ datecolor=#ffffffff
 font="sans-serif"
 locktext='Type password to unlock...'
 
-LOCK_IMAGE_DIR="$HOME/.cache/lockscreen"
-LOCK_IMAGE="$LOCK_IMAGE_DIR/lock.png"
+LOCK_IMAGE="$wallpaper_dir/firewatch.jpg"
 UNIT_FILE=/etc/systemd/system/suspend@.service
 
 _log_err() {
@@ -28,19 +27,7 @@ _log_err() {
 }
 
 _usage() {
-	echo "$(basename "$0") [ set file_name | choose | lock | install | uninstall ]"
-}
-
-_set() {
-	[ -f "$1" ] || _log_err "Invalid file $1"
-	[ -d "$LOCK_IMAGE_DIR" ] || mkdir -p "$LOCK_IMAGE_DIR"
-
-	resolution=$(xrandr | grep '\*' | cut -d' ' -f4)
-	convert "$1" \
-		-resize "${resolution}^" \
-		"$LOCK_IMAGE"
-
-	notify-send -i blueman-laptop "Lock screen updated"
+	echo "$(basename "$0") [ lock | install | uninstall ]"
 }
 
 _lock_i3() {
@@ -152,19 +139,7 @@ _uninstall() {
 	sudo systemctl daemon-reload
 }
 
-_choose() {
-	chosen=$(find "$wallpaper_dir" -type f | sxiv -ftio)
-	[ "$chosen" ] || exit 0
-	_set "$chosen"
-}
-
 case "$1" in
-	set)
-		_set "$2"
-		;;
-	choose)
-		_choose "$2"
-		;;
 	lock)
 		_lock
 		;;
