@@ -143,6 +143,13 @@ require("lazy").setup({
     end
   },
   {
+    "lukas-reineke/indent-blankline.nvim",
+    main = "ibl",
+    opts = {
+        scope = { enabled = false },
+    },
+  },
+  {
     "nvim-tree/nvim-tree.lua",
     cmd = { "NvimTreeToggle" },
     opts = {
@@ -205,6 +212,7 @@ require("lazy").setup({
       configs.setup({
         ensure_installed = {
           "c",
+          "comment",
           "css",
           "dot",
           "go",
@@ -212,11 +220,13 @@ require("lazy").setup({
           "json",
           "lua",
           "make",
+          "markdown",
+          "query", -- treesitter playground
+          "rust",
           "vim",
           "vimdoc",
           "yaml",
           "zig",
-          "query", -- treesitter playground
         },
         sync_install = false,
         highlight = {
@@ -245,9 +255,10 @@ require("lazy").setup({
       palette.base7 = "#606060"
       palette.white = "#d0d0d0"
       monokai.setup({
+        italics = false,
         palette = palette,
         custom_hlgroups = {
-          Todo = { fg = palette.pink, style = "underline" },
+          Todo = { bg = palette.pink, fg = palette.base1 },
           NormalFloat = { fg = palette.white, bg = palette.base2 },
           FloatBorder = { fg = palette.orange, bg = palette.base2 },
           TelescopeNormal = { fg = palette.white, bg = palette.base2 },
@@ -256,6 +267,8 @@ require("lazy").setup({
           TelescopeBorder = { fg = palette.orange },
           NvimTreeCursorColumn = { bg = palette.base2 },
           NvimTreeCursorLine = { bg = palette.base2 },
+          NERDTreeDir = { fg = palette.green },
+          NERDTreeExecFile = { fg = palette.orange },
           -- SignColumn = { fg = palette.white, bg = palette.base3 },
         },
       })
