@@ -5,5 +5,5 @@ visible=$(swaymsg -t get_tree | jq -r '..| select(.app_id? == "scratchpad") | .v
 case "$visible" in
 	true)  swaymsg '[app_id="^scratchpad$"] move to scratchpad' ;;
 	false) swaymsg '[app_id="^scratchpad$"] scratchpad show' ;;
-	*)     alacritty --class "scratchpad" &	;;
+	*)     foot --app-id "scratchpad" &	;;
 esac

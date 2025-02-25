@@ -26,7 +26,8 @@ gaps inner 10
 gaps outer 1
 
 # start a terminal
-bindsym $mod+Return exec alacritty
+bindsym $mod+Return exec foot
+bindsym $mod+Shift+Return exec alacritty
 
 # kill focused window
 bindsym $mod+q kill

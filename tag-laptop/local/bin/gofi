@@ -75,9 +75,9 @@ _window() {
 	shift
 	mode=$1
 	shift
-	alacritty \
+	foot \
 		--title "gofi" \
-		--command gofi "$mode" "$*"
+		gofi "$mode" "$*"
 }
 
 _usage() {
