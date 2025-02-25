@@ -1,0 +1,25 @@
+# vim: ft=sh :
+
+bin_name=uv
+
+version=0.5.30
+base_url=https://github.com/astral-sh/uv/releases/download
+tar_file=uv-x86_64-unknown-linux-gnu.tar.gz
+url="$base_url/$version/$tar_file"
+cache_dir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
+
+_gpkg_install() {
+	_gpkg_log_info "Downloading $bin_name version $version"
+	archive="$cache_dir/$tar_file"
+	mkdir -p "$cache_dir"
+	curl -sSL "$url" > "$archive"
+	tar -C "$cache_dir" --strip-components=1 -xvf "$tar_file"
+	ln -fs "$cache_dir/uv" "$HOME/.local/bin/uv"
+	ln -fs "$cache_dir/uvx" "$HOME/.local/bin/uvx"
+}
+
+_gpkg_uninstall() {
+	rm -f "$HOME/.local/bin/uv"
+	rm -f "$HOME/.local/bin/uvx"
+	rm -rf "$cache_dir"
+}
