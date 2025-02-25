@@ -1,16 +1,39 @@
 # Colors
 autoload -U colors && colors
 
+# Cache directory
+mkdir -p ~/.cache/zsh
+
 # Completion
-autoload -U compinit
 setopt COMPLETE_ALIASES
 setopt NO_LIST_AMBIGUOUS
+
+# Use menu for selection
 zstyle ':completion:*' menu select
-zstyle ':completion::complete:*' gain-privileges 1
+
+# Case insensitive
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
+# Cache systemd unit files completion
+zstyle ':completion:*:*:systemctl:*' cache-path ~/.cache/zsh/systemd
+zstyle ':completion:*:*:systemctl:*' use-cache true
+
+# Enable caching for all completions
+zstyle ':completion::complete:*' use-cache true
+zstyle ':completion::complete:*' cache-path ~/.cache/zsh
+
+# Enable sudo completions
+zstyle ':completion::complete:*' gain-privileges 1
+
+# Optimize systemd completion matching
+zstyle ':completion:*:*:systemctl:*' matcher-list 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*:*:systemctl:*' group-order services paths systemd-units
+
+# Load completion menu
 zmodload zsh/complist
 
-compinit
+autoload -Uz compinit
+compinit -d ~/.cache/zsh/zcompdump
 
 # Report command running time if it is more than 3 seconds
 REPORTTIME=3
