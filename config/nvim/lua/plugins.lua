@@ -90,9 +90,15 @@ require("lazy").setup({
     config = function()
       local actions = require("telescope.actions")
       require("telescope").setup({
+        extensions = {
+          ["ui-select"] = {
+            require("telescope.themes").get_dropdown{}
+          },
+        },
         defaults = {
           mappings = {
             i = {
+              ["<esc>"] = actions.close,
               ["<C-j>"] = actions.move_selection_next,
               ["<C-k>"] = actions.move_selection_previous,
               ["<C-h>"] = actions.close,
@@ -267,8 +273,17 @@ require("lazy").setup({
           TelescopeBorder = { fg = palette.orange },
           NvimTreeCursorColumn = { bg = palette.base2 },
           NvimTreeCursorLine = { bg = palette.base2 },
+          -- NERDTree
           NERDTreeDir = { fg = palette.green },
           NERDTreeExecFile = { fg = palette.orange },
+          -- CodeCompanion
+          CodeCompanionChatTokens = { fg = palette.orange },
+          CodeCompanionVirtualText = { fg = palette.orange },
+          CodeCompanionChatHeader = { fg = palette.orange },
+          CodeCompanionChatSeparator = { fg = palette.orange },
+          CodeCompanionChatVariable = { fg = palette.pink },
+          CodeCompanionChatTool = { fg = palette.pink },
+          CodeCompanionChatAgent = { fg = palette.pink },
           -- SignColumn = { fg = palette.white, bg = palette.base3 },
         },
       })
@@ -323,33 +338,84 @@ require("lazy").setup({
     opts = {
       strategies = {
         chat = {
-          adapter = "ollama",
+          adapter = "ovhllama",
         },
         inline = {
-          adapter = "ollama",
+          adapter = "ovhllama",
         },
       },
       adapters = {
-        ollama = function()
-          return require("codecompanion.adapters").extend("ollama", {
+        opts = {
+          show_defaults = false,
+        },
+        ovhai = function()
+          return require("codecompanion.adapters").extend("openai_compatible", {
+            env = {
+              url = "https://oai.endpoints.kepler.ai.cloud.ovh.net",
+              chat_url = "/v1/chat/completions",
+              api_key = 'cmd: cat ~/.config/ovh/ai-endpoint-token'
+            },
             schema = {
               model = {
-                -- default = "qwen2.5-coder:32b",
-                default = "deepseek-coder-v2:latest",
+                default = "Meta-Llama-3_1-70B-Instruct",
               },
               num_ctx = {
-                default = 16384,
+                default = 128000,
+              },
+            }
+          })
+        end,
+        ovhllama = function()
+          return require("codecompanion.adapters").extend("openai_compatible", {
+            env = {
+              url = "https://llama-3-3-70b-instruct.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat",
+              chat_url = "/v1/chat/completions",
+              api_key = 'cmd: cat ~/.config/ovh/ai-endpoint-token',
+            },
+            schema = {
+              model = {
+                default = "Meta-Llama-3_3-70B-Instruct",
+              },
+              num_ctx = {
+                default = 128000,
               },
             },
+          })
+        end,
+        ovhcodellama = function()
+          return require("codecompanion.adapters").extend("openai_compatible", {
             env = {
-              url = "https://ollama.quimbo.fr",
-              api_key = "your_key_here",
+              url = "https://codellama-13b-instruct-hf.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat",
+              chat_url = "/v1/chat/completions",
+              api_key = 'cmd: cat ~/.config/ovh/ai-endpoint-token',
             },
-            headers = {
-              ["Content-Type"] = "application/json",
+            schema = {
+              model = {
+                default = "CodeLlama-13b-Instruct-hf",
+              },
+              num_ctx = {
+                default = 16000,
+              },
             },
-            parameters = {
-              sync = true,
+          })
+        end,
+        ovhdeepseek = function()
+          return require("codecompanion.adapters").extend("openai_compatible", {
+            env = {
+              url = "https://deepseek-r1-distill-llama-70b.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat",
+              chat_url = "/v1/chat/completions",
+              api_key = 'cmd: cat ~/.config/ovh/ai-endpoint-token',
+            },
+            schema = {
+              model = {
+                default = "DeepSeek-R1-Distill-Llama-70B",
+              },
+              temperature = {
+                default = 0.2,
+              },
+              num_ctx = {
+                default = 128000,
+              },
             },
           })
         end,

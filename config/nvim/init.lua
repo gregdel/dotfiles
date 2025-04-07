@@ -19,6 +19,13 @@ vim.api.nvim_create_autocmd("BufWrite", {
     end
 })
 
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+  pattern = "OTKfile",
+  callback = function()
+    vim.opt.filetype = "sh"
+  end
+})
+
 -- TODO: handle this the neovim way
 vim.cmd [[
   " Visual Mode */# from Scrooloose
