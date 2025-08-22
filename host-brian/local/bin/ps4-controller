@@ -1,6 +1,6 @@
 #!/bin/sh
 
-out="󰊵"
+out="<span size='larger'>󰊵</span>"
 
 i=0
 for p in /sys/class/power_supply/ps-controller*; do
@@ -8,7 +8,7 @@ for p in /sys/class/power_supply/ps-controller*; do
 
 	capacity="$(cat "$p/capacity")"
 	state="$(cat "$p/status")"
-	icon="󰊴"
+	icon="<span size='larger'>󰊴</span>"
 	i=$((i+1))
 
 	case "$state" in

@@ -1,12 +1,11 @@
 @define-color color-fg #d0d0d0;
 @define-color color-bg #101010;
 @define-color color-yellow #c4a000;
-@define-color color-accent #64b5f6;
 @define-color color-hover #1a1a1a;
 
 * {
     font-family: "monospace";
-    font-size: 13px;
+    font-size: 1rem;
     min-height: 0;
     background: @color-bg;
     color: @color-fg;
@@ -20,6 +19,7 @@
 #custom-steam {
     padding-left: 1rem;
     padding-right: 1rem;
+    font-size: 1.8rem;
 }
 
 #custom-ps4-controller,
@@ -29,11 +29,19 @@
     border-bottom: 2px solid @color-yellow;
 }
 
+#custom-ps4-controller {
+    font-size: 1.2rem;
+}
+
 #bluetooth,
 #network {
     padding-left: 1rem;
     padding-right: 1rem;
     border-bottom: 2px solid @color-bg;
+}
+
+#network.wifi .icon {
+    font-size: 2rem;
 }
 
 #workspaces button {
