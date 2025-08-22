@@ -4,8 +4,12 @@
 mkdir -p "$HOME/.config"
 mkdir -p "$HOME/.local/bin"
 
+_check_cmd() {
+	command -v "$1" >/dev/null 2>/dev/null
+}
+
 # Install vim plugins
-if type vim >/dev/null 2>/dev/null; then
+if _check_cmd vim && [ ! -d "$HOME/.vim/plugged/ale" ]; then
     vim --not-a-term +PlugInstall +PlugClean! +qa
 fi
 

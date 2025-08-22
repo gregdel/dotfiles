@@ -1,0 +1,71 @@
+{
+    "layer": "top",
+    "height": 30,
+    "format-time": "{H}h{m}",
+    "modules-left": ["sway/workspaces", "sway/mode", "hyprland/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right": ["custom/steam", "custom/ps4-controller", "bluetooth", "pulseaudio", "network"],
+    "sway/workspaces": {
+        "disable-scroll": true,
+        "format": "{name}"
+    },
+    "sway/mode": {
+        "format": "<span style=\"italic\">{}</span>"
+    },
+    "clock": {
+        "format": "{:%a %d %b - %H:%M}",
+        "tooltip": false
+    },
+    "temperature#GPU": {
+        "hwmon-path": "/sys/class/hwmon/hwmon0/temp2_input",
+        "format": "GPU:{temperatureC}°C"
+    },
+    "temperature#NVME1": {
+        "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
+        "format": "D1:{temperatureC}°C"
+    },
+    "temperature#NVME2": {
+        "hwmon-path": "/sys/class/hwmon/hwmon3/temp1_input",
+        "format": "D2:{temperatureC}°C"
+    },
+    "custom/steam": {
+        "format": "",
+        "tooltip": true,
+        "tooltip-format": "Launch Steam",
+        "on-click": "steam"
+    },
+    "custom/ps4-controller": {
+        "interval": 10,
+        "format": "{}",
+        "exec": "ps4-controller"
+    },
+    "bluetooth": {
+        "on-click": "blueman-manager"
+    },
+    "network": {
+        "interval": 10,
+        "interface": "wlp15s0",
+        "format-wifi": " {essid} ({signalStrength}%)",
+        "format-disabled": "",
+        "format-disconnected": "",
+        "tooltip-format-wifi": "IP: {ipaddr}/{cidr}\nFreq: {frequency}Ghz"
+    },
+    "pulseaudio": {
+        "format": "{volume}% {icon} {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "hdmi": "﴿",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    }
+}
