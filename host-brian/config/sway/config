@@ -26,7 +26,7 @@ gaps inner 10
 gaps outer 1
 
 # start a terminal
-bindsym $mod+Return exec alacritty
+bindsym $mod+Return exec foot
 
 # kill focused window
 bindsym $mod+q kill
@@ -116,7 +116,7 @@ bindsym Mod1+w exec w000t
 # mako
 bindsym Ctrl+Space exec makoctl dismiss
 
-# wofi
+# gofi
 for_window [title="^gofi$"] floating enable; border pixel 2
 bindsym Mod1+r exec gofi window binaries
 bindsym Mod1+m exec gofi window man
