@@ -1,25 +1,22 @@
 # vim: ft=sh :
 
-bin_version=0.38.0
-bin_url="https://github.com/junegunn/fzf/releases/download/$bin_version/fzf-$bin_version-linux_amd64.tar.gz"
-bin_name=fzf
-bin_path="$GPKG_INSTALL_DIR/bin/$bin_name"
+version=0.65.1
+base_url="https://github.com/junegunn/fzf/releases/download"
+url="$base_url//v$version/fzf-$version-linux_amd64.tar.gz"
+cache_dir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
 
-man_file="fzf.1"
-man_dir="$HOME/.local/share/man/man1/"
-man_path="$man_dir/$man_file"
-man_url="https://raw.githubusercontent.com/junegunn/fzf/$bin_version/man/man1/fzf.1"
+_gpkg_version() {
+	echo "$version"
+}
 
 _gpkg_install() {
-	_gpkg_log_info "Downloading $bin_name version $bin_version"
-	curl -sSL "$bin_url" | tar xzv -C "$GPKG_INSTALL_DIR/bin" "$bin_name"
-	[ -d "$man_dir" ] && mkdir -p "$man_dir"
-	_gpkg_log_info "Downloading the man page"
-	curl -sSL "$man_url" > "$man_path"
-	_gpkg_log_info "All done"
+	mkdir -p "$cache_dir"
+	cd "$cache_dir" || _gpkg_log_error "Failed to enter $cache_dir"
+	_gpkg_fetch "$url" | tar -xz
+	ln -fs "$cache_dir/fzf" "$HOME/.local/bin"
 }
 
 _gpkg_uninstall() {
-	rm "$bin_path"
-	rm "$man_path"
+	rm -f "$HOME/.local/bin/fzf"
+	rm -rf "$cache_dir"
 }

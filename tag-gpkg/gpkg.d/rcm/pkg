@@ -1,14 +1,18 @@
 # vim: ft=sh :
 
-version=1.3.4
+version=1.3.6
 filename="rcm-$version"
 url="https://thoughtbot.github.io/rcm/dist/$filename.tar.gz"
+
+_gpkg_version() {
+	echo "$version"
+}
 
 _gpkg_install() {
 	_gpkg_log_info "Downloading rcm.."
 	buildir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
 	mkdir -p "$buildir"
-	curl -LSs "$url" | tar -C "$buildir" -xz --strip-components=1
+	_gpkg_fetch "$url" | tar -C "$buildir" -xz --strip-components=1
 
 	_gpkg_configure
 	_gpkg_make

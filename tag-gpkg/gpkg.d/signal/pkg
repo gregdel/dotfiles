@@ -4,10 +4,14 @@ version="7.39.0"
 url="https://updates.signal.org/desktop/apt/pool/s/signal-desktop/signal-desktop_${version}_amd64.deb"
 cache_dir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
 
+_gpkg_version() {
+	echo "$version"
+}
+
 _gpkg_install() {
 	mkdir -p "$cache_dir"
 	cd "$cache_dir"
-	curl -LSs "$url" > signal.deb
+	_gpkg_fetch "$url" > signal.deb
 	ar x signal.deb
 	tar xf data.tar.xz
 	ln -f -s "$cache_dir/opt/Signal/signal-desktop" "$HOME/.local/bin/signal"

@@ -2,6 +2,10 @@
 
 url="https://aur.archlinux.org/yay.git"
 
+_gpkg_version() {
+	echo "latest"
+}
+
 _gpkg_install() {
 	tmp_dir=$(mktemp -d)
 	_gpkg_log_info "Cloning yay PKGBUILD from the AUR..."

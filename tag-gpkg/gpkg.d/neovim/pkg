@@ -5,6 +5,10 @@ bin_url="https://github.com/neovim/neovim/releases/download/$version/nvim.appima
 bin_path="$HOME/.local/bin/nvim"
 cache_dir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
 
+_gpkg_version() {
+	echo "$version"
+}
+
 _gpkg_install() {
 	_gpkg_uninstall
 

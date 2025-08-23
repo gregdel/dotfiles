@@ -3,8 +3,12 @@
 version='0.10.0'
 url="https://ziglang.org/download/$version/zig-linux-x86_64-${version}.tar.xz"
 
+_gpkg_version() {
+	echo "$version"
+}
+
 _gpkg_install() {
-	curl -LSs "$url" | tar -C "$HOME/.local" -xJ
+	_gpkg_fetch "$url" | tar -C "$HOME/.local" -xJ
 	mv "$HOME/.local/zig-linux-x86_64-${version}" "$HOME/.local/zig"
 }
 

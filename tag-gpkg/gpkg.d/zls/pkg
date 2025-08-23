@@ -3,6 +3,10 @@
 url="https://github.com/zigtools/zls.git"
 version="0.10.0"
 
+_gpkg_version() {
+	echo "$version"
+}
+
 _gpkg_install() {
 	_gpkg_git_clone "$url" "$version" "$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
 	(cd "$GPKG_BUILD_DIR/$GPKG_PKG_NAME" && zig build -Drelease-safe)

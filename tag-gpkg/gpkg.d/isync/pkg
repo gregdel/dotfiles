@@ -3,6 +3,10 @@
 isync_version=1.4.4
 isync_url="https://sourceforge.net/projects/isync/files/isync/$isync_version/isync-$isync_version.tar.gz"
 
+_gpkg_version() {
+	echo "$isync_version"
+}
+
 _gpkg_install() {
 	cache_dir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
 	mkdir -p "$cache_dir"

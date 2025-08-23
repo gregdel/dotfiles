@@ -1,10 +1,14 @@
 # vim: ft=sh :
 
-version='1.22.4'
+version='1.25.0'
 url="https://dl.google.com/go/go${version}.linux-amd64.tar.gz"
 
+_gpkg_version() {
+	echo "$version"
+}
+
 _gpkg_install() {
-	curl -LSs "$url" | tar -C "$HOME/.local" -xvz
+	_gpkg_fetch "$url" | tar -C "$HOME/.local" -xvz
 }
 
 _gpkg_uninstall() {

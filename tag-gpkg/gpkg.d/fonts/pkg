@@ -13,8 +13,12 @@ __nerd_font_install() {
 	font=$1
 	file="$font.tar.xz"
 	url="$NERD_FONT_BASE_URL/$file"
-	curl -SsLf "$url" | tar --wildcards -Jxf - "*.ttf" ||
+	_gpkg_fetch "$url" | tar --wildcards -Jxf - "*.ttf" ||
 		_gpkg_log_eror "Failed to download font $font"
+}
+
+_gpkg_version() {
+	echo "$NERD_FONT_VERSION"
 }
 
 _gpkg_install() {
@@ -34,17 +38,13 @@ _gpkg_install() {
 		__nerd_font_install "$font"
 	done
 
-	_gpkg_log_info "Generating fontscale..."
+	_gpkg_log_info "Generating font cache for X11..."
 	mkfontscale
-
-	_gpkg_log_info "Generating fontdir..."
 	mkfontdir
-
-	_gpkg_log_info "Loading font folder to X..."
 	xset +fp "$FONT_DIRECTORY"
 
-	_gpkg_log_info "Regenerating font cache"
-	fc-cache -fv
+	_gpkg_log_info "Regenerating fontconfig cache..."
+	fc-cache -f
 }
 
 _gpkg_uninstall() {
