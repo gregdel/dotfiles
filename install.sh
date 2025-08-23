@@ -15,8 +15,10 @@ _err() {
 	exit 1
 }
 
-type make >/dev/null 2>/dev/null || _err "Please install make to install rcm"
+_check_cmd() {
+	command -v "$1" >/dev/null 2>/dev/null
+}
 
-type rcup >/dev/null 2>/dev/null || _install
-
-rcup -f
+_check_cmd make || _err "Please install make to install rcm"
+_check_cmd rcup || _install
+rcup -fv

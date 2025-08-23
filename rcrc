@@ -1,2 +1,13 @@
+# vim: ft=sh :
+
 EXCLUDES="README.md install.sh"
-SYMLINK_DIRS="vim nvim oh-my-zsh mutt awesome urxvt tmux"
+SYMLINK_DIRS="vim nvim oh-my-zsh mutt awesome urxvt tmux gpkg.d"
+TAGS="gpkg"
+
+read -r hostname < /etc/hostname
+[ -z "$hostname" ] && return 0
+case "$hostname" in
+  brian)
+    TAGS="$TAGS fonts foot"
+    ;;
+esac
