@@ -312,7 +312,6 @@ require("lazy").setup({
           vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
           vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
           vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-          vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
           vim.keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, opts)
           vim.keymap.set("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, opts)
           vim.keymap.set("n", "<space>wl", function()
@@ -331,6 +330,7 @@ require("lazy").setup({
   },
   {
     "olimorris/codecompanion.nvim",
+    tag = "v17.21.0",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
@@ -338,124 +338,31 @@ require("lazy").setup({
     opts = {
       strategies = {
         chat = {
-          adapter = "ovhllama",
+          adapter = "ovh",
         },
         inline = {
-          adapter = "ovhllama",
+          adapter = "ovh",
         },
       },
       adapters = {
-        opts = {
-          show_defaults = false,
-        },
-        ovhai = function()
-          return require("codecompanion.adapters").extend("openai_compatible", {
-            env = {
-              url = "https://oai.endpoints.kepler.ai.cloud.ovh.net",
-              chat_url = "/v1/chat/completions",
-              api_key = 'cmd: cat ~/.config/ovh/ai-endpoint-token'
-            },
-            schema = {
-              model = {
-                default = "Meta-Llama-3_1-70B-Instruct",
+        http = {
+          ovh = function()
+            return require("codecompanion.adapters").extend("openai_compatible", {
+              env = {
+                url = "https://oai.endpoints.kepler.ai.cloud.ovh.net",
+                chat_url = "/v1/chat/completions",
+                api_key = 'cmd: cat ~/.config/ovh/ai-endpoint-token'
               },
-              num_ctx = {
-                default = 128000,
-              },
-            }
-          })
-        end,
-        ovhllama = function()
-          return require("codecompanion.adapters").extend("openai_compatible", {
-            env = {
-              url = "https://llama-3-3-70b-instruct.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat",
-              chat_url = "/v1/chat/completions",
-              api_key = 'cmd: cat ~/.config/ovh/ai-endpoint-token',
-            },
-            schema = {
-              model = {
-                default = "Meta-Llama-3_3-70B-Instruct",
-              },
-              num_ctx = {
-                default = 128000,
-              },
-            },
-          })
-        end,
-        ovhcodellama = function()
-          return require("codecompanion.adapters").extend("openai_compatible", {
-            env = {
-              url = "https://codellama-13b-instruct-hf.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat",
-              chat_url = "/v1/chat/completions",
-              api_key = 'cmd: cat ~/.config/ovh/ai-endpoint-token',
-            },
-            schema = {
-              model = {
-                default = "CodeLlama-13b-Instruct-hf",
-              },
-              num_ctx = {
-                default = 16000,
-              },
-            },
-          })
-        end,
-        ovhdeepseek = function()
-          return require("codecompanion.adapters").extend("openai_compatible", {
-            env = {
-              url = "https://deepseek-r1-distill-llama-70b.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat",
-              chat_url = "/v1/chat/completions",
-              api_key = 'cmd: cat ~/.config/ovh/ai-endpoint-token',
-            },
-            schema = {
-              model = {
-                default = "DeepSeek-R1-Distill-Llama-70B",
-              },
-              temperature = {
-                default = 0.2,
-              },
-              num_ctx = {
-                default = 128000,
-              },
-            },
-          })
-        end,
+              schema = {
+                model = {
+                  default = "Meta-Llama-3_3-70B-Instruct",
+                },
+              }
+            })
+          end,
+        }
       },
     },
-  },
-  {
-    "nomnivore/ollama.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
-    cmd = { "Ollama" },
-    keys = {
-      -- Sample keybind for prompt menu. Note that the <c-u> is important for selections to work properly.
-      {
-        "<leader>oo",
-        ":<c-u>lua require('ollama').prompt()<cr>",
-        desc = "ollama prompt",
-        mode = { "n", "v" },
-      },
-
-      -- Sample keybind for direct prompting. Note that the <c-u> is important for selections to work properly.
-      {
-        "<leader>oG",
-        ":<c-u>lua require('ollama').prompt('Generate_Code')<cr>",
-        desc = "ollama Generate Code",
-        mode = { "n", "v" },
-      },
-    },
-
-    ---@type Ollama.Config
-    opts = {
-      model = "phi4:14b",
-      -- model = "codellama:7b",
-      -- model = "deepseek-coder-v2:16b",
-      url = "https://ollama.quimbo.fr",
-      -- url = "http://127.0.0.1:11434",
-      serve = { on_start = false },
-      -- View the actual default prompts in ./lua/ollama/prompts.lua
-    }
   },
   {
     "fatih/vim-go",
@@ -490,6 +397,16 @@ require("lazy").setup({
     config = function()
       require("nvim-surround").setup()
     end
+  },
+  {
+    "saghen/blink.cmp",
+    version = "1.*",
+    opts = {
+      keymap = { preset = "enter" },
+      appearance = {
+        nerd_font_variant = 'mono'
+      },
+    },
   },
   { "numToStr/Comment.nvim", opts = {} },
 

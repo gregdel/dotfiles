@@ -50,7 +50,7 @@ vim.opt.splitbelow = true
 vim.opt.diffopt.extends = "vertical"
 
 -- Conceal setup
-vim.opt.conceallevel = 2
+vim.opt.conceallevel = 0
 
 -- List
 vim.opt.listchars="tab:▸\\ ,eol:¬,trail:·"
