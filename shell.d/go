@@ -1,9 +1,16 @@
 # vim: ft=sh :
-_check_command go || return
+
+
+has_go=
+_check_command go && has_go=1
+
+_go_path="$HOME/.local/go/bin"
+[ -f "$_go_path/go" ] && has_go=1
+
+[ "$has_go" = 1 ] || return
 
 export GOPATH=$HOME/dev/go
 export GOBIN=$HOME/dev/go/bin
 _add_path /usr/local/go/bin
-_add_path "$HOME/.local/go/bin"
+_add_path "$_go_path"
 _add_path "$GOBIN"
-

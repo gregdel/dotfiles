@@ -35,6 +35,13 @@ zmodload zsh/complist
 autoload -Uz compinit
 compinit -d ~/.cache/zsh/zcompdump
 
+# Disable completion for the "mcd" alias
+_mcd() {
+    # Don't offer any completions, just allow free text input
+    return 1
+}
+compdef _mcd mcd
+
 # Report command running time if it is more than 3 seconds
 REPORTTIME=3
 # Keep a lot of history

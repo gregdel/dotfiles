@@ -21,15 +21,14 @@ alias screen='screen -U'
 # mutt
 alias mutt='cd $HOME/downloads && neomutt -n'
 
+# neovim
+alias vi='nvim'
+alias vim='nvim'
+
 mcd() {
 	mkdir -p "$1" && cd "$1" || return;
 }
 
-compress-image() {
-	convert \
-		-strip \
-		-interlace Plane \
-		-gaussian-blur 0.05 \
-		-quality 85% \
-		"$1" "$2"
+gf() {
+	git status --porcelain | cut -c4- | fzf --multi
 }
