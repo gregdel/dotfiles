@@ -26,8 +26,8 @@ gaps inner 10
 gaps outer 1
 
 # start a terminal
-bindsym $mod+Return exec alacritty
-bindsym $mod+Shift+Return exec /home/gdelattr/.local/bin/alacritty
+bindsym $mod+Return exec foot
+bindsym $mod+Shift+Return exec alacritty
 
 # kill focused window
 bindsym $mod+q kill
@@ -147,9 +147,6 @@ bindsym XF86AudioMute exec pulsemixer --toggle-mute
 # screenshot
 bindsym Print exec screenshot
 
-# Toggle the laptop screen
-bindsym XF86Search exec external_screen.sh
-
 # screen brightness controls
 bindsym XF86MonBrightnessUp exec light -A 5
 bindsym XF86MonBrightnessDown exec light -U 5
@@ -218,10 +215,6 @@ exec_always {
 
 bar {
     swaybar_command waybar
-}
-
-input '1133:16411:Logitech_M215_2nd_Gen' {
-    scroll_factor 0.2
 }
 
 input type:keyboard {

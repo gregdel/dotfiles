@@ -18,7 +18,7 @@
     },
     "backlight": {
         "format": "{percent}% {icon}",
-        "format-icons": ["", "", ""],
+        "format-icons": ["󰃞", "󰃟", "󰃠"],
         "on-scroll-up": "light -A 5",
         "on-scroll-down": "light -U 5"
     },
@@ -39,20 +39,20 @@
     },
     "network": {
         "interval": 10,
-        "format-wifi": " {essid} ({signalStrength}%)",
-        "format-ethernet": "{ifname} ",
         "format-disabled": "",
-        "format-disconnected": "",
-        "tooltip-format-wifi": "IP: {ipaddr}/{cidr}\n",
+        "format-wifi": " {essid} ({signalStrength}%)",
+        "tooltip-format-wifi": "IP: {ipaddr}/{cidr}\nFrequency: {frequency}Mhz",
+        "format-ethernet": " {ifname}",
         "tooltip-format-ethernet": "IP: {ipaddr}/{cidr}\n",
+        "format-disconnected": "",
         "on-click": "/opt/cisco/anyconnect/bin/vpnui"
     },
     "custom/ovh": {
         "interval": 10,
         "format": "{}",
-        "on-click": "/opt/cisco/anyconnect/bin/vpnui",
+        "on-click": "/home/gdelattr/.local/bin/vpn",
         "exec-if": "true",
-        "exec": "ovh-secure"
+        "exec": "/home/gdelattr/.local/bin/ovh-secure"
     },
     "pulseaudio": {
         "format": "{volume}% {icon} {format_source}",

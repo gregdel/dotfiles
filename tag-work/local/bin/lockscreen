@@ -18,7 +18,7 @@ locktext='Type password to unlock...'
 
 LOCK_IMAGE="/home/gdelattr/pictures/wallpapers/wallpaper-bike.jpg"
 
-exec swaylock \
+exec /usr/bin/swaylock \
 	--ignore-empty-password \
 	--show-failed-attempts \
 	--daemonize \

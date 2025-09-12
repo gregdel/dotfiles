@@ -10,4 +10,7 @@ case "$hostname" in
   brian)
     TAGS="$TAGS fonts foot"
     ;;
+  laptop14*)
+    TAGS="$TAGS fonts work gofi"
+    ;;
 esac

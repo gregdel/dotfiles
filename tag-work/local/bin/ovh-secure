@@ -1,16 +1,18 @@
 #!/bin/sh
 
-_mute() {
-	"$@" >/dev/null 2>/dev/null
+_check_link() {
+	[ -d "/sys/class/net/$1" ]
 }
 
-_check_link() {
-	_mute ip link show "$@"
+_check_wifi() {
+	count="$(/usr/sbin/iwconfig wlo1 2>/dev/null | /usr/bin/grep -c proton)"
+	[ "$count" = "1" ]
 }
 
 _is_connected() {
 	_check_link cscotun0 && return 0
 	_check_link enx2cea7f330177 && return 0
+	_check_wifi && return 0
 	return 1
 }
 
