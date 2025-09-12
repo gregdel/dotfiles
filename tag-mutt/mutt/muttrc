@@ -53,11 +53,11 @@ auto_view text/calendar text/html
 
 # Folder format -------------------------------------
 set date_format   = "%d/%m/%y %H:%M"
-set index_format  = "%Z|%4C %D %?X?:%X&   ? %-20.20F  %.100s %> %5c"
+set index_format  = "%Z|%4C %D %?X?󰁦:%X&   ? %-20.20F  %.100s %> %5c"
 set folder_format = " %2C %t %N %f %> %d "
 set pager_format  = " %b  %Z  %D  From: %f %>  %e/%E  %5c "
 set status_format = " %h  %f  :%?M?%M/?%m%?n? :%n?%?d? :%d?%?F? :%F?%?t? :%t?%?p? :%p? %> %?V? :%V ? %s  %S  %P  %l "
-set attach_format = "%2n  %u%?t? &  ?%?Q?& ?%?D? &  ?%I  %T%d %> %20m/%-20M  %16e  %?C?%15C&unknown charset?  %6s "
+set attach_format = "%2n  %u%?t? &  ?%?Q?󰁦& ?%?D? &  ?%I  %T%d %> %20m/%-20M  %16e  %?C?%15C&unknown charset?  %6s "
 
 # View attachments properly.
 bind attach <return> view-mailcap
