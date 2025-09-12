@@ -1,7 +1,8 @@
 # vim: ft=sh :
 
-version="v0.9.1"
-bin_url="https://github.com/neovim/neovim/releases/download/$version/nvim.appimage"
+file_name=nvim-linux-x86_64.appimage
+version="v0.11.0"
+bin_url="https://github.com/neovim/neovim/releases/download/$version/$file_name"
 bin_path="$HOME/.local/bin/nvim"
 cache_dir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
 
@@ -16,8 +17,8 @@ _gpkg_install() {
 
 	(cd "$cache_dir" && \
 		wget "$bin_url" && \
-		chmod u+x nvim.appimage && \
-		./nvim.appimage --appimage-extract && \
+		chmod u+x "$file_name" && \
+		./"$file_name" --appimage-extract && \
 		ln -s "$(readlink -f ./squashfs-root/usr/bin/nvim)" "$bin_path"
 	)
 }
