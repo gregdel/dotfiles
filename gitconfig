@@ -1,9 +1,16 @@
 [user]
     name = Grégoire Delattre
     email = gregoire.delattre@gmail.com
+[core]
+    editor = nvim
 [branch]
     autosetupmerge = true
     autosetuprebase = always
+[diff]
+    algorithm = histogram
+    colorMoved = plain
+    mnemonicPrefix = true
+    renames = true
 [color]
     ui = auto
 [color "branch"]
@@ -46,8 +53,6 @@
     ls = ls-files
 [push]
     default = tracking
-[core]
-    editor = vim
 [sendemail]
     smtpserver = "/usr/bin/msmtp"
     confirm = auto
