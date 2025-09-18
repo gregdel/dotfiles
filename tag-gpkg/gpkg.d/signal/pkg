@@ -1,6 +1,6 @@
 # vim: ft=sh :
 
-version="7.62.0"
+version="7.70.0"
 url="https://updates.signal.org/desktop/apt/pool/s/signal-desktop/signal-desktop_${version}_amd64.deb"
 cache_dir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
 
@@ -14,7 +14,7 @@ _gpkg_install() {
 	_gpkg_fetch "$url" > signal.deb
 	ar x signal.deb
 	tar xf data.tar.xz
-	ln -f -s "$cache_dir/opt/Signal/signal-desktop" "$HOME/.local/bin/signal"
+	ln -f -s "$cache_dir/opt/Signal/signal-desktop" "$HOME/.local/bin/signal-desktop"
 }
 
 _gpkg_uninstall() {

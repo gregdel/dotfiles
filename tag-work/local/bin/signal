@@ -1,0 +1,4 @@
+#!/bin/sh
+
+export LANGUAGE="en_US:fr_FR"
+signal-desktop --ozone-platform-hint=auto
