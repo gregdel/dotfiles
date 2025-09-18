@@ -1,0 +1,21 @@
+# vim: ft=sh :
+
+version=0.33.0
+base_url=https://github.com/jj-vcs/jj/releases/download
+url="$base_url/v$version/jj-v$version-x86_64-unknown-linux-musl.tar.gz"
+cache_dir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
+
+_gpkg_version() {
+	echo "$version"
+}
+
+_gpkg_install() {
+	mkdir -p "$cache_dir"
+	_gpkg_fetch "$url" | tar -C "$cache_dir" -xz ./jj
+	ln -fs "$cache_dir/jj" "$HOME/.local/bin/"
+}
+
+_gpkg_uninstall() {
+	rm -f "$HOME/.local/bin/jj"
+	rm -rf "$cache_dir"
+}
