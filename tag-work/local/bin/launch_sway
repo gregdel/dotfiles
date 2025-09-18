@@ -3,25 +3,21 @@
 export XDG_SESSION_TYPE=wayland
 export XDG_CURRENT_DESKTOP=sway
 
-# Enable firefox support for wayland
+# Firefox
 export MOZ_ENABLE_WAYLAND=1
 
-# Qt config for wayland
-export QT_QPA_PLATFORM=wayland-egl
+# Qt
+export QT_QPA_PLATFORM=wayland
 export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-
-# Elementary/EFL
-export ECORE_EVAS_ENGINE=wayland_egl
-export ELM_ENGINE=wayland_egl
 
 # SDL
 export SDL_VIDEODRIVER=wayland
 
-# TODO: configure this for both X and wayland
-export XDG_CONFIG_HOME=$HOME/.config
-export XDG_CACHE_HOME=$HOME/.cache
+# Config paths
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
 
-# Termite without border
-export GTK_CSD=1
+# Electron/Chromium
+export OZONE_PLATFORM=wayland
 
 exec sway
