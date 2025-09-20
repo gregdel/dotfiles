@@ -3,6 +3,9 @@ vim.opt_local.softtabstop = 4
 vim.opt_local.tabstop = 4
 vim.opt_local.shiftwidth = 4
 
+-- LSP
+vim.lsp.enable("gopls")
+
 -- ALE
 vim.b.ale_linters = {"go build", "gopls", "golangci-lint"}
 vim.b.ale_fixers = {"goimports", "gofmt"}

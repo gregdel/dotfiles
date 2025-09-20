@@ -60,6 +60,16 @@ require("lazy").setup({
     end
   },
   {
+    "akinsho/bufferline.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons"},
+    opts = {
+      options = {
+        mode = "tabs",
+        buffer_close_icon = "",
+      },
+    },
+  },
+  {
     "folke/zen-mode.nvim",
     opts = {
       plugins = {
@@ -292,11 +302,6 @@ require("lazy").setup({
   {
     "neovim/nvim-lspconfig",
     config = function()
-      local lsp = require("lspconfig")
-      lsp.clangd.setup{}
-      lsp.gopls.setup{}
-      lsp.rust_analyzer.setup{}
-
       -- Use LspAttach autocommand to only map the following keys
       -- after the language server attaches to the current buffer
       vim.api.nvim_create_autocmd("LspAttach", {
