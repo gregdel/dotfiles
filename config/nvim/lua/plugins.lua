@@ -65,7 +65,10 @@ require("lazy").setup({
     opts = {
       options = {
         mode = "tabs",
+        always_show_bufferline = false,
         buffer_close_icon = "",
+        show_close_icon = false,
+        separator_style = "thick",
       },
     },
   },
@@ -295,6 +298,8 @@ require("lazy").setup({
           CodeCompanionChatTool = { fg = palette.pink },
           CodeCompanionChatAgent = { fg = palette.pink },
           -- SignColumn = { fg = palette.white, bg = palette.base3 },
+          -- Bufferline
+          BufferLineFill = { bg = palette.base2 },
         },
       })
     end,
