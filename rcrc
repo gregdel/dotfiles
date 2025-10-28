@@ -13,4 +13,7 @@ case "$hostname" in
   laptop14*)
     TAGS="$TAGS fonts work gofi"
     ;;
+  lois)
+    TAGS="$TAGS fonts foot music gofi"
+    ;;
 esac

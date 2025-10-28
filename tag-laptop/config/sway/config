@@ -223,7 +223,7 @@ input type:keyboard {
     xkb_options compose:ralt,ctrl:nocaps
 }
 
-input "1739:30383:DLL075B:01_06CB:76AF_Touchpad" {
+input type:touchpad {
     dwt enabled
     click_method clickfinger
     middle_emulation enabled
@@ -231,6 +231,8 @@ input "1739:30383:DLL075B:01_06CB:76AF_Touchpad" {
     scroll_method two_finger
     tap_button_map lrm
     tap enabled
+    drag enabled
+    drag_lock disabled
 }
 
 output "eDP-1" {

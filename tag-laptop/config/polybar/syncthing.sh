@@ -8,10 +8,10 @@ _help() {
 
 _status() {
 	if systemctl --user is-active syncthing >/dev/null; then
-		echo ""
+		echo "󰓦"
 		return 0
 	else
-		echo ""
+		echo ""
 		return 1
 	fi
 }

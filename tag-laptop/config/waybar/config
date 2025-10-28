@@ -5,7 +5,7 @@
     "format-time": "{H}h{m}",
     "modules-left": ["sway/workspaces", "sway/mode", "custom/media"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/ovh", "mpd", "custom/bluetooth", "custom/syncthing", "pulseaudio", "backlight", "network", "battery"],
+    "modules-right": ["custom/syncthing", "pulseaudio", "backlight", "network", "battery"],
     "sway/workspaces": {
         "disable-scroll": true,
         "format": "{name}"
@@ -19,7 +19,7 @@
     },
     "backlight": {
         "format": "{percent}% {icon}",
-        "format-icons": ["", "", ""],
+        "format-icons": ["󰃞", "󰃟", "󰃠"],
         "on-scroll-up": "light -A 5",
         "on-scroll-down": "light -U 5"
     },
@@ -54,33 +54,6 @@
         "on-click-right": "~/.config/polybar/syncthing.sh open",
         "on-click": "~/.config/polybar/syncthing.sh toggle"
     },
-    "custom/bluetooth": {
-        "interval": 10,
-        "max-length": 3,
-        "format": "{}",
-        "exec": "bluetooth-helper polybar"
-    },
-    "custom/ovh": {
-        "interval": 10,
-        "format": " OVH",
-        "exec": "pgrep -x openconnect"
-    },
-    "mpd": {
-        "format": "{stateIcon}{randomIcon} ﱘ",
-        "format-paused": "",
-        "format-disconnected": "",
-        "format-stopped": "",
-        "tooltip-format": "Artist: {artist}\nAlbum: {album}\nTitle: {title}",
-        "tooltip-format-disconnected": "MPD (disconnected)",
-        "on-click": "~/.local/bin/mpc-notify",
-        "interval": 10,
-        "random-icons": {
-            "on": "  "
-        },
-        "state-icons": {
-            "playing": "契"
-        }
-    },
     "pulseaudio": {
         "format": "{volume}% {icon} {format_source}",
         "format-bluetooth": "{volume}% {icon} {format_source}",
@@ -94,7 +67,7 @@
             "headset": "",
             "phone": "",
             "portable": "",
-            "hdmi": "﴿",
+            "hdmi": "",
             "default": ["", "", ""]
         },
         "on-click": "pavucontrol"
