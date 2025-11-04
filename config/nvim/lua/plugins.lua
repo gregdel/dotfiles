@@ -142,6 +142,8 @@ require("lazy").setup({
       vim.g.ale_lint_on_insert_leave = 0
       vim.g.ale_fix_on_save = 1
       vim.g.ale_virtualtext_cursor = 1
+      -- enable ale's LSP integration in nvim
+      vim.g.ale_use_neovim_lsp_api = 1
     end
   },
   {
@@ -231,6 +233,7 @@ require("lazy").setup({
       configs.setup({
         ensure_installed = {
           "c",
+          "cpp",
           "comment",
           "css",
           "dot",
