@@ -1,0 +1,6 @@
+#!/bin/sh
+
+systemctl --user disable swayidle
+
+swaymsg output 'DP-1' enable
+swaymsg output 'HDMI-A-2' disable

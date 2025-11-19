@@ -1,0 +1,7 @@
+#!/bin/sh
+
+mqtt_server=192.168.100.50
+mqtt_topic="zigbee2mqtt/ir_remote/set/ir_code_to_send"
+action_power="B70RvRE6AokG4AED4AsB4BcfQAFAI+APAcAbQAfgCwMHLLi9Eb0ROgLgAxvgCwHgFx9AAUAj4A8BwBtAB+ALA+B8hwIGOgI="
+
+mosquitto_pub -h "$mqtt_server" -t "$mqtt_topic" -m "$action_power"

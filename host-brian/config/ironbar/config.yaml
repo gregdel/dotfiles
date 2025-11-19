@@ -1,0 +1,81 @@
+position: top
+height: 30
+popup_gap: 5
+popup_autohide: true
+
+start:
+  - type: workspaces
+
+  - type: volume
+    format: "{icon} {percentage}%"
+    max_volume: 130
+
+  - type: music
+    player_type: mpris
+    format: "{artist} - {title}"
+    truncate:
+      mode: end
+      max_length: 40
+
+center:
+  - type: clock
+    format: "%a %d %b - %H:%M"
+
+end:
+  - type: sys_info
+    format:
+      - " {temp_c:k10temp-Tctl}°"
+      - "󰾲 {temp_c:amdgpu-edge}°"
+    interval:
+      temps: 5
+
+  - type: bluetooth
+
+  - type: custom
+    bar:
+      - type: label
+        label: "{{5000:~/.local/bin/ps4-controller}}"
+
+  - type: custom
+    bar:
+      - type: button
+        label: ""
+        on_click: popup:toggle
+    popup:
+      - type: box
+        orientation: vertical
+        widgets:
+          - type: button
+            label: "{{5000:~/.local/bin/sway-monitor HDMI-A-2}} Toggle Monitor"
+            on_click: "!~/.local/bin/sway-monitor HDMI-A-2 toggle"
+          - type: button
+            label: "{{5000:~/.local/bin/sway-monitor DP-1}} Toggle TV"
+            on_click: "!~/.local/bin/sway-monitor DP-1 toggle"
+          - type: button
+            label: "{{10000:~/.local/bin/swayidle-toggle icon}} Toggle Swayidle"
+            on_click: "!~/.local/bin/swayidle-toggle toggle"
+          - type: button
+            label: "󰻅 TV Toggle"
+            on_click: "!~/.local/bin/tv-remote"
+          - type: button
+            label: " Steam"
+            on_click: "!steam"
+
+  - type: custom
+    bar:
+      - type: button
+        label: "⏻"
+        on_click: "popup:toggle"
+    popup:
+      - type: box
+        orientation: vertical
+        widgets:
+          - type: button
+            label: "Suspend"
+            on_click: "!systemctl suspend"
+          - type: button
+            label: "Reboot"
+            on_click: "!reboot"
+          - type: button
+            label: "Shutdown"
+            on_click: "!shutdown now"

@@ -1,0 +1,192 @@
+@define-color color-fg #d0d0d0;
+@define-color color-fg-dim #505050;
+@define-color color-bg #101010;
+@define-color color-bg-dim #202020;
+@define-color color-yellow #c4a000;
+
+* {
+    font-family: monospace;
+    font-size: 14px;
+    color: @color-fg;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.background {
+    background: transparent;
+}
+
+#bar {
+    background: @color-bg;
+}
+
+/* GTK4 popover styling - fix white corners */
+popover {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+popover > contents {
+    background: @color-bg-dim;
+    border: none;
+    border-radius: 8px;
+    padding: 0;
+}
+
+popover > arrow {
+    background: transparent;
+    border: none;
+}
+
+.bluetooth,
+.clock,
+.custom,
+.music,
+.sys_info,
+.volume {
+    background: transparent;
+    margin: 2px;
+    padding: 0 10px;
+}
+
+.clock {
+    font-weight: bold;
+}
+
+.custom button {
+    background: transparent;
+    padding: 0 5px;
+    min-width: 20px;
+}
+
+.custom button:hover {
+    background: @color-bg;
+    color: @color-yellow;
+}
+
+.workspaces .item {
+    background: @color-bg;
+    padding: 0 8px;
+    margin: 0 2px;
+    border-radius: 0;
+}
+
+.workspaces .item.focused {
+    border-bottom: 2px solid @color-yellow;
+}
+
+/* Popups */
+.popup {
+    background: @color-bg-dim;
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.popup button {
+    background: @color-bg;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    margin: 4px;
+}
+
+.popup button:hover {
+    background: @color-bg-dim;
+    color: @color-yellow;
+}
+
+/* Sliders / scales */
+scale {
+    background: transparent;
+}
+
+scale trough {
+    background: @color-bg;
+    border-radius: 4px;
+    min-width: 8px;
+    min-height: 100px;
+}
+
+scale highlight {
+    background: @color-yellow;
+    border-radius: 4px;
+}
+
+scale slider {
+    background: @color-fg;
+    border-radius: 50%;
+    min-width: 16px;
+    min-height: 16px;
+}
+
+/* Calendar */
+calendar {
+    background: @color-bg-dim;
+    color: @color-fg;
+    border: none;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+calendar.header {
+    background: @color-bg-dim;
+    border: none;
+}
+
+calendar.button {
+    background: @color-bg;
+    color: @color-fg;
+}
+
+calendar:selected {
+    background: @color-yellow;
+    color: @color-bg;
+}
+
+calendar.highlight {
+    color: @color-yellow;
+}
+
+calendar:indeterminate {
+    color: @color-fg-dim;
+}
+
+/* Music popup */
+.popup-music .album-art {
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.popup-music .title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.popup-music .artist {
+    color: @color-fg-dim;
+}
+
+.popup-music .controls button {
+    background: @color-bg;
+    border-radius: 8px;
+    padding: 8px;
+    margin: 4px;
+}
+
+.popup-music .controls button:hover {
+    color: @color-yellow;
+}
+
+.popup-music .progress {
+    background: @color-bg;
+    border-radius: 4px;
+}
+
+.popup-music .progress .fill {
+    background: @color-yellow;
+    border-radius: 4px;
+}

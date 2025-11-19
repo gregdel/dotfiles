@@ -1,0 +1,32 @@
+#!/bin/sh
+# shellcheck disable=3043
+
+_get_connected_devices() {
+    bluetoothctl devices Connected | while read -r _ mac name; do
+        printf "%s|%s\n" "$mac" "$name"
+    done
+}
+
+_select() {
+	fuzzel \
+		--dmenu \
+		--prompt "Disconnect: " \
+		--minimal-lines \
+		--selection-radius 6 \
+		--no-exit-on-keyboard-focus-loss
+}
+
+_disconnect() {
+    local selected mac name
+    selected="$(_get_connected_devices | _select)" || exit 1
+
+    [ -z "$selected" ] && exit 0
+
+    mac="${selected%%|*}"
+    name="${selected#*|}"
+
+    bluetoothctl disconnect "$mac"
+    notify-send -i bluetooth "Bluetooth" "Disconnected $name"
+}
+
+_disconnect

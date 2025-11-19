@@ -1,0 +1,12 @@
+[Unit]
+Description=Ironbar status bar
+Documentation=https://github.com/JakeStanger/ironbar
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/ironbar
+Restart=on-failure
+
+[Install]
+WantedBy=sway-session.target

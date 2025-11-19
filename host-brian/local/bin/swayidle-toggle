@@ -1,0 +1,27 @@
+#!/bin/sh
+# shellcheck disable=3043
+
+_swayidle() {
+	systemctl --user "$1" swayidle.service
+}
+
+_active() {
+	_swayidle is-active >/dev/null 2>&1
+}
+
+_toggle() {
+	local cmd=start
+	_active && cmd=stop
+	_swayidle "$cmd"
+}
+
+_icon() {
+	local icon="󰒳"
+	_active && icon="󰒲"
+	printf '%s' "$icon"
+}
+
+case "$1" in
+	toggle) _toggle ;;
+	*)      _icon   ;;
+esac

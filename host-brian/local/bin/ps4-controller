@@ -1,29 +1,38 @@
 #!/bin/sh
+# shellcheck disable=3043
 
-out="<span size='larger'>󰊵</span>"
+_format_controller() {
+	local uevent="$1"
+    # shellcheck disable=1090
+    . "$uevent" || return 1
+    [ -n "$POWER_SUPPLY_CAPACITY" ] || return 1
 
-i=0
-for p in /sys/class/power_supply/ps-controller*; do
-	[ -d "$p" ] || continue
+	local icon="" capacity="$POWER_SUPPLY_CAPACITY"
+    case "$POWER_SUPPLY_STATUS" in
+        Charging) icon="󰨢" ;;
+        *)
+            if [ "$capacity" -lt 15 ]; then
+				icon="󰝋"
+            elif [ "$capacity" -lt 30 ]; then
+                icon="󰝎"
+            elif [ "$capacity" -lt 60 ]; then
+                icon="󰝏"
+            else
+                icon="󰝍"
+            fi
+            ;;
+    esac
+    printf "%s %s%%" "$icon" "$capacity"
+}
 
-	capacity="$(cat "$p/capacity")"
-	state="$(cat "$p/status")"
-	icon="<span size='larger'>󰊴</span>"
-	i=$((i+1))
-
-	case "$state" in
-		Discharging) state="↓" ;;
-		Charging)    state="↑" ;;
-	esac
-
-	[ "$capacity" -lt 30 ] && icon="󰝎"
-	controller="$icon:${capacity}%$state"
-
-	if [ "$i" -eq 1 ]; then
-		out="$controller"
-	else
-		out="$out $controller"
-	fi
+text="" count=0 formatted=""
+set -- /sys/class/power_supply/ps-controller-battery-*/uevent
+for uevent; do
+	[ -f "$1" ] || continue
+	formatted="$(_format_controller "$uevent")" || continue
+	text="${text:+$text / }$formatted"
+	count=$((count + 1))
 done
 
-printf "%s" "$out"
+[ "$count" -eq 0 ] && text="󰖻"
+printf "%s" "$text"

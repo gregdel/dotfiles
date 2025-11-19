@@ -3,17 +3,9 @@ set -e
 
 [ "$1" ] || exec nnn
 
-PARENT_COMMAND=$(ps -o comm= $PPID)
-_term_choose() {
-	case "$PARENT_COMMAND" in
-		nnn) st -e "$@" ;;
-		*)   "$@"       ;;
-	esac
-}
-
 _log() {
-	case "$PARENT_COMMAND" in
-		nnn) notify-send -i deepin-terminal "Open" "$@" ;;
+	case "$(ps -o comm= $PPID)" in
+		nnn) notify-send -i deepin-terminal "nnn" "$@" ;;
 		*)   echo "$@"               ;;
 	esac
 }
@@ -45,8 +37,8 @@ _open_file() {
 		video/*)
 			mpv "$@"
 			;;
-		text/*)
-			_term_choose nvim "$*"
+		text/*|application/json)
+			nvim "$*"
 			;;
 		application/pdf)
 			zathura "$@"
@@ -74,8 +66,19 @@ case "$1" in
 		browser="firefox"
 		[ "$BROWSER" ] && browser=$BROWSER
 		if [ "$WAYLAND_DISPLAY" ]; then
-			con_id=$(swaymsg -t get_tree | jq -r "..|try select(.app_id == \"$browser\").id")
-			swaymsg "[con_id=$con_id]" focus
+			case "$XDG_CURRENT_DESKTOP" in
+				Hyprland)
+					browser_address=$(hyprctl clients -j |
+						jq -r ".[] | select(.class == \"$browser\") | .address" |
+						head -n1)
+					[ -n "$browser_address" ] &&
+						hyprctl dispatch focuswindow "address:$browser_address"
+					;;
+				sway)
+					con_id=$(swaymsg -t get_tree | jq -r "..|try select(.app_id == \"$browser\").id")
+					swaymsg "[con_id=$con_id]" focus
+					;;
+			esac
 		fi
 		$browser "$@"
 		;;

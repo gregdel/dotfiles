@@ -1,0 +1,42 @@
+#!/bin/sh
+
+_fuzzel() {
+	fuzzel --dmenu
+}
+
+_urls() {
+	_fuzzel < "$HOME/.urls"
+}
+
+_man() {
+	man -k . \
+		| sed 's/^\([^ ]*\) (\(.\)).*/\2 \1/' \
+		| grep -E '^[0-9]+' \
+		| sort -n \
+		| _fuzzel
+}
+
+_usage() {
+	echo "$(basename "$0") CMD"
+	echo "CMD:"
+	echo "  man - search through man pages"
+	echo "  url - search and open URLs stored in $HOME/.urls"
+	exit 1
+}
+
+case "$1" in
+	man)
+		selected=$(_man)
+		[ -z "$selected" ] && exit 0
+		hyprctl dispatch exec foot man "$selected"
+		;;
+	urls)
+		selected=$(_urls)
+		url=${selected%% *}
+		[ "$url" ] && o "$url"
+		exit 0
+		;;
+	*)
+		_usage
+		;;
+esac

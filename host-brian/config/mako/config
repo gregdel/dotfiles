@@ -1,0 +1,30 @@
+font=monospace 11
+icon-path=/usr/share/icons/Papirus-Dark/
+
+width=400
+height=140
+padding=10
+margin=10,20
+
+text-color=#EEE8D5
+progress-color=over #B58900
+background-color=#3F3F3FF0
+
+border-radius=12
+border-size=0
+
+[urgency=low]
+background-color=#3F3F3FF0
+
+[urgency=normal]
+background-color=#3F3F3FF0
+
+[urgency=high]
+background-color=#CC9393F0
+default-timeout=0
+
+[grouped]
+format=<b>%s</b>\n%b\n<i>+%g more</i>
+
+[mode=do-not-disturb]
+invisible=1

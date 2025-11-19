@@ -1,3 +1,6 @@
+include /etc/sway/config.d/50-systemd-user.conf
+exec systemctl --user start sway-session.target
+
 # modkey
 set $mod Mod4
 
@@ -63,49 +66,31 @@ bindsym $mod+Shift+space floating toggle
 # change focus between tiling / floating windows
 bindsym $mod+space focus mode_toggle
 
-# focus the parent container
-bindsym $mod+p focus parent
-
-# focus the child container
-bindsym $mod+c focus child
-
 bindsym $mod+Escape workspace back_and_forth
 
-# workspaces
-set $ws1 1
-set $ws2 2
-set $ws3 3
-set $ws4 4
-set $ws5 5
-set $ws6 6
-set $ws7 7
-set $ws8 8
-set $ws9 9
-set $ws10 10
-
 # switch to workspace
-bindsym $mod+1 workspace $ws1
-bindsym $mod+2 workspace $ws2
-bindsym $mod+3 workspace $ws3
-bindsym $mod+4 workspace $ws4
-bindsym $mod+5 workspace $ws5
-bindsym $mod+6 workspace $ws6
-bindsym $mod+7 workspace $ws7
-bindsym $mod+8 workspace $ws8
-bindsym $mod+9 workspace $ws9
-bindsym $mod+0 workspace $ws10
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
 
 # move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace $ws1
-bindsym $mod+Shift+2 move container to workspace $ws2
-bindsym $mod+Shift+3 move container to workspace $ws3
-bindsym $mod+Shift+4 move container to workspace $ws4
-bindsym $mod+Shift+5 move container to workspace $ws5
-bindsym $mod+Shift+6 move container to workspace $ws6
-bindsym $mod+Shift+7 move container to workspace $ws7
-bindsym $mod+Shift+8 move container to workspace $ws8
-bindsym $mod+Shift+9 move container to workspace $ws9
-bindsym $mod+Shift+0 move container to workspace $ws10
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
 
 # Move workspace between outputs
 bindsym $mod+o move workspace to output right
@@ -116,13 +101,12 @@ bindsym Mod1+w exec w000t
 # mako
 bindsym Ctrl+Space exec makoctl dismiss
 
-# gofi
-for_window [title="^gofi$"] floating enable; border pixel 2
-bindsym Mod1+r exec gofi window binaries
-bindsym Mod1+m exec gofi window man
-bindsym Mod1+p exec gofi window pass
-bindsym Mod1+u exec gofi window urls
-bindsym Mod1+Shift+u exec gofi window edit ~/.urls
+# Fuzzy launch
+bindsym Mod1+r exec fuzzel
+bindsym Mod1+m exec fuzzel-select man
+bindsym Mod1+u exec fuzzel-select urls
+bindsym Mod1+Shift+s exec screenshot
+bindsym Mod1+Shift+u exec foot vim ~/.urls
 
 # scratchpad
 for_window [app_id="^scratchpad$"] floating enable; border pixel 2
@@ -134,31 +118,19 @@ bindsym Mod1+k resize shrink height 10 px or 10ppt
 bindsym Mod1+j resize grow height 10 px or 10ppt
 bindsym Mod1+l resize grow width 10 px or 10ppt
 
-# audio controls
-bindsym XF86AudioRaiseVolume exec pamixer --unmute --increase 5
-bindsym XF86AudioLowerVolume exec pamixer --unmute --decrease 5
-bindsym XF86AudioMute exec pamixer --toggle-mute
-bindsym XF86AudioPlay exec mpc toggle
-bindsym XF86AudioPrev exec mpc prev
-bindsym XF86AudioNext exec mpc next
-
-# screenshot
-bindsym Print exec screenshot
-
-# Toggle the laptop screen
-bindsym XF86Search exec external_screen.sh
-
-# screen brightness controls
-bindsym XF86MonBrightnessUp exec light -A 5
-bindsym XF86MonBrightnessDown exec light -U 5
+# audio / player controls
+bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioPause exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioStop exec playerctl stop
 
 # windows specific configurations
 for_window [app_id="mpv"] floating enable
 for_window [app_id="firefox"] [title="^Extension:.+"] floating enable
-
-# reload the configuration file
-bindsym $mod+Shift+c reload
-bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit sway?' -b 'Yep !' 'swaymsg exit'
 
 # Always running
 set $gnome-schema org.gnome.desktop.interface
@@ -166,13 +138,6 @@ exec_always {
     gsettings set $gnome-schema gtk-theme 'Arc-Darker'
     gsettings set $gnome-schema icon-theme 'Moka'
     gsettings set $gnome-schema cursor-theme 'Adwaita'
-
-
-    systemctl --user import-environment DISPLAY WAYLAND_DISPLAY
-}
-
-bar {
-    swaybar_command waybar
 }
 
 input type:keyboard {
@@ -183,15 +148,40 @@ input type:keyboard {
 
 output "*" {
     scale 1
-    pos 0 0
-    adaptive_sync off
     bg /home/greg/pictures/wallpaper.jpg fill
 }
 
+# TV
 output "DP-1" {
+    disable
+    pos 0 0
+}
+
+# Monitor
+output "HDMI-A-2" {
     scale 2
+    pos 1920 0
 }
 
 output "HEADLESS-*" {
     res 1920x1080
+}
+
+# SwayFX effects
+smart_corner_radius on
+corner_radius 8
+shadows enable
+shadows_on_csd enable
+shadow_blur_radius 20
+shadow_color #00000080
+
+blur enable
+blur_passes 2
+blur_radius 5
+
+layer_effects "ironbar" {
+    blur enable
+    blur_ignore_transparent enable
+    shadows disable
+    corner_radius 0
 }
