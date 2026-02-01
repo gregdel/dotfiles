@@ -1,7 +1,7 @@
 position: top
 height: 30
 popup_gap: 5
-popup_autohide: true
+popup_autohide: false
 
 start:
   - type: workspaces
@@ -12,14 +12,15 @@ start:
 
   - type: music
     player_type: mpris
-    format: "{artist} - {title}"
+    format: "{artist}  {title}"
     truncate:
       mode: end
       max_length: 40
 
 center:
   - type: clock
-    format: "%a %d %b - %H:%M"
+    format: "%a %d %b  %H:%M"
+    justify: center
 
 end:
   - type: sys_info

@@ -14,6 +14,11 @@
     margin: 0;
 }
 
+button,
+.workspaces .item {
+    transition: background 150ms ease-in-out, color 150ms ease-in-out;
+}
+
 .background {
     background: transparent;
 }
@@ -22,23 +27,17 @@
     background: @color-bg;
 }
 
-/* GTK4 popover styling - fix white corners */
-popover {
+/* GTK4 popover (bluetooth, etc.) */
+popover,
+popover > arrow {
     background: transparent;
-    border: none;
     box-shadow: none;
 }
 
 popover > contents {
     background: @color-bg-dim;
-    border: none;
     border-radius: 8px;
-    padding: 0;
-}
-
-popover > arrow {
-    background: transparent;
-    border: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 .bluetooth,
@@ -56,6 +55,10 @@ popover > arrow {
     font-weight: bold;
 }
 
+.popup-clock .calendar-clock {
+    font-size: 2.5rem;
+}
+
 .custom button {
     background: transparent;
     padding: 0 5px;
@@ -63,7 +66,35 @@ popover > arrow {
 }
 
 .custom button:hover {
+    background: @color-bg-dim;
+    color: @color-yellow;
+}
+
+/* GTK menu/list widgets (used by bluetooth, volume app list, etc.) */
+menu,
+listview,
+list {
     background: @color-bg;
+}
+
+menu {
+    border-radius: 8px;
+    padding: 4px;
+}
+
+menuitem,
+listview > row,
+list > row {
+    background: @color-bg;
+    padding: 4px 8px;
+}
+
+menuitem:hover,
+listview > row:hover,
+listview > row:selected,
+list > row:hover,
+list > row:selected {
+    background: @color-bg-dim;
     color: @color-yellow;
 }
 
@@ -71,7 +102,10 @@ popover > arrow {
     background: @color-bg;
     padding: 0 8px;
     margin: 0 2px;
-    border-radius: 0;
+}
+
+.workspaces .item:hover {
+    border-bottom: 2px solid @color-fg-dim;
 }
 
 .workspaces .item.focused {
@@ -81,22 +115,31 @@ popover > arrow {
 /* Popups */
 .popup {
     background: @color-bg-dim;
-    border: none;
     border-radius: 8px;
     padding: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 .popup button {
     background: @color-bg;
-    border: none;
     border-radius: 6px;
     padding: 8px 16px;
     margin: 4px;
 }
 
+.popup-custom button label {
+    min-width: 180px;
+    text-align: left;
+}
+
 .popup button:hover {
     background: @color-bg-dim;
     color: @color-yellow;
+}
+
+.popup-volume .device-box,
+.popup-volume .device-box .device-selector {
+    background: @color-bg-dim;
 }
 
 /* Sliders / scales */
@@ -106,52 +149,66 @@ scale {
 
 scale trough {
     background: @color-bg;
-    border-radius: 4px;
-    min-width: 8px;
-    min-height: 100px;
+    border-radius: 2px;
+    min-width: 4px;
+    min-height: 12px;
 }
 
 scale highlight {
     background: @color-yellow;
-    border-radius: 4px;
+    border-radius: 10%;
 }
 
 scale slider {
     background: @color-fg;
-    border-radius: 50%;
-    min-width: 16px;
-    min-height: 16px;
+    border-radius: 10%;
+    min-width: 12px;
+    min-height: 12px;
 }
 
 /* Calendar */
-calendar {
+.calendar {
     background: @color-bg-dim;
-    color: @color-fg;
-    border: none;
     border-radius: 8px;
-    padding: 4px;
+    padding: 8px;
 }
 
-calendar.header {
+calendar header,
+calendar header stack,
+calendar header label {
     background: @color-bg-dim;
-    border: none;
 }
 
-calendar.button {
-    background: @color-bg;
-    color: @color-fg;
+calendar header button {
+    background: @color-bg-dim;
+    padding: 4px 8px;
 }
 
-calendar:selected {
-    background: @color-yellow;
-    color: @color-bg;
-}
-
-calendar.highlight {
+calendar header button:hover {
     color: @color-yellow;
 }
 
-calendar:indeterminate {
+calendar grid label {
+    min-width: 24px;
+    min-height: 24px;
+    padding: 2px;
+}
+
+calendar grid label.today {
+    color: @color-yellow;
+    font-weight: bold;
+}
+
+calendar grid label:selected {
+    background: @color-yellow;
+    color: @color-bg;
+    border-radius: 50%;
+    min-width: 28px;
+    min-height: 28px;
+    padding: 0;
+}
+
+calendar grid label.other-month {
     color: @color-fg-dim;
 }
 
@@ -183,7 +240,14 @@ calendar:indeterminate {
 
 .popup-music .progress {
     background: @color-bg;
-    border-radius: 4px;
+    min-height: 12px;
+    /* border-radius: 4px; */
+}
+
+.popup-music .progress .slider {
+    min-width: 16px;
+    min-height: 16px;
+    border-radius: 50%;
 }
 
 .popup-music .progress .fill {

@@ -1,5 +1,6 @@
+default-timeout=15000
 font=monospace 11
-icon-path=/usr/share/icons/Papirus-Dark/
+icon-path=/usr/share/icons/Papirus-Dark
 
 width=400
 height=140
