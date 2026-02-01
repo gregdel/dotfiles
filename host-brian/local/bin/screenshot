@@ -1,9 +1,16 @@
 #!/bin/sh
 set -e
 
-file="$(date +'/tmp/%d_%m_%H#%k:%M:%S.png')"
+file="$(date +'/tmp/%d_%m_%y#%H:%M:%S.png')"
 
 grim -g "$(slurp)" "$file"
-notify-send -i folder-black-pictures "Screenshot" "Saved to $file"
 
+wl-copy --primary "$file"
+
+notify-send \
+	--icon=folder-black-pictures \
+	--urgency=low \
+	--expire-time=1000 \
+	"Screenshot" \
+	"Saved to $file"
 
