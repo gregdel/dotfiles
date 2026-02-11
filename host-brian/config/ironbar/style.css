@@ -132,6 +132,20 @@ list > row:selected {
     text-align: left;
 }
 
+.popup-custom .menu-item {
+    padding: 8px 12px;
+}
+
+.popup-custom .menu-item-icon {
+    min-width: 1.6em;
+    text-align: center;
+    margin-right: 8px;
+}
+
+.popup-custom .menu-item-text {
+    text-align: left;
+}
+
 .popup button:hover {
     background: @color-bg-dim;
     color: @color-yellow;

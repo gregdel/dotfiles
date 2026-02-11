@@ -47,20 +47,70 @@ end:
         orientation: vertical
         widgets:
           - type: button
-            label: "{{5000:~/.local/bin/sway-monitor HDMI-A-2}} Toggle Monitor"
+            class: menu-item
             on_click: "!~/.local/bin/sway-monitor HDMI-A-2 toggle"
+            widgets:
+              - type: box
+                orientation: horizontal
+                widgets:
+                  - type: label
+                    class: menu-item-icon
+                    label: "{{5000:~/.local/bin/sway-monitor HDMI-A-2}}"
+                  - type: label
+                    class: menu-item-text
+                    label: "Toggle monitor output"
           - type: button
-            label: "{{5000:~/.local/bin/sway-monitor DP-1}} Toggle TV"
+            class: menu-item
             on_click: "!~/.local/bin/sway-monitor DP-1 toggle"
+            widgets:
+              - type: box
+                orientation: horizontal
+                widgets:
+                  - type: label
+                    class: menu-item-icon
+                    label: "{{5000:~/.local/bin/sway-monitor DP-1}}"
+                  - type: label
+                    class: menu-item-text
+                    label: "Toggle TV output"
           - type: button
-            label: "{{10000:~/.local/bin/swayidle-toggle icon}} Toggle Swayidle"
+            class: menu-item
             on_click: "!~/.local/bin/swayidle-toggle toggle"
+            widgets:
+              - type: box
+                orientation: horizontal
+                widgets:
+                  - type: label
+                    class: menu-item-icon
+                    label: "{{10000:~/.local/bin/swayidle-toggle icon}}"
+                  - type: label
+                    class: menu-item-text
+                    label: "Toggle auto sleep"
           - type: button
-            label: "󰻅 TV Toggle"
+            class: menu-item
             on_click: "!~/.local/bin/tv-remote"
+            widgets:
+              - type: box
+                orientation: horizontal
+                widgets:
+                  - type: label
+                    class: menu-item-icon
+                    label: "󰻅"
+                  - type: label
+                    class: menu-item-text
+                    label: "TV ON/OFF"
           - type: button
-            label: " Steam"
+            class: menu-item
             on_click: "!steam"
+            widgets:
+              - type: box
+                orientation: horizontal
+                widgets:
+                  - type: label
+                    class: menu-item-icon
+                    label: ""
+                  - type: label
+                    class: menu-item-text
+                    label: "Launch Steam"
 
   - type: custom
     bar:
