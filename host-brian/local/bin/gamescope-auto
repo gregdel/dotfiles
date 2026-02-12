@@ -1,0 +1,29 @@
+#!/bin/sh
+
+read -r width height refresh <<EOF
+	$(swaymsg -t get_outputs |
+		jq -r '.[] | select(.focused) | .current_mode | "\(.width) \(.height) \(.refresh)"')
+EOF
+refresh=$(( refresh / 1000 ))
+
+# To setup the --rt flag you need:
+# sudo setcap 'cap_sys_nice=eip' /usr/bin/gamescope
+
+echo "w:$width h:$height r:$refresh cmd:$*" \
+	>> /tmp/gamescope-auto.log
+
+systemctl --user stop swayidle
+
+gamemoderun gamescope \
+	--mangoapp \
+	--rt \
+	--xwayland-count 2 \
+	--framerate-limit "$refresh" \
+	--nested-refresh "$refresh" \
+	--output-width "$width" \
+	--output-height "$height" \
+	--nested-width "$width" \
+	--nested-height "$height" \
+	--fullscreen -- "$@"
+
+systemctl --user start swayidle
