@@ -245,6 +245,7 @@ require("lazy").setup({
           "markdown",
           "query", -- treesitter playground
           "rust",
+          "typescript",
           "vim",
           "vimdoc",
           "yaml",
