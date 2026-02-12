@@ -108,7 +108,7 @@ vim.keymap.set("n", "<Leader>gu", "<Cmd>Gitsigns reset_hunk<CR>", opts)
 -- IBL
 vim.keymap.set("n", "<Leader>v", "<Cmd>IBLToggle<CR>", opts)
 
--- AI
+-- CodeCompagnon
 vim.keymap.set("n", "<Leader>ac", "<Cmd>CodeCompanionChat<CR>", opts)
 vim.keymap.set("v", "<Leader>ac", "<Cmd>CodeCompanionChat<CR>", opts)
 vim.keymap.set("n", "<Leader>aa", "<Cmd>CodeCompanionActions<CR>", opts)

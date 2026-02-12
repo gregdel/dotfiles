@@ -5,21 +5,24 @@ _check_link() {
 }
 
 _check_wifi() {
-	count="$(/usr/sbin/iwconfig wlo1 2>/dev/null | /usr/bin/grep -c proton)"
+	dev="$1"
+	count="$(/usr/sbin/iwconfig "$dev" 2>/dev/null | /usr/bin/grep -c proton)"
 	[ "$count" = "1" ]
 }
 
 _is_connected() {
 	_check_link cscotun0 && return 0
 	_check_link enx2cea7f330177 && return 0
-	_check_wifi && return 0
+	_check_wifi wlo1 && return 0
 	return 1
 }
 
+icon=""
+ret=1
 if _is_connected; then
-	echo " OVH"
-	exit 0
-else
-	echo " OVH"
-	exit 1
+	icon=""
+	ret=0
 fi
+
+echo "$icon OVH"
+return $ret

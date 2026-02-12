@@ -4,7 +4,7 @@
     "format-time": "{H}h{m}",
     "modules-left": ["sway/workspaces", "sway/mode", "custom/media"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/ovh", "pulseaudio", "backlight", "network", "battery"],
+    "modules-right": ["custom/vpn", "pulseaudio", "backlight", "network", "battery"],
     "sway/workspaces": {
         "disable-scroll": true,
         "format": "{name}"
@@ -47,7 +47,7 @@
         "format-disconnected": "",
         "on-click": "/opt/cisco/anyconnect/bin/vpnui"
     },
-    "custom/ovh": {
+    "custom/vpn": {
         "interval": 10,
         "format": "{}",
         "on-click": "/home/gdelattr/.local/bin/vpn",

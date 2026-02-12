@@ -28,7 +28,9 @@
     changed = green
     untracked = cyan
 [alias]
-    l  = log --graph --date-order --pretty=format:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit
+    ; l  = log --graph --date-order --pretty=format:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit
+    l = log --graph --date-order --pretty=format:'%Cred%h%Creset -%C(auto)%d%Creset %s %C(yellow)%G?%Creset %Cgreen(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit
+
     la = !git l --all
 
     redate = "!f() { git filter-branch --env-filter 'export GIT_COMMITTER_DATE=\"$GIT_AUTHOR_DATE\"' $@ --; }; f"
@@ -37,12 +39,14 @@
     rmtls = remote -v show
     brls = branch -vva --list
 
+    cp = cherry-pick
     cia = commit --amend --reset-author
     dm = !git branch --merged | grep -v '*' | xargs -n 1 git branch -d
     current-branch = rev-parse --abbrev-ref HEAD
     pushdev = !git push --set-upstream origin `git current-branch`:dev/`git current-branch`
     pushbr = !git push --set-upstream origin `git current-branch`
     su = submodule update --init
+    cio = commit --author 'Grégoire Delattre <gregoire.delattre@ovhcloud.com>'
 
     st = status
     ci = commit
@@ -57,3 +61,12 @@
     smtpserver = "/usr/bin/msmtp"
     confirm = auto
     annotate = yes
+
+[includeIf "gitdir:~/dev/rdvac/nap-framework/"]
+    path = ~/.gitconfig-ovh-gpg
+
+[includeIf "gitdir:~/dev/rdvac/nap-soft-doc/"]
+    path = ~/.gitconfig-ovh-gpg
+
+[includeIf "gitdir:~/dev/rdvac/"]
+    path = ~/.gitconfig-ovh

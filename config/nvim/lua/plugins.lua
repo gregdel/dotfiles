@@ -351,14 +351,28 @@ require("lazy").setup({
     opts = {
       strategies = {
         chat = {
-          adapter = "ovh",
+          adapter = "internal",
         },
         inline = {
-          adapter = "ovh",
+          adapter = "internal",
         },
       },
       adapters = {
         http = {
+          internal = function()
+            return require("codecompanion.adapters").extend("openai_compatible", {
+              env = {
+                url = "https://oai.endpoints.preprod.ai.cloud.ovh.net",
+                chat_url = "/v1/chat/completions",
+                api_key = 'gregoire.delattre@ovhcloud.com'
+              },
+              schema = {
+                model = {
+                  default = "gpt-oss-120b",
+                },
+              }
+            })
+          end,
           ovh = function()
             return require("codecompanion.adapters").extend("openai_compatible", {
               env = {
