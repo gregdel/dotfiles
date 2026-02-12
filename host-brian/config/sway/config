@@ -129,8 +129,17 @@ bindsym XF86AudioPrev exec playerctl previous
 bindsym XF86AudioStop exec playerctl stop
 
 # windows specific configurations
-for_window [app_id="mpv"] floating enable
 for_window [app_id="firefox"] [title="^Extension:.+"] floating enable
+
+for_window [class="^steam_app_\d+$"] {
+    allow_tearing yes
+    fullscreen enable
+}
+
+for_window [app_id="mpv"] {
+    inhibit_idle visible
+    floating enable
+}
 
 # Always running
 set $gnome-schema org.gnome.desktop.interface
@@ -165,23 +174,4 @@ output "HDMI-A-2" {
 
 output "HEADLESS-*" {
     res 1920x1080
-}
-
-# SwayFX effects
-smart_corner_radius on
-corner_radius 8
-shadows enable
-shadows_on_csd enable
-shadow_blur_radius 20
-shadow_color #00000080
-
-blur enable
-blur_passes 2
-blur_radius 5
-
-layer_effects "ironbar" {
-    blur enable
-    blur_ignore_transparent enable
-    shadows disable
-    corner_radius 0
 }
