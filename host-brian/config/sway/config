@@ -136,7 +136,7 @@ for_window [app_id="firefox"] [title="^Extension:.+"] floating enable
 set $gnome-schema org.gnome.desktop.interface
 exec_always {
     gsettings set $gnome-schema gtk-theme 'Arc-Darker'
-    gsettings set $gnome-schema icon-theme 'Moka'
+    gsettings set $gnome-schema icon-theme 'Papirus'
     gsettings set $gnome-schema cursor-theme 'Adwaita'
 }
 

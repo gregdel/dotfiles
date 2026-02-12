@@ -31,6 +31,7 @@ end:
       temps: 5
 
   - type: bluetooth
+    icon_size: 28
 
   - type: custom
     bar:

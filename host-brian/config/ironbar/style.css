@@ -34,9 +34,15 @@ popover > arrow {
     box-shadow: none;
 }
 
-popover > contents {
+popover > contents,
+.popup,
+.calendar {
     background: @color-bg-dim;
     border-radius: 8px;
+}
+
+popover > contents,
+.popup {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
@@ -49,6 +55,84 @@ popover > contents {
     background: transparent;
     margin: 2px;
     padding: 0 10px;
+}
+
+/* Bluetooth */
+.bluetooth {
+    min-height: 26px;
+    padding: 0 12px;
+}
+
+.popup-bluetooth {
+    padding: 8px;
+}
+
+.popup-bluetooth .header {
+    padding: 6px 8px;
+}
+
+.popup-bluetooth .header .label {
+    font-weight: bold;
+}
+
+.popup-bluetooth .devices .box .device {
+    background: @color-bg;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin: 6px 0;
+}
+
+.popup-bluetooth .devices .box .device:hover {
+    background: @color-bg-dim;
+}
+
+.popup-bluetooth .devices .box .device .icon-box {
+    min-width: 36px;
+    min-height: 36px;
+    margin-right: 10px;
+    border-radius: 8px;
+}
+
+.popup-bluetooth .devices .box .device .icon-box .icon {
+    font-size: 18px;
+}
+
+.popup-bluetooth .devices .box .device .icon-box .image {
+    border-radius: 6px;
+}
+
+.popup-bluetooth .devices .box .device .icon-box .text-icon:empty::before {
+    content: "";
+    color: @color-fg-dim;
+}
+
+.popup-bluetooth .devices .box .device .status .header-label {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.popup-bluetooth .devices .box .device .status .footer-label {
+    color: @color-fg-dim;
+}
+
+.popup-bluetooth .header .switch,
+.popup-bluetooth .devices .box .device .switch {
+    min-width: 42px;
+    min-height: 22px;
+    border-radius: 999px;
+    padding: 2px;
+}
+
+.popup-bluetooth .header .switch slider,
+.popup-bluetooth .devices .box .device .switch slider {
+    min-width: 18px;
+    min-height: 18px;
+    border-radius: 999px;
+}
+
+.popup-bluetooth .header .switch trough,
+.popup-bluetooth .devices .box .device .switch trough {
+    border-radius: 999px;
 }
 
 .clock {
@@ -114,10 +198,7 @@ list > row:selected {
 
 /* Popups */
 .popup {
-    background: @color-bg-dim;
-    border-radius: 8px;
     padding: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 .popup button {
@@ -182,19 +263,17 @@ scale slider {
 
 /* Calendar */
 .calendar {
-    background: @color-bg-dim;
-    border-radius: 8px;
     padding: 8px;
 }
 
 calendar header,
 calendar header stack,
-calendar header label {
+calendar header label,
+calendar header button {
     background: @color-bg-dim;
 }
 
 calendar header button {
-    background: @color-bg-dim;
     padding: 4px 8px;
 }
 
@@ -255,7 +334,6 @@ calendar grid label.other-month {
 .popup-music .progress {
     background: @color-bg;
     min-height: 12px;
-    /* border-radius: 4px; */
 }
 
 .popup-music .progress .slider {
