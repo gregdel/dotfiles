@@ -1,42 +1,34 @@
 # vim: ft=sh :
 
+_agent_dir=$HOME/.ssh/agent
+_agent_env=$_agent_dir/env
+
 _start_agent() {
-	local pid
-	pid=$(pgrep -u "$USER" 'ssh-agent' | head -n 1)
-	if [ -z "$pid" ]; then
-		# Start the ssh-agent
-		eval "$(ssh-agent -s)" >/dev/null
-		return 0
+	if [ -r "$_agent_env" ]; then
+		# shellcheck disable=1090
+		. "$_agent_env"
+		if [ -n "$SSH_AUTH_SOCK" ]; then
+			ssh-add -l >/dev/null 2>&1 && return 0
+		fi
 	fi
-	SSH_AGENT_PID=$pid
 
-	sock=$(find \
-		"$HOME/.ssh/agent" /tmp \
-		-maxdepth 2 \
-		-type s \
-		-user "$USER" \
-		-name '*agent.*' \
-		-print -quit \
-		2>/dev/null)
-	[ -n "$sock" ] && SSH_AUTH_SOCK=$sock
-
-	export SSH_AUTH_SOCK
-	export SSH_AGENT_PID
+	mkdir -p "$_agent_dir"
+	eval "$(ssh-agent -s)" >/dev/null
+	{
+		printf 'SSH_AUTH_SOCK=%s; export SSH_AUTH_SOCK\n' "$SSH_AUTH_SOCK"
+		printf 'SSH_AGENT_PID=%s; export SSH_AGENT_PID\n' "$SSH_AGENT_PID"
+	} >"$_agent_env"
 }
 _start_agent
 
 agent() {
-	local key
 	local timeout=10800 # 3h
-	if [ -f ~/.ssh/id_ed25519 ]; then
-		key=~/.ssh/id_ed25519
-	else
-		key=~/.ssh/id_rsa
-	fi
-	ssh-add -t "$timeout" "$key"
+	ssh-add -t "$timeout"
 }
 
 killagent() {
-	pgrep -u "$USER" ssh-agent | xargs kill
-	_start_agent
+	# shellcheck disable=1090
+	[ -r "$_agent_env" ]    && . "$_agent_env"
+	[ -n "$SSH_AGENT_PID" ] && ssh-agent -k >/dev/null
+	rm -f "$_agent_env"
 }
