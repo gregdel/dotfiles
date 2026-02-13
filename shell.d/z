@@ -1,3 +1,7 @@
 # vim: ft=sh :
 
-[ -f "$HOME/.local/bin/z.sh" ] && . "$HOME/.local/bin/z.sh"
+_check_command zoxide || return 0
+
+shell=$(basename "$SHELL")
+[ -z "$shell" ] && return 0
+eval "$(zoxide init "$shell")"
