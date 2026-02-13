@@ -103,17 +103,27 @@ function reload_zsh {
 }
 
 _git_prompt() {
+	local git_cmd head_line branch output
 	git_cmd=$(git status --porcelain --branch 2>/dev/null)
 	[ "$git_cmd" ] || return 0
 
-	local branch
-	case "$git_cmd" in
-		*No\ commits\ yet*) branch="[no commits yet]"                   ;;
-		*no\ branch*)       branch=$(git describe --tags --always)      ;;
-		*)                  branch=$(git rev-parse --abbrev-ref HEAD)   ;;
+	head_line=${git_cmd%%$'\n'*}
+	head_line=${head_line#\#\# }
+	case "$head_line" in
+		"No commits yet on "*)
+			branch="[no commits yet]"
+			;;
+		"HEAD ("*)
+			branch=$(git describe --tags --always 2>/dev/null)
+			[ -n "$branch" ] || branch="[detached]"
+			;;
+		*)
+			branch=${head_line%%...*}
 	esac
 
-	local output="%F{blue}$branch%f"
+	[ -n "$branch" ] || return 0
+
+	output="%F{blue}$branch%f"
 	case "$git_cmd" in *M\ \ *)  output="$output %F{yellow}✗%f"  ;; esac
 	case "$git_cmd" in *R\ \ *)  output="$output %F{yellow}→%f"  ;; esac
 	case "$git_cmd" in *\ M\ *)  output="$output %F{green}✗%f"   ;; esac
@@ -135,7 +145,7 @@ _setup_prompt() {
 	[ "$SSH_CONNECTION" ] && _remote_connection='%(!.%F{red}root.%F{green}%n)@%m%f '
 
 	local _bg_jobs=
-	[ "$(jobs | wc -l)" != "0" ] && _bg_jobs='%F{yellow}%f '
+	[ ${#jobstates} -gt 0 ] && _bg_jobs='%F{yellow}%f '
 
 	PS1="%B${_ssh_agent}${_remote_connection}%F{blue}%~%f ${_bg_jobs}%F{red}${_vim_mode} %f%b"
 
