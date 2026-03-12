@@ -132,8 +132,8 @@ bindsym XF86AudioStop exec playerctl stop
 for_window [app_id="firefox"] [title="^Extension:.+"] floating enable
 
 for_window [class="^steam_app_\d+$"] {
-    allow_tearing yes
     fullscreen enable
+    floating enable
 }
 
 for_window [app_id="mpv"] {

@@ -1,5 +1,10 @@
 #!/bin/sh
 
+_notify() {
+	notify-send -i sc-controller "gamescope-auto" "$@"
+}
+
+# Get the current width / height / refresh rate of the focused monitor.
 read -r width height refresh <<EOF
 	$(swaymsg -t get_outputs |
 		jq -r '.[] | select(.focused) | .current_mode | "\(.width) \(.height) \(.refresh)"')
@@ -8,12 +13,36 @@ refresh=$(( refresh / 1000 ))
 
 # To setup the --rt flag you need:
 # sudo setcap 'cap_sys_nice=eip' /usr/bin/gamescope
+gamescope_bin="$(which gamescope)"
+capabilities="$(getcap "$gamescope_bin")"
+case "$capabilities" in
+	*cap_sys_nice=eip*) ;;
+	*)
+		_notify "Please set capabilities for gamescope"
+		exit 1
+		;;
+esac
+
+# Async shader compilation: reduces stutter at the cost of rare first-frame glitches
+export DXVK_ASYNC=1
+# gpl: reduces shader compilation stutter (not default on my 6700XT)
+# sam: leverages ReBAR for better VRAM placement
+export RADV_PERFTEST=gpl,sam
+
+_notify "Starting gamescope with ${width}x${height}@${refresh}Hz"
 
 echo "w:$width h:$height r:$refresh cmd:$*" \
 	>> /tmp/gamescope-auto.log
 
 systemctl --user stop swayidle
+trap 'systemctl --user start swayidle' EXIT
 
+# Unset LD_PRELOAD for gamescope itself (Steam runtime libs break gamescope
+# rendering), then restore it for the game so Steam Input/overlay still work.
+# shellcheck disable=2153
+ld_preload="$LD_PRELOAD"
+
+env -u LD_PRELOAD \
 gamemoderun gamescope \
 	--mangoapp \
 	--rt \
@@ -24,6 +53,4 @@ gamemoderun gamescope \
 	--output-height "$height" \
 	--nested-width "$width" \
 	--nested-height "$height" \
-	--fullscreen -- "$@"
-
-systemctl --user start swayidle
+	--fullscreen -- env LD_PRELOAD="$ld_preload" "$@"
