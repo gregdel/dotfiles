@@ -13,7 +13,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-function close_lazy()
+local function close_lazy()
   for _, win in ipairs(vim.api.nvim_list_wins()) do
     local config = vim.api.nvim_win_get_config(win)
     if config.relative ~= "" then  -- is_floating_window?
@@ -232,6 +232,7 @@ require("lazy").setup({
 
       configs.setup({
         ensure_installed = {
+          "bash",
           "c",
           "cpp",
           "comment",

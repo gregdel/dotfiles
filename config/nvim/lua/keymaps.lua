@@ -22,10 +22,6 @@ vim.keymap.set("n", "Y", "y$", opts)
 vim.keymap.set("v", "Y", '"zy', opts)
 vim.keymap.set("v", "P", '"zp', opts)
 
--- Easy folding with space
--- vim.keymap.set("n", "<Space>", "za", opts)
--- vim.keymap.set("v", "<Space>", "zf", opts)
-
 -- Bar
 vim.keymap.set("n", "gl", "<Cmd>tabnext<CR>", opts)
 vim.keymap.set("n", "gh", "<Cmd>tabprev<CR>", opts)
@@ -81,9 +77,6 @@ vim.keymap.set("n", "<Leader>N", "<Cmd>NvimTreeToggle<CR>", opts)
 
 -- Nerdtree
 vim.keymap.set("n", "<Leader>n", "<Cmd>NERDTreeToggle<CR>", opts)
-
--- Trouble
-vim.keymap.set("n", "<Leader>d", "<Cmd>TroubleToggle<CR>", opts)
 
 -- Tabular
 vim.keymap.set("v", "<Enter>", "<Cmd>Tabularize /", opts)

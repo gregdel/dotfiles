@@ -37,7 +37,7 @@ vim.opt.signcolumn = "yes"
 
 -- Format options no automatic wraping, gq wrap to 80
 vim.opt.textwidth = 0
-vim.opt.formatoptions = "cq"
+vim.opt.formatoptions = "cqj"
 vim.opt.wrapmargin = 0
 vim.opt.wrap = true
 
