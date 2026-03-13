@@ -8,7 +8,7 @@ _start_agent() {
 		# shellcheck disable=1090
 		. "$_agent_env"
 		if [ -n "$SSH_AUTH_SOCK" ]; then
-			ssh-add -l >/dev/null 2>&1 && return 0
+			ssh-add -l >/dev/null 2>&1; [ $? -le 1 ] && return 0
 		fi
 	fi
 
