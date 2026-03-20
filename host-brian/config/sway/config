@@ -103,7 +103,6 @@ bindsym Ctrl+Space exec makoctl dismiss
 
 # Fuzzy launch
 bindsym Mod1+r exec fuzzel
-bindsym Mod1+m exec fuzzel-select man
 bindsym Mod1+u exec fuzzel-select urls
 bindsym Mod1+Shift+s exec screenshot
 bindsym Mod1+Shift+u exec foot vim ~/.urls
@@ -118,6 +117,9 @@ bindsym Mod1+k resize shrink height 10 px or 10ppt
 bindsym Mod1+j resize grow height 10 px or 10ppt
 bindsym Mod1+l resize grow width 10 px or 10ppt
 
+# Mangohud toggle
+bindsym Mod1+m exec mangohudctl toggle no_display
+
 # audio / player controls
 bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
 bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
@@ -130,6 +132,8 @@ bindsym XF86AudioStop exec playerctl stop
 
 # windows specific configurations
 for_window [app_id="firefox"] [title="^Extension:.+"] floating enable
+
+for_window [app_id="^polochon.*"] floating enable
 
 for_window [class="^steam_app_\d+$"] {
     fullscreen enable
