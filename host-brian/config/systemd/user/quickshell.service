@@ -1,0 +1,13 @@
+[Unit]
+Description=Quickshell status bar
+Documentation=https://quickshell.outfoxxed.me
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+ExecStart=/usr/sbin/quickshell
+Environment=PATH=/home/greg/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Restart=on-failure
+
+[Install]
+WantedBy=sway-session.target

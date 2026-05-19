@@ -1,0 +1,25 @@
+#!/bin/sh
+# shellcheck disable=3043
+# Output CPU and GPU temps for the quickshell bar
+# Format: " <cpu>° 󰾲 <gpu>°"
+
+_read_temp() {
+    local driver="$1" label="$2" dir file lbl input
+    for dir in /sys/class/hwmon/hwmon*/; do
+        [ "$(cat "${dir}name" 2>/dev/null)" = "$driver" ] || continue
+        for file in "${dir}"temp*_label; do
+            [ -f "$file" ] || continue
+            lbl=$(cat "$file" 2>/dev/null)
+            [ "$lbl" = "$label" ] || continue
+            input="${file%_label}_input"
+            [ -f "$input" ] || continue
+            printf "%d" "$(( $(cat "$input") / 1000 ))"
+            return 0
+        done
+    done
+    printf "?"
+}
+
+cpu=$(_read_temp k10temp Tctl)
+gpu=$(_read_temp amdgpu edge)
+printf " %s° 󰾲 %s°\n" "$cpu" "$gpu"
