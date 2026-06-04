@@ -8,7 +8,7 @@ read -r hostname < /etc/hostname
 [ -z "$hostname" ] && return 0
 case "$hostname" in
   brian)
-    TAGS="$TAGS fonts foot"
+    TAGS="$TAGS fonts foot steam"
     ;;
   laptop14*)
     TAGS="$TAGS fonts work gofi"
