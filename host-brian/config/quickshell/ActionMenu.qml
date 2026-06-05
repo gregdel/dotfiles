@@ -31,6 +31,7 @@ Item {
     MouseArea {
         id: btnMouse
         anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
         onClicked: actionPopup.visible = !actionPopup.visible
     }
@@ -45,72 +46,82 @@ Item {
 
         implicitWidth: 220
         implicitHeight: actionCol.implicitHeight + 16
-        color: "#202020"
+        color: "transparent"
 
         HoverHandler {
             onHoveredChanged: if (!hovered) actionPopup.visible = false
         }
 
-        Column {
-            id: actionCol
-            anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-                margins: 8
-            }
-            spacing: 2
+        Rectangle {
+            anchors.fill: parent
+            color: "#202020"
+            radius: 8
+            antialiasing: true
+            clip: true
+            border.width: 1
+            border.color: "#303030"
 
-            MenuButton {
-                width: parent.width
-                iconProc: "sway-monitor HDMI-A-2"
-                iconInterval: 5000
-                label: "Toggle monitor output"
-                onActivated: {
-                    actionPopup.visible = false
-                    root.runCmd("sway-monitor HDMI-A-2 toggle")
+            Column {
+                id: actionCol
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
+                    margins: 8
                 }
-            }
+                spacing: 2
 
-            MenuButton {
-                width: parent.width
-                iconProc: "sway-monitor DP-1"
-                iconInterval: 5000
-                label: "Toggle TV output"
-                onActivated: {
-                    actionPopup.visible = false
-                    root.runCmd("sway-monitor DP-1 toggle")
+                MenuButton {
+                    width: parent.width
+                    iconProc: "sway-monitor HDMI-A-2"
+                    iconInterval: 5000
+                    label: "Toggle monitor output"
+                    onActivated: {
+                        actionPopup.visible = false
+                        root.runCmd("sway-monitor HDMI-A-2 toggle")
+                    }
                 }
-            }
 
-            MenuButton {
-                width: parent.width
-                iconProc: "swayidle-toggle icon"
-                iconInterval: 10000
-                label: "Toggle auto sleep"
-                onActivated: {
-                    actionPopup.visible = false
-                    root.runCmd("swayidle-toggle toggle")
+                MenuButton {
+                    width: parent.width
+                    iconProc: "sway-monitor DP-1"
+                    iconInterval: 5000
+                    label: "Toggle TV output"
+                    onActivated: {
+                        actionPopup.visible = false
+                        root.runCmd("sway-monitor DP-1 toggle")
+                    }
                 }
-            }
 
-            MenuButton {
-                width: parent.width
-                staticIcon: "󰻅"
-                label: "TV ON/OFF"
-                onActivated: {
-                    actionPopup.visible = false
-                    root.runCmd("tv-remote")
+                MenuButton {
+                    width: parent.width
+                    iconProc: "swayidle-toggle icon"
+                    iconInterval: 10000
+                    label: "Toggle auto sleep"
+                    onActivated: {
+                        actionPopup.visible = false
+                        root.runCmd("swayidle-toggle toggle")
+                    }
                 }
-            }
 
-            MenuButton {
-                width: parent.width
-                staticIcon: ""
-                label: "Launch Steam"
-                onActivated: {
-                    actionPopup.visible = false
-                    root.runCmd("steam")
+                MenuButton {
+                    width: parent.width
+                    staticIcon: "󰻅"
+                    label: "TV ON/OFF"
+                    onActivated: {
+                        actionPopup.visible = false
+                        root.runCmd("tv-remote")
+                    }
+                }
+
+                MenuButton {
+                    width: parent.width
+                    staticIcon: ""
+                    label: "Launch Steam"
+                    onActivated: {
+                        actionPopup.visible = false
+                        root.runCmd("steam")
+                    }
                 }
             }
         }

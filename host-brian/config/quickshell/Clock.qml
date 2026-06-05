@@ -6,13 +6,13 @@ Text {
     font.pixelSize: 14
     font.bold: true
 
-    text: Qt.formatDateTime(new Date(), "ddd dd MMM  hh:mm")
+    text: Qt.formatDateTime(new Date(), "ddd dd MMM  hh:mm")
 
     Timer {
         interval: 10000
         repeat: true
         running: true
         triggeredOnStart: true
-        onTriggered: parent.text = Qt.formatDateTime(new Date(), "ddd dd MMM  hh:mm")
+        onTriggered: parent.text = Qt.formatDateTime(new Date(), "ddd dd MMM  hh:mm")
     }
 }

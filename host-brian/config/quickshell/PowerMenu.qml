@@ -31,6 +31,7 @@ Item {
     MouseArea {
         id: btnMouse
         anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
         onClicked: powerPopup.visible = !powerPopup.visible
     }
@@ -45,53 +46,63 @@ Item {
 
         implicitWidth: 140
         implicitHeight: powerCol.implicitHeight + 16
-        color: "#202020"
+        color: "transparent"
 
         HoverHandler {
             onHoveredChanged: if (!hovered) powerPopup.visible = false
         }
 
-        Column {
-            id: powerCol
-            anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-                margins: 8
-            }
-            spacing: 4
+        Rectangle {
+            anchors.fill: parent
+            color: "#202020"
+            radius: 8
+            antialiasing: true
+            clip: true
+            border.width: 1
+            border.color: "#303030"
 
-            Repeater {
-                model: [
-                    { label: "Suspend",  cmd: "systemctl suspend" },
-                    { label: "Reboot",   cmd: "reboot" },
-                    { label: "Shutdown", cmd: "shutdown now" }
-                ]
+            Column {
+                id: powerCol
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
+                    margins: 8
+                }
+                spacing: 4
 
-                Rectangle {
-                    required property var modelData
-                    width: parent.width
-                    height: 36
-                    radius: 6
-                    color: itemMouse.containsMouse ? "#282828" : "#181818"
+                Repeater {
+                    model: [
+                        { label: "Suspend",  cmd: "systemctl suspend" },
+                        { label: "Reboot",   cmd: "reboot" },
+                        { label: "Shutdown", cmd: "shutdown now" }
+                    ]
 
-                    Text {
-                        anchors.centerIn: parent
-                        text: modelData.label
-                        color: itemMouse.containsMouse ? "#c4a000" : "#d0d0d0"
-                        font.family: "monospace"
-                        font.pixelSize: 13
-                    }
+                    Rectangle {
+                        required property var modelData
+                        width: parent.width
+                        height: 36
+                        radius: 6
+                        color: itemMouse.containsMouse ? "#282828" : "transparent"
 
-                    MouseArea {
-                        id: itemMouse
-                        cursorShape: Qt.PointingHandCursor
-                        acceptedButtons: Qt.NoButton
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        onClicked: {
-                            powerPopup.visible = false
-                            root.runCmd(modelData.cmd)
+                        Text {
+                            anchors.centerIn: parent
+                            text: modelData.label
+                            color: itemMouse.containsMouse ? "#c4a000" : "#d0d0d0"
+                            font.family: "monospace"
+                            font.pixelSize: 13
+                        }
+
+                        MouseArea {
+                            id: itemMouse
+                            cursorShape: Qt.PointingHandCursor
+                            acceptedButtons: Qt.LeftButton
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked: {
+                                powerPopup.visible = false
+                                root.runCmd(modelData.cmd)
+                            }
                         }
                     }
                 }

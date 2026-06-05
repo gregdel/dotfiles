@@ -70,6 +70,7 @@ Item {
     MouseArea {
         id: rowMouse
         anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
         onClicked: menuBtn.activated()
     }
