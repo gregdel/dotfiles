@@ -105,6 +105,7 @@ bindsym Ctrl+Space exec makoctl dismiss
 bindsym Mod1+r exec fuzzel
 bindsym Mod1+u exec fuzzel-select urls
 bindsym Mod1+Shift+s exec screenshot
+bindsym Print exec screenshot
 bindsym Mod1+Shift+u exec foot vim ~/.urls
 
 # scratchpad
@@ -164,15 +165,15 @@ output "*" {
     bg /home/greg/pictures/wallpaper.jpg fill
 }
 
-# TV
-output "DP-1" {
-    disable
-    pos 0 0
-}
-
 # Monitor
 output "HDMI-A-2" {
     scale 2
+    pos 0 0
+}
+
+# TV
+output "DP-1" {
+    disable
     pos 1920 0
 }
 
