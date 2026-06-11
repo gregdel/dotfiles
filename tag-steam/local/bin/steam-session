@@ -10,17 +10,12 @@ gamescope_config="$HOME/.config/gamescope"
 mkdir -p "$gamescope_config"
 export GAMESCOPE_MODE_SAVE_FILE="$gamescope_config/modes.cfg"
 
-steam -shutdown >/dev/null 2>&1 || true
-sleep 1
+if pgrep --quiet steam; then
+	steam -shutdown >/dev/null 2>&1 || true
+	sleep 1
+fi
 
-# width=1920
-# height=1080
-#   -W "$width" -H "$height" \
-#   -w "$width" -h "$height" \
-#   -r 60 \
-  # -O HDMI-A-1 \
-
-exec gamescope \
+gamescope \
   --mangoapp \
   -e \
   -f \
