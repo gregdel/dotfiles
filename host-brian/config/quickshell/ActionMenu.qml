@@ -1,11 +1,13 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.I3
 import Quickshell.Io
 
 Item {
     id: root
     property var barWindow
+    property var monitorValues: I3.monitors.values
 
     implicitWidth: 30
     implicitHeight: 30
@@ -13,6 +15,15 @@ Item {
     Process {
         id: cmdRunner
         command: ["sh", "-c", "true"]
+    }
+
+    Connections {
+        target: I3
+
+        function onRawEvent(event) {
+            if (event.type === "output")
+                I3.refreshMonitors()
+        }
     }
 
     function runCmd(cmd) {
@@ -71,25 +82,86 @@ Item {
                 }
                 spacing: 2
 
-                MenuButton {
-                    width: parent.width
-                    iconProc: "sway-monitor HDMI-A-2"
-                    iconInterval: 5000
-                    label: "Toggle monitor output"
-                    onActivated: {
-                        actionPopup.visible = false
-                        root.runCmd("sway-monitor HDMI-A-2 toggle")
-                    }
-                }
+                Repeater {
+                    model: [
+                        {
+                            "outputName": "HDMI-A-2",
+                            "label": "Monitor output",
+                            "onIcon": "󰍹",
+                            "offIcon": "󰍶"
+                        },
+                        {
+                            "outputName": "DP-1",
+                            "label": "TV output",
+                            "onIcon": "",
+                            "offIcon": "󰍶"
+                        }
+                    ]
 
-                MenuButton {
-                    width: parent.width
-                    iconProc: "sway-monitor DP-1"
-                    iconInterval: 5000
-                    label: "Toggle TV output"
-                    onActivated: {
-                        actionPopup.visible = false
-                        root.runCmd("sway-monitor DP-1 toggle")
+                    Item {
+                        id: outputRow
+
+                        required property var modelData
+
+                        width: actionCol.width
+                        implicitHeight: 38
+                        implicitWidth: 200
+
+                        property var monitor: {
+                            root.monitorValues
+                            return I3.findMonitorByName(modelData.outputName)
+                        }
+                        property bool visibleOutput: monitor !== null
+                            && monitor.lastIpcObject.active === true
+                            && monitor.lastIpcObject.power === true
+
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: 6
+                            color: rowMouse.containsMouse ? "#282828" : "transparent"
+
+                            RowLayout {
+                                anchors {
+                                    fill: parent
+                                    leftMargin: 10
+                                    rightMargin: 10
+                                }
+                                spacing: 8
+
+                                Text {
+                                    text: outputRow.visibleOutput ? modelData.onIcon : modelData.offIcon
+                                    color: outputRow.visibleOutput ? "#d0d0d0" : "#505050"
+                                    font.family: "monospace"
+                                    font.pixelSize: 14
+                                    horizontalAlignment: Text.AlignHCenter
+                                    Layout.preferredWidth: 22
+                                }
+
+                                Text {
+                                    text: modelData.label
+                                    color: outputRow.visibleOutput ? "#d0d0d0" : "#808080"
+                                    font.family: "monospace"
+                                    font.pixelSize: 13
+                                    Layout.fillWidth: true
+                                }
+                            }
+                        }
+
+                        MouseArea {
+                            id: rowMouse
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
+                            onClicked: {
+                                actionPopup.visible = false
+                                if (outputRow.visibleOutput) {
+                                    I3.dispatch("output " + modelData.outputName + " disable")
+                                } else {
+                                    I3.dispatch("output " + modelData.outputName + " enable, output " + modelData.outputName + " power on")
+                                }
+                                I3.refreshMonitors()
+                            }
+                        }
                     }
                 }
 
