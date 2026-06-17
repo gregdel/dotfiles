@@ -1,0 +1,74 @@
+#!/bin/sh
+# shellcheck disable=3043
+
+set -e
+
+notify() {
+	local icon_path="$HOME/.config/w000t/w000t.jpg"
+	local level="$1"
+	local message="$2"
+	local urgency
+
+	case "$level" in
+		info)  urgency=normal   ;;
+		error) urgency=critical ;;
+		*)     urgency=normal   ;;
+	esac
+
+	notify-send \
+		--urgency "$urgency" \
+		--expire-time 5000 \
+		--app-name w000t \
+		--icon "$icon_path" \
+		"w000t" "$message"
+}
+
+fail() {
+	notify error "$1"
+	exit 1
+}
+
+probe_content_type() {
+	curl \
+		--max-time 10 \
+		--show-error \
+		--silent \
+		--location \
+		--range 0-0 \
+		--dump-header - \
+		--output /dev/null \
+		"$1" | grep -i 'Content-Type:' | tail -n 1
+}
+
+if ! read -r token < "$HOME/.config/w000t/token" || [ -z "$token" ]; then
+	fail "Failed to read w000t token"
+fi
+
+selected_url="$(wl-paste -p)"
+case "$selected_url" in
+	http://*|https://*) ;;
+	*) fail "Selection is not an http(s) URL" ;;
+esac
+
+payload=$(jq -cn --arg long_url "$selected_url" '{long_url: $long_url}')
+
+if short_url=$(curl \
+		--silent \
+		--show-error \
+		--fail \
+		--max-time 10 \
+		-H "Content-Type: application/json" \
+		-H "X-Auth-Token: $token" \
+		-H "Accept: text/plain" \
+		-d "$payload" \
+		"https://w000t.me/w000ts"
+	); then
+	[ -n "$short_url" ] || fail "Failed to get the w000t :("
+else
+	fail "Failed to get the w000t :("
+fi
+
+content_type=$(probe_content_type "$short_url")
+
+wl-copy --primary "$short_url"
+notify info "$short_url \n$content_type"
