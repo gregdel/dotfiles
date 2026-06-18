@@ -1,5 +1,4 @@
 #!/bin/sh
-set -eu
 
 export XDG_SESSION_TYPE=wayland
 export XDG_CURRENT_DESKTOP=gamescope
@@ -15,8 +14,15 @@ if pgrep --quiet steam; then
 	sleep 1
 fi
 
+case "$1" in
+	tv) set -- -O DP-1 ;;
+	*)  set --         ;;
+esac
+
 gamescope \
-  --mangoapp \
-  -e \
-  -f \
-  -- steam -gamepadui -steamdeck -steamos3
+	"$@" \
+	--mangoapp \
+	--steam \
+	--fullscreen \
+	--xwayland-count 2 \
+	-- steam -gamepadui -steamos3 -steamdeck
