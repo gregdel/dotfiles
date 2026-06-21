@@ -1,0 +1,7 @@
+#!/bin/sh
+
+busctl call \
+  org.freedesktop.login1 \
+  /org/freedesktop/login1/seat/seat0 \
+  org.freedesktop.login1.Seat \
+  SwitchTo u "${1:-1}"
