@@ -1,0 +1,134 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "model": "openai/gpt-5.6-sol",
+    "agent": {
+        "plan": {
+            "permission": {
+                "edit": "deny",
+                "task": {
+                    "*": "deny",
+                    "explore": "allow"
+                }
+            }
+        },
+        "explore": {
+            "permission": {
+                "edit": "deny",
+                "task": "deny"
+            }
+        }
+    },
+    "provider": {
+        "llamacpp": {
+            "npm": "@ai-sdk/openai-compatible",
+            "name": "llama.cpp (local)",
+            "options": {
+                "baseURL": "http://127.0.0.1:10999/v1"
+            },
+            "models": {
+                "gemma4-v2-Q6_K.gguf": {
+                    "name": "Gemma 4 12B agentic",
+                    "limit": { "context": 16384, "output": 4096 }
+                },
+                "Qwen3.8-27B-Q4_K_M.gguf": {
+                    "name": "Qwen3.8-27B-Q4_K_M.gguf",
+                    "tool_call": true,
+                    "limit": { "context": 32000, "output": 16384 }
+                },
+                "Qwen3-Coder-30B-A3B-Instruct-Q4_K_XL": {
+                    "name": "Qwen3-Coder 30B-A3B",
+                    "tool_call": true,
+                    "limit": { "context": 120000, "output": 16384 }
+                },
+            }
+        }
+    },
+    "mcp": {
+        "context7": {
+            "type": "remote",
+            "url": "https://mcp.context7.com/mcp",
+            "headers": {
+                // works without a key, but rate limits are much higher with one
+                "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
+            },
+            "enabled": true
+        },
+    },
+    "compaction": {
+        "prune": true
+    },
+    "permission": {
+        "*": "ask",
+        "context7_*": "allow",
+        "read": {
+            "*": "allow",
+            "*.env": "ask",
+            "*.env.*": "ask",
+            "*.env.example": "allow"
+        },
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "lsp": "allow",
+        "question": "allow",
+        "skill": "allow",
+        "task": "allow",
+        "todowrite": "allow",
+        "webfetch": "allow",
+        "bash": {
+            "*": "ask",
+            "ls": "allow",
+            "ls *": "allow",
+            "pwd": "allow",
+            "pwd *": "allow",
+            "file": "allow",
+            "file *": "allow",
+            "stat": "allow",
+            "stat *": "allow",
+            "wc": "allow",
+            "wc *": "allow",
+            "diff": "allow",
+            "diff *": "allow",
+            "cmp": "allow",
+            "cmp *": "allow",
+            "readlink": "allow",
+            "readlink *": "allow",
+            "realpath": "allow",
+            "realpath *": "allow",
+            "basename": "allow",
+            "basename *": "allow",
+            "dirname": "allow",
+            "dirname *": "allow",
+            "fd": "allow",
+            "fd *": "allow",
+            "rg": "allow",
+            "rg *": "allow",
+            "git status": "allow",
+            "git status *": "allow",
+            "git log": "allow",
+            "git log *": "allow",
+            "git diff": "allow",
+            "git diff *": "allow",
+            "git show": "allow",
+            "git show *": "allow",
+            "git rev-parse": "allow",
+            "git rev-parse *": "allow",
+            "git ls-files": "allow",
+            "git ls-files *": "allow",
+            "git remote -v": "allow",
+            "fd *-x*": "ask",
+            "fd *-X*": "ask",
+            "fd *--exec*": "ask",
+            "rg *--pre*": "ask",
+            "file -*C*": "ask",
+            "file *--compile*": "ask",
+            "diff *--output*": "ask",
+            "git *--output*": "ask",
+            "*>*": "ask",
+            "git add": "deny",
+            "git add *": "deny",
+            "git commit": "deny",
+            "git commit *": "deny",
+        },
+    },
+}
