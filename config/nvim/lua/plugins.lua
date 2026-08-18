@@ -225,46 +225,6 @@ require("lazy").setup({
     },
   },
   {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    config = function ()
-      local configs = require("nvim-treesitter.configs")
-
-      configs.setup({
-        ensure_installed = {
-          "bash",
-          "c",
-          "cpp",
-          "comment",
-          "css",
-          "dot",
-          "go",
-          "html",
-          "json",
-          "lua",
-          "make",
-          "markdown",
-          "query", -- treesitter playground
-          "rust",
-          "typescript",
-          "vim",
-          "vimdoc",
-          "yaml",
-          "zig",
-        },
-        sync_install = false,
-        highlight = {
-          enable = true,
-        },
-      })
-    end,
-  },
-  {
-    "nvim-treesitter/playground",
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
-    cmd = { "TSPlaygroundToggle", "TSHighlightCapturesUnderCursor", "TSNodeUnderCursor" },
-  },
-  {
     "tanvirtin/monokai.nvim",
     priority = 1000,
     config = function()
@@ -344,42 +304,6 @@ require("lazy").setup({
     end
   },
   {
-    "olimorris/codecompanion.nvim",
-    tag = "v17.21.0",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-    },
-    opts = {
-      strategies = {
-        chat = {
-          adapter = "ovh",
-        },
-        inline = {
-          adapter = "ovh",
-        },
-      },
-      adapters = {
-        http = {
-          ovh = function()
-            return require("codecompanion.adapters").extend("openai_compatible", {
-              env = {
-                url = "https://oai.endpoints.kepler.ai.cloud.ovh.net",
-                chat_url = "/v1/chat/completions",
-                api_key = 'cmd: cat ~/.config/ovh/ai-endpoint-token'
-              },
-              schema = {
-                model = {
-                  default = "Meta-Llama-3_3-70B-Instruct",
-                },
-              }
-            })
-          end,
-        }
-      },
-    },
-  },
-  {
     "fatih/vim-go",
     ft = { "go", "gomod" },
     config = function()
@@ -411,6 +335,20 @@ require("lazy").setup({
     event = "VeryLazy",
     config = function()
       require("nvim-surround").setup()
+    end
+  },
+  {
+    "romus204/tree-sitter-manager.nvim",
+    dependencies = {}, -- tree-sitter CLI must be installed system-wide
+    config = function()
+      require("tree-sitter-manager").setup({
+        -- Default Options
+        -- ensure_installed = {}, -- list of parsers to install at the start of a neovim session. If set to "all", install all parsers.
+        -- border = nil, -- border style for the window (e.g. "rounded", "single"), if nil, use the default border style defined by 'vim.o.winborder'. See :h 'winborder' for more info.
+        -- auto_install = false, -- if enabled, install missing parsers when editing a new file
+        -- highlight = true, -- treesitter highlighting is enabled by default
+        -- languages = {}, -- override or add new parser sources
+      })
     end
   },
   {
