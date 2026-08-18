@@ -1,0 +1,17 @@
+#!/bin/sh
+
+uid=$(id -u)
+log_file=/tmp/snoop.log
+
+sudo bpftrace -e '
+tracepoint:syscalls:sys_enter_execve,
+tracepoint:syscalls:sys_enter_execveat
+/uid == '"$uid"'/
+{
+	time("%H:%M:%S ");
+	printf("pid=%d comm=%s file=%s argv=", pid, comm, str(args->filename));
+	join(args->argv);
+}
+' | tee "$log_file"
+
+echo "Logs written in $log_file"
