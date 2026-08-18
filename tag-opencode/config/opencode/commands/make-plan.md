@@ -1,12 +1,13 @@
 ---
 description: Write a self-contained implementation plan for fresh agents
 agent: build
-model: openai/gpt-5.6-sol
-variant: xhigh
 ---
 
-Create or update `plan.md` at the project root for the complex task discussed
-in this session. Treat `$ARGUMENTS` as additional task details or constraints.
+Create or update `plan.md` at the root of the current git worktree
+(`git rev-parse --show-toplevel`), never in a subdirectory. If not in a git
+repository, use the working directory. This file is the handoff artifact for
+the complex task discussed in this session. Treat `$ARGUMENTS` as additional
+task details or constraints.
 
 Do not implement the task. Repository inspection and edits to `plan.md` are the
 only changes allowed.
@@ -27,16 +28,20 @@ only changes allowed.
    plan for a different task.
 5. Decompose the task into independently selectable vertical milestones.
 6. Write the complete plan to `plan.md`.
+7. Before finishing, verify the plan is internally consistent: every
+   Dependencies and Parallel With entry names an existing milestone ID, the
+   Milestone Overview table rows match the milestone sections, and statuses
+   agree.
 
 ## Plan Requirements
 
-- Make the document self-contained. Never refer to "this conversation",
-  "above", or other context unavailable to a fresh agent.
+- Make the document self-contained: never refer to "this conversation",
+  "above", or other context unavailable to a fresh agent. Every milestone must
+  be independently actionable with only the repository and `plan.md`; include
+  all milestone-specific context needed to execute it without prior session
+  history.
 - State the intended outcome, verified repository baseline, constraints,
   non-goals, assumptions, and important design decisions.
-- Make every milestone independently actionable by an agent with only the
-  repository and `plan.md`. Include all milestone-specific context needed to
-  execute it without prior session history.
 - Make each milestone an independently useful vertical slice that leaves the
   repository coherent and testable.
 - Mark every milestone as required or optional. An optional milestone must
@@ -69,6 +74,8 @@ Include these instructions in `plan.md` for implementing agents:
   in Handoff Notes. Ask for direction rather than silently changing scope.
 - Run every verification command and record relevant results.
 - Mark the milestone `Completed` only after its acceptance criteria pass.
+- Keep the milestone's status consistent in both the Milestone Overview table
+  and the milestone's header when changing it.
 - Mark an omitted milestone `Skipped` with a reason. Skipping an optional
   milestone must not block any selected milestone.
 - Record decisions, deviations, and useful context in Handoff Notes so another
@@ -93,6 +100,7 @@ Include these instructions in `plan.md` for implementing agents:
 **Status:** Pending
 **Required:** Yes or No
 **Dependencies:** None
+**Parallel With:** None
 
 ### Context
 ### Outcome
@@ -100,7 +108,9 @@ Include these instructions in `plan.md` for implementing agents:
 ### Out of Scope
 ### Files and Symbols
 ### Implementation
+- [ ] Step that must be done
 ### Acceptance Criteria
+- [ ] Criterion that must hold
 ### Verification
 ### Handoff Notes
 

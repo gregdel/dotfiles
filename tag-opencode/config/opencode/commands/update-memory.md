@@ -18,7 +18,7 @@ What context was missing that would have helped the agent work more effectively?
 ## Step 2: Find AGENTS.md Files
 
 ```bash
-fd "(CLAUDE|AGENTS).md$" --type file
+fd "^AGENTS.md$" --type file
 ```
 
 ## Step 3: Draft Additions

@@ -1,7 +1,6 @@
 ---
 description: Review staged Git changes without modifying the repository
 agent: plan
-subtask: true
 ---
 
 Review only the changes currently staged in the Git index. Treat `$ARGUMENTS`

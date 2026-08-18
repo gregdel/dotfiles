@@ -1,6 +1,6 @@
 {
     "$schema": "https://opencode.ai/config.json",
-    "model": "openai/gpt-5.6-sol",
+    "model": "opencode-go/gpt-5.6-luna",
     "agent": {
         "plan": {
             "permission": {
@@ -18,25 +18,24 @@
             }
         }
     },
+    "lsp": true,
     "provider": {
         "llamacpp": {
             "npm": "@ai-sdk/openai-compatible",
             "name": "llama.cpp (local)",
             "options": {
-                "baseURL": "http://127.0.0.1:10999/v1"
-            },
+                "baseURL": "http://127.0.0.1:10999/v1",
+                "timeout": false,
+           },
             "models": {
-                "gemma4-v2-Q6_K.gguf": {
-                    "name": "Gemma 4 12B agentic",
-                    "limit": { "context": 16384, "output": 4096 }
-                },
                 "Qwen3.8-27B-Q4_K_M.gguf": {
                     "name": "Qwen3.8-27B-Q4_K_M.gguf",
                     "tool_call": true,
-                    "limit": { "context": 32000, "output": 16384 }
+                    "reasoning": true,
+                    "limit": { "context": 32768, "output": 8192 }
                 },
-                "Qwen3-Coder-30B-A3B-Instruct-Q4_K_XL": {
-                    "name": "Qwen3-Coder 30B-A3B",
+                "unsloth/Qwen3-Coder-30B-A3B-Instruct-GGUF:Q4_K_XL": {
+                    "name": "Qwen3 Coder 30B-A3B Q4_K_XL",
                     "tool_call": true,
                     "limit": { "context": 120000, "output": 16384 }
                 },
@@ -58,6 +57,9 @@
         "prune": true
     },
     "permission": {
+        "external_directory": {
+          "~/dev/go/pkg/**": "allow",
+        },
         "*": "ask",
         "context7_*": "allow",
         "read": {
@@ -103,6 +105,20 @@
             "fd *": "allow",
             "rg": "allow",
             "rg *": "allow",
+            "go build": "allow",
+            "go build *": "allow",
+            "go env": "allow",
+            "go env *": "allow",
+            "go env -w*": "ask",
+            "go env -u*": "ask",
+            "go doc": "allow",
+            "go doc *": "allow",
+            "go list": "allow",
+            "go list *": "allow",
+            "go test": "allow",
+            "go test *": "allow",
+            "go version": "allow",
+            "go version *": "allow",
             "git status": "allow",
             "git status *": "allow",
             "git log": "allow",
@@ -115,6 +131,8 @@
             "git rev-parse *": "allow",
             "git ls-files": "allow",
             "git ls-files *": "allow",
+            "git ls-tree": "allow",
+            "git ls-tree *": "allow",
             "git remote -v": "allow",
             "fd *-x*": "ask",
             "fd *-X*": "ask",
