@@ -1,0 +1,8 @@
+{
+  "defaultProjectTrust": "ask",
+  "enableInstallTelemetry": false,
+  "defaultProvider": "opencode-go",
+  "defaultModel": "deepseek-v4-flash",
+  "defaultThinkingLevel": "high",
+  "showCacheMissNotices": true
+}

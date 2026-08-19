@@ -1,4 +1,5 @@
 # vim: ft=sh :
+# shellcheck disable=2034
 
 EXCLUDES="README.md install.sh"
 SYMLINK_DIRS="vim nvim oh-my-zsh mutt awesome urxvt tmux gpkg.d"
@@ -8,10 +9,10 @@ read -r hostname < /etc/hostname
 [ -z "$hostname" ] && return 0
 case "$hostname" in
   brian)
-    TAGS="$TAGS fonts foot steam music opencode"
+    TAGS="$TAGS fonts foot steam music ai"
     ;;
   laptop14*)
-    TAGS="$TAGS fonts work gofi"
+    TAGS="$TAGS fonts work gofi ai"
     ;;
   lois)
     TAGS="$TAGS fonts foot music gofi"

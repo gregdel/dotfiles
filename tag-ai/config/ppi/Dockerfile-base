@@ -1,0 +1,27 @@
+FROM docker.io/library/alpine:3.24
+
+ARG UID
+ARG GID
+ARG USER
+ARG HOME
+
+RUN apk add --no-cache \
+        bash \
+        ca-certificates \
+        git \
+        nodejs \
+        npm \
+        openssh-client \
+        ripgrep \
+        fd \
+        shellcheck shfmt \
+        neovim \
+    && addgroup -g "$GID" "$USER" \
+    && adduser -D -u "$UID" -G "$USER" -s /bin/sh -h "$HOME" "$USER" \
+    && npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+
+USER "$USER"
+ENV HOME="$HOME"
+ENV EDITOR=nvim
+WORKDIR /workspace
+ENTRYPOINT ["pi"]

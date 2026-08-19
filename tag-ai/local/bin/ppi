@@ -1,0 +1,109 @@
+#!/bin/sh
+set -eu
+
+container_name="pi-dev"
+container_image="localhost/pi-coding-agent:alpine"
+dockerfile="$HOME/.config/ppi/Dockerfile-base"
+
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/pi"
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/ppi/pi-agent"
+dotfiles_dir="$HOME/.dotfiles"
+
+uid="$(id -u)"
+gid="$(id -g)"
+user="$(id -un)"
+home="${HOME:-/home/$user}"
+
+setup() {
+	[ -f "$dockerfile" ] || {
+		echo "error: Dockerfile not found at $dockerfile" >&2
+		echo "create $dockerfile first" >&2
+		exit 1
+	}
+	podman build \
+		--build-arg "UID=$uid" \
+		--build-arg "GID=$gid" \
+		--build-arg "USER=$user" \
+		--build-arg "HOME=$home" \
+		--tag "$container_image" \
+		--file "$dockerfile"
+}
+
+usage() {
+	cat <<EOF
+Usage: ppi [command] [args...]
+
+Run the pi coding agent in a container. The current working directory is
+mounted as the workspace unless a directory argument is given.
+
+Commands:
+  setup                Build the container image from the Dockerfile
+  run [ro] [dir]       Run the agent in the workspace
+  ro [dir]             Run with the workspace mounted read-only (planning only)
+  help                 Show this help
+EOF
+}
+
+run() {
+	ro_mode=0
+	if [ "${1:-}" = "ro" ]; then
+		ro_mode=1
+		shift
+	fi
+
+	workspace="${1:-$PWD}"
+	workspace="$(realpath "$workspace")" || {
+		echo "error: workspace '$1' does not exist" >&2
+		exit 1
+	}
+	[ -d "$workspace" ] || {
+		echo "error: '$workspace' is not a directory" >&2
+		exit 1
+	}
+
+	mkdir -p "$config_dir" "$state_dir"
+
+	workspace_mount="$workspace:$workspace:z"
+	if [ "$ro_mode" -eq 1 ]; then
+		workspace_mount="$workspace:$workspace:ro,z"
+	fi
+
+	exec podman run \
+		--interactive \
+		--tty \
+		--rm \
+		--replace \
+		--name "$container_name" \
+		--hostname "$container_name" \
+		--network pasta \
+		--userns "keep-id:uid=$uid,gid=$gid" \
+		--cap-drop all \
+		--security-opt no-new-privileges \
+		--pids-limit 512 \
+		-e "HOME=$home" \
+		-e LANG=C.UTF-8 \
+		-e LC_ALL=C.UTF-8 \
+		-e "TERM=${TERM:-xterm-256color}" \
+		-e "COLORTERM=${COLORTERM:-truecolor}" \
+		-v "$dotfiles_dir:$home/.dotfiles:ro,z" \
+		-v "$state_dir:$home/.pi/agent:z" \
+		-v "$config_dir:$home/.config/pi:ro,z" \
+		-v "$config_dir/agent/settings.json:$home/.pi/agent/settings.json:ro,z" \
+		-v "$config_dir/agent/AGENTS.md:$home/.pi/agent/AGENTS.md:ro,z" \
+		-v "$config_dir/agent/prompts:$home/.pi/agent/prompts:ro,z" \
+		-v "$HOME/.config/nvim:$home/.config/nvim:ro,z" \
+		-v "${XDG_DATA_HOME:-$HOME/.local/share}/nvim:$home/.local/share/nvim:z" \
+		-v "${XDG_STATE_HOME:-$HOME/.local/state}/nvim:$home/.local/state/nvim:z" \
+		-v "${XDG_CACHE_HOME:-$HOME/.cache}/nvim:$home/.cache/nvim:z" \
+		-v "$workspace_mount" \
+		--workdir "$workspace" \
+		"$container_image" \
+		"$@"
+}
+
+case "${1:-}" in
+setup)          setup    ;;
+run)   shift;   run "$@" ;;
+help|-h|--help) usage    ;;
+*)              run "$@" ;;
+esac
