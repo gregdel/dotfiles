@@ -7,5 +7,5 @@ vim/spell/*.spl
 vim/spell/*.sug
 tag-mutt/mutt/cache/*
 tag-mutt/mutt/tmp/*
-tmux/plugins/*
-!tmux/plugins/tpm
+config/tmux/plugins/*
+!config/tmux/plugins/tpm

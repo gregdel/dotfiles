@@ -10,18 +10,20 @@ _check_cmd() {
 
 # Install vim plugins
 if _check_cmd vim && [ ! -d "$HOME/.vim/plugged/ale" ]; then
-    vim --not-a-term +PlugInstall +PlugClean! +qa
+	vim --not-a-term +PlugInstall +PlugClean! +qa
 fi
 
 # Install tmux plugins
-tmux_plugins="$HOME/.tmux/plugins/"
+tmux_plugins="${XDG_CONFIG_HOME:-$HOME/.config}/tmux/plugins/"
+export TMUX_PLUGIN_MANAGER_PATH="$tmux_plugins"
+tmux set-environment -g TMUX_PLUGIN_MANAGER_PATH "$tmux_plugins" 2>/dev/null || :
 [ -d "$tmux_plugins/tmux-copycat" ] || "$tmux_plugins/tpm/bin/install_plugins"
 
 # Create the required files for mutt
 [ -L "$HOME/.mutt" ] && {
-    mkdir -p "$HOME/.mutt/cache"
-    mkdir -p "$HOME/.mutt/tmp"
-    touch "$HOME/.mutt/certificates"
+	mkdir -p "$HOME/.mutt/cache"
+	mkdir -p "$HOME/.mutt/tmp"
+	touch "$HOME/.mutt/certificates"
 }
 
 # Create the required directory for mpd
