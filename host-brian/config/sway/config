@@ -80,6 +80,18 @@ bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace 10
 
+# switch to workspace home row mod friendly
+bindsym $mod+Mod1+q workspace 1
+bindsym $mod+Mod1+w workspace 2
+bindsym $mod+Mod1+e workspace 3
+bindsym $mod+Mod1+r workspace 4
+bindsym $mod+Mod1+t workspace 5
+bindsym $mod+Mod1+y workspace 6
+bindsym $mod+Mod1+u workspace 7
+bindsym $mod+Mod1+i workspace 8
+bindsym $mod+Mod1+o workspace 9
+bindsym $mod+Mod1+p workspace 10
+
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace 1
 bindsym $mod+Shift+2 move container to workspace 2
@@ -92,14 +104,23 @@ bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
 
+# move focused container to workspace
+bindsym $mod+Mod1+Shift+q move container to workspace 1
+bindsym $mod+Mod1+Shift+w move container to workspace 2
+bindsym $mod+Mod1+Shift+e move container to workspace 3
+bindsym $mod+Mod1+Shift+r move container to workspace 4
+bindsym $mod+Mod1+Shift+t move container to workspace 5
+bindsym $mod+Mod1+Shift+y move container to workspace 6
+bindsym $mod+Mod1+Shift+u move container to workspace 7
+bindsym $mod+Mod1+Shift+i move container to workspace 8
+bindsym $mod+Mod1+Shift+o move container to workspace 9
+bindsym $mod+Mod1+Shift+p move container to workspace 10
+
 # Move workspace between outputs
 bindsym $mod+o move workspace to output right
 
-# w000t
-bindsym Mod1+w exec w000t
-
 # mako
-bindsym Ctrl+Space exec makoctl dismiss
+bindsym $mod+Backspace exec makoctl dismiss
 
 # Fuzzy launch
 bindsym Mod1+r exec fuzzel
@@ -107,6 +128,12 @@ bindsym Mod1+u exec fuzzel-select urls
 bindsym Mod1+Shift+s exec screenshot
 bindsym Print exec screenshot
 bindsym Mod1+Shift+u exec foot vim ~/.urls
+
+# w000t
+bindsym Mod1+w exec w000t
+
+# mpv from clipboard
+bindsym Mod1+v exec mpv-clipboard
 
 # scratchpad
 for_window [app_id="^scratchpad$"] floating enable; border pixel 2

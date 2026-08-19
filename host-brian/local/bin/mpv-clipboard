@@ -1,0 +1,27 @@
+#!/bin/sh
+
+url=
+
+pick() {
+	selection="$1"
+	case "$selection" in
+		http://?*|https://?*) url="$selection" ;;
+		*) return 1                            ;;
+	esac
+
+	case "$selection" in
+		*[![:graph:]]*) return 1 ;;
+	esac
+
+	return 0
+}
+
+die() {
+	notify-send \
+		--urgency "critical" \
+		"mpv-clipboard" "$1"
+	exit 1
+}
+
+pick "$(wl-paste)" || pick "$(wl-paste -p)" || die "Missing URL"
+mpv -fs -- "$url"

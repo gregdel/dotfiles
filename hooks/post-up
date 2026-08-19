@@ -28,6 +28,3 @@ tmux set-environment -g TMUX_PLUGIN_MANAGER_PATH "$tmux_plugins" 2>/dev/null || 
 
 # Create the required directory for mpd
 [ -L "$HOME/.mpdconf" ] && mkdir -p "$HOME/.mpd"
-
-# z
-touch "$HOME/.z"
