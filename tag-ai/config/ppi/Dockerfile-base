@@ -6,19 +6,17 @@ ARG USER
 ARG HOME
 
 RUN apk add --no-cache \
-        bash \
-        ca-certificates \
-        git \
-        nodejs \
-        npm \
-        openssh-client \
-        ripgrep \
-        fd \
+        nodejs npm bun tsc \
+        bash ca-certificates git \
+        curl jq ripgrep fd \
         shellcheck shfmt \
-        neovim \
+        go gopls golangci-lint \
+        neovim fzf \
+        build-base pkgconf libffi-dev \
+        wayland-dev libx11-dev libxkbcommon-dev mesa-dev libxcursor-dev vulkan-headers \
     && addgroup -g "$GID" "$USER" \
     && adduser -D -u "$UID" -G "$USER" -s /bin/sh -h "$HOME" "$USER" \
-    && npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+    && HOME=/root npm install -g --ignore-scripts @earendil-works/pi-coding-agent
 
 USER "$USER"
 ENV HOME="$HOME"

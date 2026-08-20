@@ -4,5 +4,9 @@
   "defaultProvider": "opencode-go",
   "defaultModel": "deepseek-v4-flash",
   "defaultThinkingLevel": "high",
-  "showCacheMissNotices": true
+  "showCacheMissNotices": true,
+  "packages": [
+    "npm:pi-web-access",
+    "npm:@upstash/context7-pi"
+  ]
 }

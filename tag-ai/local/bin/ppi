@@ -1,7 +1,6 @@
 #!/bin/sh
 set -eu
 
-container_name="pi-dev"
 container_image="localhost/pi-coding-agent:alpine"
 dockerfile="$HOME/.config/ppi/Dockerfile-base"
 
@@ -31,15 +30,15 @@ setup() {
 
 usage() {
 	cat <<EOF
-Usage: ppi [command] [args...]
+Usage: ppi [ro] [podman run options...] [-- [pi args...]]
 
 Run the pi coding agent in a container. The current working directory is
-mounted as the workspace unless a directory argument is given.
+mounted as the workspace. Arguments before -- are passed to podman run;
+arguments after -- are passed to pi. If -- is omitted, all arguments are
+passed to podman run.
 
 Commands:
   setup                Build the container image from the Dockerfile
-  run [ro] [dir]       Run the agent in the workspace
-  ro [dir]             Run with the workspace mounted read-only (planning only)
   help                 Show this help
 EOF
 }
@@ -51,15 +50,17 @@ run() {
 		shift
 	fi
 
-	workspace="${1:-$PWD}"
-	workspace="$(realpath "$workspace")" || {
-		echo "error: workspace '$1' does not exist" >&2
+	workspace="$(realpath "${PWD:-.}")" || {
+		echo "error: current working directory does not exist" >&2
 		exit 1
 	}
 	[ -d "$workspace" ] || {
 		echo "error: '$workspace' is not a directory" >&2
 		exit 1
 	}
+
+	workspace_name="$(basename "$workspace" | sed 's/[^A-Za-z0-9_.-]/-/g')"
+	container_name="pi-dev-${workspace_name}-$$"
 
 	mkdir -p "$config_dir" "$state_dir"
 
@@ -68,42 +69,64 @@ run() {
 		workspace_mount="$workspace:$workspace:ro,z"
 	fi
 
+	dotfiles_workspace="$(realpath "$dotfiles_dir" 2>/dev/null)" || dotfiles_workspace=
+	dotfiles_args=
+	if [ "$workspace" != "$dotfiles_workspace" ]; then
+		dotfiles_args="-v $dotfiles_dir:$home/.dotfiles:ro,z"
+	fi
+
+	podman_args=
+	while [ "$#" -gt 0 ] && [ "$1" != "--" ]; do
+		podman_args="$podman_args $1"
+		shift
+	done
+	if [ "${1:-}" = "--" ]; then
+		shift
+	fi
+
+	# Extra Podman arguments are intentionally limited to simple shell words.
+	# shellcheck disable=SC2086
 	exec podman run \
 		--interactive \
 		--tty \
 		--rm \
-		--replace \
 		--name "$container_name" \
 		--hostname "$container_name" \
-		--network pasta \
+		--network host \
 		--userns "keep-id:uid=$uid,gid=$gid" \
 		--cap-drop all \
 		--security-opt no-new-privileges \
 		--pids-limit 512 \
 		-e "HOME=$home" \
+		-e GOPATH \
+		-e GOBIN \
+		-e "NPM_CONFIG_CACHE=$home/.pi/agent/npm-cache" \
 		-e LANG=C.UTF-8 \
 		-e LC_ALL=C.UTF-8 \
 		-e "TERM=${TERM:-xterm-256color}" \
 		-e "COLORTERM=${COLORTERM:-truecolor}" \
-		-v "$dotfiles_dir:$home/.dotfiles:ro,z" \
 		-v "$state_dir:$home/.pi/agent:z" \
 		-v "$config_dir:$home/.config/pi:ro,z" \
 		-v "$config_dir/agent/settings.json:$home/.pi/agent/settings.json:ro,z" \
 		-v "$config_dir/agent/AGENTS.md:$home/.pi/agent/AGENTS.md:ro,z" \
 		-v "$config_dir/agent/prompts:$home/.pi/agent/prompts:ro,z" \
+		-v "$config_dir/agent/extensions:$home/.pi/agent/extensions:ro,z" \
 		-v "$HOME/.config/nvim:$home/.config/nvim:ro,z" \
+		-v "$HOME/dev/go/pkg/:$home/dev/go/pkg:z" \
 		-v "${XDG_DATA_HOME:-$HOME/.local/share}/nvim:$home/.local/share/nvim:z" \
 		-v "${XDG_STATE_HOME:-$HOME/.local/state}/nvim:$home/.local/state/nvim:z" \
 		-v "${XDG_CACHE_HOME:-$HOME/.cache}/nvim:$home/.cache/nvim:z" \
+		-v "${XDG_CACHE_HOME:-$HOME/.cache}/go-build:$home/.cache/go-build:z" \
+		$dotfiles_args \
 		-v "$workspace_mount" \
 		--workdir "$workspace" \
+		$podman_args \
 		"$container_image" \
 		"$@"
 }
 
 case "${1:-}" in
-setup)          setup    ;;
-run)   shift;   run "$@" ;;
-help|-h|--help) usage    ;;
-*)              run "$@" ;;
+setup) setup ;;
+help | -h | --help) usage ;;
+*) run "$@" ;;
 esac

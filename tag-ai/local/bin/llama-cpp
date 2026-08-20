@@ -1,0 +1,41 @@
+#!/bin/sh
+
+NAME="llama-cpp"
+IMAGE="ghcr.io/ggml-org/llama.cpp:server-rocm"
+MODELS="$HOME/ai/models"
+PRESET="$HOME/.config/llama-cpp/preset.ini"
+PORT=10999
+
+if [ "$1" = "update" ]; then
+	podman pull "$IMAGE"
+	exit
+fi
+
+if [ "$#" -ne 0 ]; then
+	echo "usage: $0 [update]"
+	exit 1
+fi
+
+podman run \
+    --replace \
+    --name "$NAME" \
+    --hostname "$NAME" \
+    --network host \
+    --ipc host \
+    --device /dev/kfd \
+    --device /dev/dri \
+    --group-add keep-groups \
+    --security-opt seccomp=unconfined \
+    --cap-add SYS_PTRACE \
+    -e HSA_OVERRIDE_GFX_VERSION=10.3.0 \
+	-e HF_HUB_CACHE=/models \
+    -e HF_HOME=/models \
+	-v "$HOME/.dotfiles:$HOME/.dotfiles:ro" \
+    -v "$PRESET:/preset.ini:ro" \
+    -v "$MODELS:/models" \
+    "$IMAGE" \
+    --host 127.0.0.1 \
+    --port "$PORT" \
+    --models-preset /preset.ini \
+    --models-autoload \
+    --models-max 1
