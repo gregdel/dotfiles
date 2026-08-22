@@ -115,7 +115,7 @@ bindsym $mod+o move workspace to output right
 bindsym Mod1+w exec w000t
 
 # mako
-bindsym Ctrl+Space exec makoctl dismiss
+bindsym $mod+Backspace exec makoctl dismiss
 
 # wofi
 for_window [title="^gofi$"] floating enable; border pixel 2
@@ -157,6 +157,8 @@ bindsym XF86MonBrightnessDown exec light -U 5
 for_window [app_id="mpv"] floating enable
 for_window [app_id="firefox"] [title="^Extension:.+"] floating enable
 no_focus [class="com-eteks-sweethome3d-SweetHome3D" instance="sun-awt-X11-XWindowPeer"]
+
+for_window [app_id="polochon-gio"] floating enable
 
 # Gaps control
 set $mode_gaps Gaps: (o) outer, (i) inner

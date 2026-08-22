@@ -1,5 +1,6 @@
-directory: ~/music/Library/
+directory: ~/music/Library
 library: ~/music/beets_db.blb
+
 plugins:
   - chroma
   - fetchart
@@ -7,7 +8,6 @@ plugins:
   - lyrics
   - fromfilename
   - lastgenre
-  - mpdupdate
   - duplicates
   - edit
   - smartplaylist
@@ -18,34 +18,27 @@ import:
   write: yes
 
 fetchart:
-  auto: yes
-  sources: amazon filesystem coverart albumart
+  sources:
+    - filesystem
+    - coverart
+    - itunes
 
 embedart:
-  auto: yes
-  compare_threshold: 10
-  remove_art_file: yes
+  remove_art_file: no
 
 smartplaylist:
-  auto: yes
   relative_to: ~/music/
   playlist_dir: ~/music/playlists/
   playlists:
-  - name: imported_last_week.m3u
-    query: "'added:-7d..' added+"
-  - name: imported_last_month.m3u
-    query: "'added:-31d..' added+"
-  - name: imported_last_year.m3u
-    query: "'added:-1y..' added+"
-  - name: bad_quality.m3u
-    query: "'bitrate:..127000'"
-
-mpd:
-  host: localhost
-  port: 6600
+    - name: imported_last_week.m3u
+      query: "'added:-7d..' added+"
+    - name: imported_last_month.m3u
+      query: "'added:-31d..' added+"
+    - name: imported_last_year.m3u
+      query: "'added:-1y..' added+"
+    - name: bad_quality.m3u
+      query: "'bitrate:..127000'"
 
 spotify:
-  source_weight: 0.7
-  mode: open
-  show_failures: on
-  tiebreak: first
+  mode: list
+  show_failures: yes

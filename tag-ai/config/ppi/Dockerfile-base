@@ -6,7 +6,7 @@ ARG USER
 ARG HOME
 
 RUN apk add --no-cache \
-        nodejs npm bun tsc \
+        nodejs npm \
         bash ca-certificates git \
         curl jq ripgrep fd \
         shellcheck shfmt \

@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-container_image="localhost/pi-coding-agent:alpine"
+container_image="${PPI_IMAGE:-localhost/pi-coding-agent:alpine}"
 dockerfile="$HOME/.config/ppi/Dockerfile-base"
 
 config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/pi"
@@ -25,7 +25,8 @@ setup() {
 		--build-arg "USER=$user" \
 		--build-arg "HOME=$home" \
 		--tag "$container_image" \
-		--file "$dockerfile"
+		--file "$dockerfile" \
+		"$@"
 }
 
 usage() {
@@ -126,7 +127,7 @@ run() {
 }
 
 case "${1:-}" in
-setup) setup ;;
+setup) shift; setup "$@" ;;
 help | -h | --help) usage ;;
 *) run "$@" ;;
 esac

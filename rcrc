@@ -15,6 +15,6 @@ case "$hostname" in
     TAGS="$TAGS fonts work gofi ai"
     ;;
   lois)
-    TAGS="$TAGS fonts foot music gofi"
+    TAGS="$TAGS fonts foot music gofi ai"
     ;;
 esac
