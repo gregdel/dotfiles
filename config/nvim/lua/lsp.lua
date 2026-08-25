@@ -8,3 +8,12 @@ function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
 end
 
 require('lspconfig.ui.windows').default_options.border = border
+
+vim.lsp.enable({
+  "clangd",
+  "gopls",
+  "lua_ls",
+  "rust_analyzer",
+  "ts_ls",
+  "zls",
+})

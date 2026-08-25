@@ -78,8 +78,8 @@ vim.keymap.set("n", "<Leader>N", "<Cmd>NvimTreeToggle<CR>", opts)
 -- Nerdtree
 vim.keymap.set("n", "<Leader>n", "<Cmd>NERDTreeToggle<CR>", opts)
 
--- Tabular
-vim.keymap.set("v", "<Enter>", "<Cmd>Tabularize /", opts)
+-- Align
+vim.keymap.set("v", "<Enter>", "ga", { remap = true, silent = true })
 
 -- Telescope
 vim.keymap.set("n", "<C-p>", "<Cmd>Telescope find_files<CR>", opts)
@@ -100,9 +100,3 @@ vim.keymap.set("n", "<Leader>gu", "<Cmd>Gitsigns reset_hunk<CR>", opts)
 
 -- IBL
 vim.keymap.set("n", "<Leader>v", "<Cmd>IBLToggle<CR>", opts)
-
--- AI
-vim.keymap.set("n", "<Leader>ac", "<Cmd>CodeCompanionChat<CR>", opts)
-vim.keymap.set("v", "<Leader>ac", "<Cmd>CodeCompanionChat<CR>", opts)
-vim.keymap.set("n", "<Leader>aa", "<Cmd>CodeCompanionActions<CR>", opts)
-vim.keymap.set("v", "<Leader>aa", "<Cmd>CodeCompanionActions<CR>", opts)

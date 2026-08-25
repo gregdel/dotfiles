@@ -31,8 +31,44 @@ local custom_symbols = {
 
 require("lazy").setup({
   {
+    "nvim-mini/mini.nvim",
+    version = "*",
+    config = function()
+      local icons = require("mini.icons")
+      icons.setup()
+      icons.mock_nvim_web_devicons()
+
+      require("mini.align").setup()
+      require("mini.pairs").setup()
+      require("mini.surround").setup({
+        mappings = {
+          add = "ys",
+          delete = "ds",
+          find = "",
+          find_left = "",
+          highlight = "",
+          replace = "cs",
+          suffix_last = "",
+          suffix_next = "",
+        },
+        search_method = "cover_or_next",
+      })
+      vim.keymap.del("x", "ys")
+      vim.keymap.set("x", "S", [[:<C-u>lua MiniSurround.add('visual')<CR>]], { silent = true })
+      vim.keymap.set("n", "yss", "ys_", { remap = true })
+
+      local hipatterns = require("mini.hipatterns")
+      local highlighters = {
+        hex_color = hipatterns.gen_highlighter.hex_color(),
+      }
+      vim.api.nvim_create_user_command("ColorizerToggle", function()
+        hipatterns.toggle(0, { highlighters = highlighters })
+      end, {})
+    end,
+  },
+  {
     "nvim-lualine/lualine.nvim",
-    dependencies = { "kyazdani42/nvim-web-devicons" },
+    dependencies = { "nvim-mini/mini.nvim" },
     event = "VimEnter",
     config = function ()
       local theme = require("lualine.themes.material")
@@ -61,7 +97,7 @@ require("lazy").setup({
   },
   {
     "akinsho/bufferline.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons"},
+    dependencies = { "nvim-mini/mini.nvim" },
     opts = {
       options = {
         mode = "tabs",
@@ -91,7 +127,7 @@ require("lazy").setup({
   },
   {
     "folke/trouble.nvim",
-    dependencies = { "kyazdani42/nvim-web-devicons" },
+    dependencies = { "nvim-mini/mini.nvim" },
     opts = {
       auto_close = true,
       signs = custom_symbols,
@@ -142,14 +178,8 @@ require("lazy").setup({
       vim.g.ale_lint_on_insert_leave = 0
       vim.g.ale_fix_on_save = 1
       vim.g.ale_virtualtext_cursor = 1
-      -- enable ale's LSP integration in nvim
-      vim.g.ale_use_neovim_lsp_api = 1
+      vim.g.ale_disable_lsp = 1
     end
-  },
-  {
-    "norcalli/nvim-colorizer.lua",
-    dependencies = { "kyazdani42/nvim-web-devicons" },
-    cmd = { "ColorizerToggle" },
   },
   {
     "scrooloose/nerdtree",
@@ -172,6 +202,7 @@ require("lazy").setup({
   },
   {
     "nvim-tree/nvim-tree.lua",
+    dependencies = { "nvim-mini/mini.nvim" },
     cmd = { "NvimTreeToggle" },
     opts = {
       view = {
@@ -254,14 +285,6 @@ require("lazy").setup({
           -- NERDTree
           NERDTreeDir = { fg = palette.green },
           NERDTreeExecFile = { fg = palette.orange },
-          -- CodeCompanion
-          CodeCompanionChatTokens = { fg = palette.orange },
-          CodeCompanionVirtualText = { fg = palette.orange },
-          CodeCompanionChatHeader = { fg = palette.orange },
-          CodeCompanionChatSeparator = { fg = palette.orange },
-          CodeCompanionChatVariable = { fg = palette.pink },
-          CodeCompanionChatTool = { fg = palette.pink },
-          CodeCompanionChatAgent = { fg = palette.pink },
           -- SignColumn = { fg = palette.white, bg = palette.base3 },
           -- Bufferline
           BufferLineFill = { bg = palette.base2 },
@@ -271,6 +294,7 @@ require("lazy").setup({
   },
   {
     "neovim/nvim-lspconfig",
+    dependencies = { "saghen/blink.cmp" },
     config = function()
       -- Use LspAttach autocommand to only map the following keys
       -- after the language server attaches to the current buffer
@@ -296,8 +320,12 @@ require("lazy").setup({
           vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, opts)
           vim.keymap.set({ "n", "v" }, "<space>ca", vim.lsp.buf.code_action, opts)
           vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-          vim.keymap.set("n", "[a", vim.diagnostic.goto_prev, opts)
-          vim.keymap.set("n", "]a", vim.diagnostic.goto_next, opts)
+          vim.keymap.set("n", "[d", function()
+            vim.diagnostic.jump({ count = -vim.v.count1 })
+          end, opts)
+          vim.keymap.set("n", "]d", function()
+            vim.diagnostic.jump({ count = vim.v.count1 })
+          end, opts)
           vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist, opts)
         end,
       })
@@ -324,20 +352,6 @@ require("lazy").setup({
     opts = {},
   },
   {
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    config = function()
-      require("nvim-autopairs").setup()
-    end,
-  },
-  {
-    "kylechui/nvim-surround",
-    event = "VeryLazy",
-    config = function()
-      require("nvim-surround").setup()
-    end
-  },
-  {
     "romus204/tree-sitter-manager.nvim",
     dependencies = {},
     config = function()
@@ -358,9 +372,6 @@ require("lazy").setup({
       },
     },
   },
-  { "numToStr/Comment.nvim", opts = {} },
-
-  { "godlygeek/tabular"               },
   { "tpope/vim-fugitive"              },
   { "tpope/vim-repeat"                },
 

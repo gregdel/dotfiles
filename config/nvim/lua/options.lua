@@ -55,10 +55,6 @@ vim.opt.conceallevel = 0
 -- List
 vim.opt.listchars="tab:▸\\ ,eol:¬,trail:·"
 
--- Colorizer
-vim.g.colorizer_nomap = 1
-vim.g.colorizer_startup = 0
-
 -- vim-jsx
 vim.g.jsx_ext_required = 0
 
