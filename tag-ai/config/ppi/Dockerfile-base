@@ -12,6 +12,7 @@ RUN apk add --no-cache \
         shellcheck shfmt \
         go gopls golangci-lint \
         neovim fzf \
+        github-cli \
         build-base pkgconf libffi-dev \
         wayland-dev libx11-dev libxkbcommon-dev mesa-dev libxcursor-dev vulkan-headers \
     && addgroup -g "$GID" "$USER" \

@@ -40,8 +40,24 @@ passed to podman run.
 
 Commands:
   setup                Build the container image from the Dockerfile
+  enter                Select a running container and enter it with bash
   help                 Show this help
 EOF
+}
+
+select_running() {
+	podman ps --format '{{.ID}} {{.Names}}' |
+		fzf --reverse --prompt='Enter container> '
+}
+
+enter() {
+	selection=""
+	if ! selection="$(select_running)"; then
+		exit 0
+	fi
+
+	container_id="${selection%% *}"
+	exec podman exec --interactive --tty "$container_id" bash
 }
 
 run() {
@@ -107,6 +123,7 @@ run() {
 		-e "TERM=${TERM:-xterm-256color}" \
 		-e "COLORTERM=${COLORTERM:-truecolor}" \
 		-v "$state_dir:$home/.pi/agent:z" \
+		--mount type=bind,source=/sys,target=/run/host-sys,readonly \
 		-v "$config_dir:$home/.config/pi:ro,z" \
 		-v "$config_dir/agent/settings.json:$home/.pi/agent/settings.json:ro,z" \
 		-v "$config_dir/agent/AGENTS.md:$home/.pi/agent/AGENTS.md:ro,z" \
@@ -128,6 +145,7 @@ run() {
 
 case "${1:-}" in
 setup) shift; setup "$@" ;;
+enter) shift; enter "$@" ;;
 help | -h | --help) usage ;;
 *) run "$@" ;;
 esac

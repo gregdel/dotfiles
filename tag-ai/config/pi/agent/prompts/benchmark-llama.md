@@ -1,158 +1,127 @@
 ---
-description: Benchmark a llama.cpp preset and tune it one knob at a time
-argument-hint: "[preset-id]"
+description: Benchmark and tune the active Pi llama.cpp model
 ---
 
-Run the interactive llama.cpp preset tuning wizard. You are operating on the
-user's dotfiles repo, which is a git checkout managed by RCM. This workflow
-modifies the repo and the live local router, so be careful and ask before
-every mutation.
+Benchmark the llama.cpp model currently selected in Pi, summarize its usable
+context and generation speed, then optionally make one local preset-key change.
+The benchmark itself is read-only. Deployment and verification are always
+manual and happen after this invocation.
 
-## Environment checks (do these first, before asking anything)
+## Preconditions
 
-1. Verify the working directory is the dotfiles repo and that it is writable
-   (the `ppi` workspace mount, not read-only):
+Before running anything:
 
-   `git rev-parse --show-toplevel` must equal `$HOME/.dotfiles`. If it is
-   anything else, tell the user: "Run this from the dotfiles repo:
-   `cd ~/.dotfiles && ppi`" and stop.
+1. Verify `git rev-parse --show-toplevel` is `$HOME/.dotfiles` and the checkout
+   is writable. Otherwise tell the user to run:
 
-2. Verify the router is reachable: `curl -s http://127.0.0.1:10999/health`
-   must return `{"status":"ok"}`. If not, tell the user the router is down
-   and stop; do not start it yourself.
+   `cd ~/.dotfiles && ppi`
 
-3. Locate the files you will use:
+   Then stop.
 
-   - Presets:           `tag-ai/config/llama-cpp/preset.ini`
-   - Benchmark script:  `tag-ai/local/bin/llama-cpp-benchmark`
-   - Transactional sweep helper (read-only reference for how edits/reloads
-     are done safely): `tag-ai/local/bin/llama-cpp-bench-draft`
+2. Read these files:
 
-## Read and understand first
+   - `tag-ai/config/llama-cpp/preset.ini`
+   - `tag-ai/local/bin/llama-cpp-benchmark`
 
-4. Read the preset file completely. Enumerate every `[section]` and its
-   keys/values — these are the presets available for tuning.
+3. Check `PI_PROVIDER` and `PI_MODEL` through the shell environment.
+   `PI_PROVIDER` must be `llama.cpp`. If not, tell the user to load the desired
+   preset with `/llama`, select it with `/model`, and invoke this prompt again.
 
-5. Read the benchmark script's header comment and `usage()` so you know its
-   contract:
+4. Confirm the selected model has a matching local preset section. Do not infer
+   a different preset from an HF repository name.
 
-   - `--fast` (default): 5 fixed sizes, cold-only, 2 runs, 256 decode,
-     gate at 32k/2. Fast triage, ~5-7 min.
-   - `--full`: sizes derived from the preset's n_ctx, warm+cold, 3 runs,
-     1024 decode, gate at capacity. Acceptance, 25-45 min depending on
-     preset.
-   - Overridable flags: `--runs`, `--sizes`, `--mode cold|warm|both`,
-     `--decode-tokens`, `--gate-context`, `--gate-runs`, `--exclusive`.
-   - Output is a single JSON document (schema v2) with `results`, `raw_runs`,
-     `memory`, `gates`, `capacity_ceiling`, `skipped_sizes`.
+5. Inspect `git status` and the existing diff for `preset.ini`. Never overwrite
+   or fold unrelated user changes into a benchmark adjustment.
 
-## Ask before running (one focused question at a time)
+6. Ask whether the machine is in its normal representative state and ready for
+   a long benchmark. Concurrent inference or unusual GPU load makes comparisons
+   invalid. Do not run until confirmed.
 
-6. Ask which preset to tune. Present the list from step 4 if the preset id
-   was not given as the template argument. Confirm you will benchmark the
-   *current* value of that preset first as a baseline. Do not run `--full`
-   without warning about the expected duration first.
+## Run once
 
-7. Ask which benchmark mode: `fast` (default, ~5-7 min) or `full`/acceptance
-   (~25-45 min). State the expected wall-clock for the chosen preset based on
-   its n_ctx before running.
+Run `llama-cpp-benchmark` exactly once with no arguments and a timeout of at
+least 30 minutes. Save its stdout under `/tmp` using `PI_SESSION_ID` in the
+filename, while retaining its exit status. Do not invoke any router lifecycle
+endpoint and do not alter files during the run.
 
-8. Ask whether to use `--exclusive` (measures cached model-load time and
-   unloads other models first; use it the first time, or when comparing
-   load behavior).
+The fixed workload measures:
 
-9. Ask one final question every time before any long run: "Is the machine
-   idle right now?" The router serves `parallel = 1`, so concurrent agent
-   traffic corrupts the measurements.
+- 8,192 total tokens (diagnostic baseline)
+- 65,536 total tokens (required minimum)
+- 100,000 total tokens (preferred)
+- 512 generated tokens, twice per depth
+- best-effort local VRAM peak with a 200 MiB free-memory requirement
 
-## Baseline
+Validate the output as JSON schema version 1. If the script reports a preflight
+error, explain it and stop. A benchmark verdict of `failed` is still a valid
+result and must be summarized.
 
-10. Run the baseline benchmark for the chosen preset with the chosen mode.
-    Give the bash tool a generous `timeout` (`--full` on big presets can
-    exceed 30 minutes). Save the JSON: `mkdir -p /tmp/llama-bench/<session>`
-    and redirect stdout there. Use the exact same invocation shape for every
-    later variant run so results are comparable (same mode, sizes, decode,
-    gate, seed).
+## Present the result
 
-11. Summarize the baseline as a compact table: per size and mode — prompt &
-    generation tok/s, TTFT, wall time, context capacity ok, gate status,
-    VRAM peak/free. Read `raw_runs` for per-trial details (e.g.
-    `cache_n`/`prompt_n` to confirm warm vs cold was real). State the verdict
-    from the `gates` object.
+Show a compact table with one row per context depth:
 
-## Propose one change
+- actual input tokens
+- cold prefill seconds and tokens/s
+- each generation tokens/s sample and their median
+- minimum free VRAM, when available
+- status and failure reason
 
-12. Diagnose using the baseline data and the preset's current values. Then
-    propose **exactly one** `key = value` change worth testing, with the
-    reasoning tied to what you measured. Examples of reasoning you may use:
+Then show:
 
-    - Prefill slow but generation fine → try larger `batch-size` /
-      `ubatch-size` (prefill is batched) or different `threads-batch`.
-    - Generation slow → try `spec-draft-n-max` / `spec-type` (check
-      `draft_n`/`draft_accepted` in `raw_runs` for acceptance rate) or
-      `n-cpu-moe`.
-    - Context capacity borderline or VRAM tight → consider `ctx-size`,
-      `cache-type-k`/`cache-type-v`, `flash-attn`.
-    - A knob is already optimal (e.g. changing it cannot help, or a
-      parameter is at a sensible bound) → say so explicitly and explain why.
+- effective server context and relevant preset arguments
+- global peak/free VRAM and whether it was measurable
+- final verdict: `failed`, `minimum`, or `preferred`
 
-    Constraints on proposals:
+State explicitly that this measures operational capacity and throughput, not
+whether the model uses long context intelligently.
 
-    - Tunable keys only: `n-cpu-moe`, `threads`, `threads-batch`,
-      `batch-size`, `ubatch-size`, `ctx-size`, `spec-draft-n-max`,
-      `spec-type`, `cache-type-k`, `cache-type-v`, `flash-attn`, `fit`,
-      `temperature`, `top-k`, `top-p`, `min-p`, `repeat-penalty`,
-      `presence-penalty`, `frequency-penalty`.
-    - Never propose changing: `hf`, `device`, `parallel`, `gpu-layers`,
-      `alias`, `load-on-startup`.
-    - Never lower `ctx-size` below the benchmark's gate context.
-    - One key per iteration, never more.
+## Compare and diagnose
 
-13. Ask the user to approve the change before touching anything, and ask
-    whether to keep the current benchmark mode for the verification run
-    (recommended) or step up to `--full`.
+When a previous schema-v1 result for the same model and workload version exists
+in the conversation, compare only if the benchmark contract is identical and
+the preset differs by the intended key. Compute proportional deltas at 65,536
+and 100,000 tokens. Treat changes within ±5% as inconclusive.
 
-## Apply, verify, decide
+Rank configurations in this order:
 
-14. On approval:
+1. Reject one that cannot complete 65,536 tokens.
+2. When VRAM is measurable, reject one leaving less than 200 MiB free there.
+3. Prefer one that also completes 100,000 tokens with sufficient headroom.
+4. Between equal-capacity configurations, require at least 5% combined
+   generation-speed improvement at 65,536 and 100,000 tokens, without a
+   material regression at either depth.
+5. Use 8,192-token speed only as a diagnostic.
 
-    - Backup: `cp tag-ai/config/llama-cpp/preset.ini /tmp/llama-bench/<session>/preset.bak`
-      and record the pre-edit state with
-      `git diff -- tag-ai/config/llama-cpp/preset.ini`.
-    - Apply the single change with the `edit` tool. Preserve the file's
-      `key = value` formatting and section layout.
-    - Reload the router: `curl -s 'http://127.0.0.1:10999/models?reload=1'`,
-      then `POST /models/load` with `{"model":"<preset-id>"}` and poll
-      `/models` until the model reports `loaded` (or run the benchmark with
-      `--exclusive` so it handles the lifecycle itself).
-    - Re-run the benchmark with the identical invocation from step 10.
-    - Show a before/after table; compute deltas.
+The only tunable keys in this workflow are:
 
-15. Decide with the user:
+- `n-cpu-moe`
+- `threads`
+- `spec-type`
+- `spec-draft-n-max`
+- `spec-draft-p-min`
+- `ctx-size` (never below 65,536)
+- `cache-type-k`
+- `cache-type-v`
 
-    - Better → offer to keep it, test another knob, or stop. If kept, the
-      change is already live in the repo; mention that `rcup` will deploy it
-      and that the router is already running it.
-    - Worse or equal → restore the backup, reload the router, reload the
-      model, and confirm the router is healthy. Then explain, using the
-      measured numbers, why the current value was already good.
+Do not change the model artifact, sampling, template settings, device,
+GPU-layer policy, batch sizes, parallelism, or load policy.
 
-16. Loop back to step 12 (propose the next single knob) until the user says
-    stop.
+For the initial Tiel MTP preset, if capacity and VRAM pass and there is no prior
+comparison, testing `spec-type = none` is the first useful control. If capacity
+or VRAM fails, address placement or context before speculative decoding.
 
-## Safety invariants
+## Optional local edit
 
-- Mutate the preset file only after explicit approval, and only via backup +
-  edit + router reload (never overwrite the file wholesale).
-- Never leave the router with a half-applied edit or an unloaded model.
-  On any failure at any step, restore the backup, reload, and report.
-- Keep benchmark invocations byte-identical across baseline and variants;
-  only the preset value may differ.
-- Leave no stray files in the repo; session artifacts stay in
-  `/tmp/llama-bench/<session>/`.
+After presenting all results, propose at most one exact `key = value` change,
+tied directly to the measurements. If no change is justified, say so and stop.
 
-## Finish
+Ask for approval. Only after approval:
 
-Provide a final summary: what was tested, measured deltas, the final state of
-the preset (with `git diff` if changes were kept), and your recommendation
-for the preset going forward.
+1. Edit that one key in the active model's local preset section.
+2. Preserve INI formatting and all unrelated changes.
+3. Show `git diff -- tag-ai/config/llama-cpp/preset.ini`.
+4. Stop. Tell the user to deploy the dotfiles change manually, reload/load the
+   preset themselves, and invoke `/benchmark-llama` again for verification.
+
+Never reload, load, unload, or download a model. Never make a second preset
+change in the same invocation.

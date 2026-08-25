@@ -1,14 +1,13 @@
 #!/bin/sh
-# Benchmark one already-defined llama.cpp router model preset.
+# Benchmark the llama.cpp model currently selected in Pi.
 #
-# The benchmark is HTTP-only. It never edits the router preset. Use
-# --exclusive when cached model-load timing and model lifecycle control are
-# required.
+# Fixed workload:
+#   - total context: 8,192, 65,536, and 100,000 tokens
+#   - generation: 512 tokens, twice at each context depth
+#   - first run: cold prompt; second run: prompt cache enabled
 #
-# Two profiles (all parameters overridable with explicit flags):
-#   --fast (default)  triage: 5 fixed sizes, cold-only, 2 runs, 256 decode.
-#   --full            acceptance: sizes derived from the preset's n_ctx,
-#                     warm+cold, 3 runs, 1024 decode, gate at capacity.
+# The script is read-only with respect to the router. It never downloads,
+# loads, unloads, reloads, or edits a model.
 
 # local is supported by the project shell policy.
 # shellcheck disable=SC3043
@@ -16,372 +15,197 @@
 set -u
 umask 077
 
-MODEL=${1:-}
-if [ -n "$MODEL" ]; then
-	shift
-fi
-
-ROUTER_URL=http://127.0.0.1:10999
-EXCLUSIVE=0
-REPETITIONS=3
+DECODE_TOKENS=512
+CONTEXTS="8192 65536 100000"
+MIN_CONTEXT=65536
+PREFERRED_CONTEXT=100000
+MIN_FREE_BYTES=$((200 * 1024 * 1024))
 HTTP_TIMEOUT=1800
-LOAD_TIMEOUT=900
-POLL_INTERVAL=1
-DECODE_TOKENS=1024
-SEED=1
-MODE=cold
-SIZES_LIST=4096,8192,16384,24576,32768
-SIZES_SOURCE=fixed
-GATE_CONTEXT=32768
-GATE_RUNS=2
-FULL=0
-MODE_SET=0
-SIZES_SET=0
-DECODE_SET=0
-RUNS_SET=0
-GATE_CTX_SET=0
-GATE_RUNS_SET=0
-SKIPPED_SIZES=
-CEILING_SIZE=
-CEILING_REASON=
-CEILING_JSON=null
-VRAM_USED_PATH=/sys/class/drm/card1/device/mem_info_vram_used
-VRAM_TOTAL_PATH=/sys/class/drm/card1/device/mem_info_vram_total
+WORKLOAD_VERSION=1
 
 TMPDIR_BENCH=
-RUNS_FILE=
-VRAM_FILE=
-MONITOR_PID=
-ABORTED=0
-STABILITY_FAILURE=0
-CONTEXT_FAILURE=0
-LOAD_MS=null
-LOAD_CACHED=null
-LOAD_STATE=not_measured
+AUTH_HEADER=
+VRAM_LOG=
+VRAM_MONITOR_PID=
+VRAM_TOTAL=null
+VRAM_BASELINE=null
+VRAM_SOURCE=null
+RESULTS_FILE=
 
 usage() {
 	cat <<EOF
-Usage: $(basename "$0") MODEL_ID [options]
+Usage: $(basename "$0") [--help]
 
-Benchmark one named model in a running llama.cpp router.
+Benchmark the model currently selected by Pi. PI_PROVIDER must be llama.cpp,
+and the selected model must already be loaded or sleeping.
 
-Modes (default: fast triage):
-  --fast                  fast triage: 5 sizes, cold-only, 2 runs, 256 decode
-  --full                  acceptance: sizes derived from the preset's n_ctx,
-                          warm+cold, 3 runs, 1024 decode, gate at capacity
+Fixed workload:
+  contexts     8192, 65536, 100000 total tokens
+  generation   512 tokens, 2 runs per context
+  VRAM target  at least 200 MiB free when local AMD counters are available
 
-Options:
-  --exclusive             unload/reload models and measure cached load time
-  --url URL               router URL (default: $ROUTER_URL)
-  --runs N                measured runs per workload (fast: 2, full: 3)
-  --sizes A,B,C           total-context sizes in tokens (default: 4096,
-                          8192, 16384, 24576, 32768; --full derives from n_ctx)
-  --mode cold|warm|both   prompt-cache modes measured (default: cold, full: both)
-  --decode-tokens N       generation budget per trial (fast: 256, full: 1024)
-  --gate-context N        context size the verdict gates on (default: 32768;
-                          --full defaults to the preset's n_ctx; "capacity"
-                          selects the preset's n_ctx explicitly)
-  --gate-runs N           minimum runs at the gate context for a pass
-                          (fast: 2, full: 3)
-  --http-timeout SECONDS  request timeout (default: $HTTP_TIMEOUT)
-  --load-timeout SECONDS  model load timeout (default: $LOAD_TIMEOUT)
-  --help                  show this help
-
-The verdict gates on a specific total-context size: that size must appear
-in the results with at least the gate-run count of protocol-valid,
-in-capacity trials. Sizes that cannot fit the model's context are skipped
-and reported. If any size fails capacity/protocol checks, the ascending
-sweep stops there and the output carries a capacity_ceiling record.
+Output is one compact JSON document. The script never changes router state.
 EOF
 }
 
-if [ -z "$MODEL" ] || [ "$MODEL" = --help ] || [ "$MODEL" = -h ]; then
-	usage
-	[ -n "$MODEL" ] || exit 64
-	exit 0
-fi
-
-while [ "$#" -gt 0 ]; do
-	case "$1" in
-	--exclusive)
-		EXCLUSIVE=1
-		;;
-	--url)
-		[ "$#" -ge 2 ] || {
-			printf '%s\n' '--url requires a value' >&2
-			exit 64
-		}
-		ROUTER_URL=$2
-		shift
-		;;
-	--runs)
-		[ "$#" -ge 2 ] || {
-			printf '%s\n' '--runs requires a value' >&2
-			exit 64
-		}
-		REPETITIONS=$2
-		RUNS_SET=1
-		shift
-		;;
-	--http-timeout)
-		[ "$#" -ge 2 ] || {
-			printf '%s\n' '--http-timeout requires a value' >&2
-			exit 64
-		}
-		HTTP_TIMEOUT=$2
-		shift
-		;;
-	--load-timeout)
-		[ "$#" -ge 2 ] || {
-			printf '%s\n' '--load-timeout requires a value' >&2
-			exit 64
-		}
-		LOAD_TIMEOUT=$2
-		shift
-		;;
-	--fast)
-		FULL=0
-		;;
-	--full)
-		FULL=1
-		;;
-	--mode)
-		[ "$#" -ge 2 ] || {
-			printf '%s\n' '--mode requires a value' >&2
-			exit 64
-		}
-		MODE=$2
-		MODE_SET=1
-		shift
-		;;
-	--sizes)
-		[ "$#" -ge 2 ] || {
-			printf '%s\n' '--sizes requires a value' >&2
-			exit 64
-		}
-		SIZES_LIST=$2
-		SIZES_SET=1
-		shift
-		;;
-	--decode-tokens)
-		[ "$#" -ge 2 ] || {
-			printf '%s\n' '--decode-tokens requires a value' >&2
-			exit 64
-		}
-		DECODE_TOKENS=$2
-		DECODE_SET=1
-		shift
-		;;
-	--gate-context)
-		[ "$#" -ge 2 ] || {
-			printf '%s\n' '--gate-context requires a value' >&2
-			exit 64
-		}
-		GATE_CONTEXT=$2
-		GATE_CTX_SET=1
-		shift
-		;;
-	--gate-runs)
-		[ "$#" -ge 2 ] || {
-			printf '%s\n' '--gate-runs requires a value' >&2
-			exit 64
-		}
-		GATE_RUNS=$2
-		GATE_RUNS_SET=1
-		shift
-		;;
+case "${1:-}" in
+	"") ;;
 	--help | -h)
 		usage
 		exit 0
 		;;
 	*)
-		printf 'unknown option: %s\n' "$1" >&2
+		usage >&2
 		exit 64
 		;;
-	esac
-	shift
-done
-
-valid_uint() {
-	case "$1" in
-	'' | *[!0-9]*) return 1 ;;
-	*) [ "$1" -ge 1 ] 2>/dev/null ;;
-	esac
-}
-
-valid_uint "$REPETITIONS" || {
-	printf '%s\n' '--runs must be a positive integer' >&2
-	exit 64
-}
-valid_uint "$HTTP_TIMEOUT" || {
-	printf '%s\n' '--http-timeout must be a positive integer' >&2
-	exit 64
-}
-valid_uint "$LOAD_TIMEOUT" || {
-	printf '%s\n' '--load-timeout must be a positive integer' >&2
-	exit 64
-}
-
-if [ "$FULL" -eq 1 ]; then
-	[ "$MODE_SET" -eq 0 ] && MODE=both
-	[ "$SIZES_SET" -eq 0 ] && SIZES_SOURCE=derive
-	[ "$DECODE_SET" -eq 0 ] && DECODE_TOKENS=1024
-	[ "$RUNS_SET" -eq 0 ] && REPETITIONS=3
-	[ "$GATE_CTX_SET" -eq 0 ] && GATE_CONTEXT=capacity
-	[ "$GATE_RUNS_SET" -eq 0 ] && GATE_RUNS=3
-fi
-
-case "$MODE" in
-cold | warm | both) ;;
-*)
-	printf '%s\n' '--mode must be cold, warm, or both' >&2
-	exit 64
-	;;
 esac
-valid_uint "$DECODE_TOKENS" || {
-	printf '%s\n' '--decode-tokens must be a positive integer' >&2
+[ "$#" -le 1 ] || {
+	usage >&2
 	exit 64
 }
-valid_uint "$GATE_RUNS" || {
-	printf '%s\n' '--gate-runs must be a positive integer' >&2
-	exit 64
-}
-if [ "$GATE_CONTEXT" != capacity ]; then
-	valid_uint "$GATE_CONTEXT" || {
-		printf '%s\n' '--gate-context must be a positive integer or "capacity"' >&2
-		exit 64
-	}
-	[ "$GATE_CONTEXT" -ge 4096 ] || {
-		printf '%s\n' '--gate-context must be >= 4096' >&2
-		exit 64
-	}
-fi
-for size in $(printf '%s\n' "$SIZES_LIST" | tr ',' ' '); do
-	case "$size" in
-	'' | *[!0-9]*)
-		printf '%s\n' '--sizes elements must be positive integers' >&2
-		exit 64
-		;;
-	esac
-	[ "$size" -ge 4096 ] 2>/dev/null || {
-		printf '%s\n' '--sizes elements must be >= 4096' >&2
-		exit 64
-	}
-done
 
-for command in curl jq awk mktemp node sha256sum; do
+for command in curl jq awk mktemp; do
 	command -v "$command" >/dev/null 2>&1 || {
 		printf 'missing dependency: %s\n' "$command" >&2
 		exit 69
 	}
 done
 
-TMPDIR_BENCH=$(mktemp -d "${TMPDIR:-/tmp}/llama-cpp-benchmark.XXXXXX") || exit 70
-RUNS_FILE=$TMPDIR_BENCH/runs.jsonl
-VRAM_FILE=$TMPDIR_BENCH/vram.log
-: >"$RUNS_FILE"
-: >"$VRAM_FILE"
-
 cleanup() {
-	if [ -n "$MONITOR_PID" ]; then
-		kill "$MONITOR_PID" 2>/dev/null || true
-		wait "$MONITOR_PID" 2>/dev/null || true
+	if [ -n "$VRAM_MONITOR_PID" ]; then
+		kill "$VRAM_MONITOR_PID" 2>/dev/null || true
+		wait "$VRAM_MONITOR_PID" 2>/dev/null || true
 	fi
 	[ -n "$TMPDIR_BENCH" ] && rm -rf "$TMPDIR_BENCH"
 }
 trap cleanup 0 HUP INT TERM
 
+TMPDIR_BENCH=$(mktemp -d "${TMPDIR:-/tmp}/llama-cpp-benchmark.XXXXXX") || exit 70
+AUTH_HEADER=$TMPDIR_BENCH/auth-header
+VRAM_LOG=$TMPDIR_BENCH/vram.log
+RESULTS_FILE=$TMPDIR_BENCH/results.jsonl
+: >"$VRAM_LOG"
+: >"$RESULTS_FILE"
+
 fail_json() {
-	code=$1
-	message=$2
+	local code="$1" message="$2"
 	jq -nc \
-		--arg model "$MODEL" \
-		--arg url "$ROUTER_URL" \
-		--arg mode "$MODE" \
 		--arg code "$code" \
 		--arg message "$message" \
-		--argjson exclusive "$EXCLUSIVE" \
-		'{schema_version:2,status:"failed",model:$model,router_url:$url,exclusive:$exclusive,mode:$mode,failure:{code:$code,message:$message}}'
+		--arg provider "${PI_PROVIDER:-}" \
+		--arg model "${PI_MODEL:-}" \
+		'{schema_version:1,status:"failed",provider:$provider,model:$model,error:{code:$code,message:$message}}'
 	exit 1
 }
 
+[ "${PI_PROVIDER:-}" = "llama.cpp" ] ||
+	fail_json wrong_provider "select a loaded llama.cpp model in Pi before running the benchmark"
+MODEL=${PI_MODEL:-}
+[ -n "$MODEL" ] || fail_json missing_model "PI_MODEL is not set"
+
+PI_DIR=${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}
+AUTH_JSON=$PI_DIR/auth.json
+STORED_URL=
+STORED_KEY=
+if [ -r "$AUTH_JSON" ]; then
+	STORED_URL=$(jq -r '.["llama.cpp"].env.LLAMA_BASE_URL // empty' "$AUTH_JSON" 2>/dev/null || true)
+	STORED_KEY=$(jq -r '.["llama.cpp"].key // empty' "$AUTH_JSON" 2>/dev/null || true)
+fi
+ROUTER_URL=${STORED_URL:-${LLAMA_BASE_URL:-}}
+API_KEY=${STORED_KEY:-${LLAMA_API_KEY:-}}
+[ -n "$ROUTER_URL" ] || fail_json missing_router "configure llama.cpp with /login llama.cpp"
+ROUTER_URL=${ROUTER_URL%/}
+case "$ROUTER_URL" in
+	*/v1) ROUTER_URL=${ROUTER_URL%/v1} ;;
+esac
+
+if [ -n "$API_KEY" ]; then
+	printf 'Authorization: Bearer %s\n' "$API_KEY" >"$AUTH_HEADER"
+fi
+
 http() {
-	curl -fsS --connect-timeout 10 --max-time "$HTTP_TIMEOUT" "$@"
-}
-
-health() {
-	http "$ROUTER_URL/health" >/dev/null 2>&1
-}
-
-models_json() {
-	http "$ROUTER_URL/models"
-}
-
-model_status() {
-	models_json | jq -c --arg model "$MODEL" '.data[]? | select(.id == $model) | .status' | head -n 1
-}
-
-model_state() {
-	status=$(model_status 2>/dev/null) || return 1
-	[ -n "$status" ] || return 1
-	printf '%s\n' "$status" | jq -r '.value // empty'
-}
-
-post_model_action() {
-	action=$1
-	request=$TMPDIR_BENCH/model-action.json
-	jq -nc --arg model "$MODEL" '{model:$model}' >"$request" || return 1
-	http -H 'Content-Type: application/json' --data-binary "@$request" \
-		"$ROUTER_URL/models/$action"
-}
-
-wait_for_model_state() {
-	wanted=$1
-	start=$(date +%s)
-	SAW_DOWNLOADING=0
-	while :; do
-		status=$(model_status 2>/dev/null || true)
-		if [ -n "$status" ]; then
-			state=$(printf '%s\n' "$status" | jq -r '.value // empty')
-			[ "$state" = downloading ] && SAW_DOWNLOADING=1
-			failed=$(printf '%s\n' "$status" | jq -r '.failed // false')
-			[ "$failed" = true ] && return 2
-			[ "$state" = "$wanted" ] && return 0
-		fi
-		now=$(date +%s)
-		[ $((now - start)) -lt "$LOAD_TIMEOUT" ] || return 3
-		sleep "$POLL_INTERVAL"
-	done
-}
-
-now_ms() {
-	node -e 'process.stdout.write(String(Date.now()))'
-}
-
-read_number() {
-	file=$1
-	if [ -r "$file" ]; then
-		value=$(cat "$file" 2>/dev/null || true)
-		case "$value" in
-		'' | *[!0-9]*) printf 'null\n' ;;
-		*) printf '%s\n' "$value" ;;
-		esac
+	if [ -s "$AUTH_HEADER" ]; then
+		curl -sS --fail-with-body --connect-timeout 10 --max-time "$HTTP_TIMEOUT" \
+			--header "@$AUTH_HEADER" "$@"
 	else
-		printf 'null\n'
+		curl -sS --fail-with-body --connect-timeout 10 --max-time "$HTTP_TIMEOUT" "$@"
 	fi
 }
 
-vram_used() {
-	read_number "$VRAM_USED_PATH"
+HEALTH=$(http "$ROUTER_URL/health" 2>/dev/null) ||
+	fail_json router_unreachable "the configured llama.cpp router is unreachable"
+printf '%s\n' "$HEALTH" | jq -e '.status == "ok"' >/dev/null 2>&1 ||
+	fail_json router_unhealthy "the configured llama.cpp router is not healthy"
+
+MODELS=$(http "$ROUTER_URL/models" 2>/dev/null) ||
+	fail_json models_unavailable "could not read the llama.cpp model catalog"
+STATUS_JSON=$(printf '%s\n' "$MODELS" | jq -c --arg model "$MODEL" '.data[]? | select(.id == $model)' | head -n 1)
+[ -n "$STATUS_JSON" ] || fail_json model_not_found "PI_MODEL is absent from the configured router"
+MODEL_STATE=$(printf '%s\n' "$STATUS_JSON" | jq -r '.status.value // empty')
+case "$MODEL_STATE" in
+	loaded | sleeping) ;;
+	*) fail_json model_not_loaded "load the selected model with /llama before benchmarking" ;;
+esac
+
+PROPS=$(http -G --data-urlencode "model=$MODEL" "$ROUTER_URL/props" 2>/dev/null) ||
+	fail_json props_unavailable "could not read the selected model properties"
+N_CTX=$(printf '%s\n' "$PROPS" | jq -er '.default_generation_settings.n_ctx | select(type == "number" and . > 0)' 2>/dev/null) ||
+	fail_json props_invalid "the selected model did not report a context size"
+BUILD_INFO=$(printf '%s\n' "$PROPS" | jq -r '.build_info // "unknown"')
+EFFECTIVE_ARGS=$(printf '%s\n' "$STATUS_JSON" | jq -c '.status.args // []')
+
+router_host() {
+	printf '%s\n' "$ROUTER_URL" | jq -Rr '
+		capture("^[A-Za-z][A-Za-z0-9+.-]*://(?<authority>[^/]+)").authority |
+		sub("^.*@"; "") |
+		if startswith("[") then capture("^\\[(?<host>[^]]+)\\]").host
+		else split(":")[0] end' 2>/dev/null
 }
 
-vram_total() {
-	read_number "$VRAM_TOTAL_PATH"
+router_is_local() {
+	local host="$1" resolved local_ips ip
+	case "$host" in
+		localhost | ::1 | 127.*) return 0 ;;
+	esac
+	command -v ip >/dev/null 2>&1 || return 1
+	command -v getent >/dev/null 2>&1 || return 1
+	resolved=$(getent ahostsv4 "$host" 2>/dev/null | awk '{print $1}' | sort -u)
+	[ -n "$resolved" ] || return 1
+	local_ips=$(ip -o -4 addr show 2>/dev/null | awk '{split($4, part, "/"); print part[1]}')
+	for ip in $resolved; do
+		printf '%s\n' "$local_ips" | grep -Fx "$ip" >/dev/null 2>&1 && return 0
+	done
+	return 1
+}
+
+find_vram_counters() {
+	local root candidate total used count=0 found_total="" found_used=""
+	for root in /run/host-sys /sys; do
+		[ -d "$root/class/drm" ] || continue
+		for candidate in "$root"/class/drm/card*/device/mem_info_vram_total; do
+			[ -r "$candidate" ] || continue
+			total=$(cat "$candidate" 2>/dev/null || true)
+			used=${candidate%_total}_used
+			case "$total" in "" | *[!0-9]*) continue ;; esac
+			[ "$total" -gt 0 ] 2>/dev/null || continue
+			[ -r "$used" ] || continue
+			count=$((count + 1))
+			found_total=$candidate
+			found_used=$used
+		done
+		[ "$count" -gt 0 ] && break
+	done
+	[ "$count" -eq 1 ] || return 1
+	VRAM_TOTAL_PATH=$found_total
+	VRAM_USED_PATH=$found_used
+	return 0
 }
 
 record_vram() {
-	used=$(vram_used)
-	[ "$used" != null ] && printf '%s\n' "$used" >>"$VRAM_FILE"
+	local used
+	used=$(cat "$VRAM_USED_PATH" 2>/dev/null || true)
+	case "$used" in "" | *[!0-9]*) return ;; esac
+	printf '%s\n' "$used" >>"$VRAM_LOG"
 }
 
 start_vram_monitor() {
@@ -391,579 +215,238 @@ start_vram_monitor() {
 	done
 }
 
-stop_vram_monitor() {
-	if [ -n "$MONITOR_PID" ]; then
-		kill "$MONITOR_PID" 2>/dev/null || true
-		wait "$MONITOR_PID" 2>/dev/null || true
-		MONITOR_PID=
-	fi
+HOST=$(router_host || true)
+if [ -n "$HOST" ] && router_is_local "$HOST" && find_vram_counters; then
+	VRAM_TOTAL=$(cat "$VRAM_TOTAL_PATH")
+	VRAM_BASELINE=$(cat "$VRAM_USED_PATH")
+	VRAM_SOURCE=$(jq -Rn --arg path "$VRAM_USED_PATH" '$path')
 	record_vram
-}
+	start_vram_monitor &
+	VRAM_MONITOR_PID=$!
+fi
 
-vram_stats_json() {
-	total=$1
-	if [ "$total" = null ]; then
-		printf '{"total_bytes":null,"min_free_bytes":null,"peak_used_bytes":null}'
+vram_for_range() {
+	local first_line="$1" stats peak min_free
+	if [ "$VRAM_TOTAL" = null ]; then
+		printf '{"peak_used_bytes":null,"min_free_bytes":null,"headroom_ok":null}'
 		return
 	fi
-	stats=$(awk -v total="$total" '
-		BEGIN { min = ""; max = "" }
-		{
-			free = total - $1
-			if (min == "" || free < min) min = free
-			if (max == "" || $1 > max) max = $1
-		}
-		END {
-			if (min == "") print "null null"
-			else print min, max
-		}
-	' "$VRAM_FILE")
-	min=${stats%% *}
-	max=${stats#* }
-	printf '{"total_bytes":%s,"min_free_bytes":%s,"peak_used_bytes":%s}' "$total" "$min" "$max"
-}
-
-render_prompt() {
-	content=$1
-	output=$2
-	request=$TMPDIR_BENCH/apply-template.json
-	response=$TMPDIR_BENCH/apply-template-response.json
-	jq -Rs --arg model "$MODEL" '{model:$model,messages:[{role:"user",content:.}]}' \
-		<"$content" >"$request" || return 1
-	http -H 'Content-Type: application/json' --data-binary "@$request" \
-		"$ROUTER_URL/apply-template" >"$response" || return 1
-	jq -er '.prompt' "$response" >"$output"
-}
-
-token_count() {
-	prompt=$1
-	request=$TMPDIR_BENCH/tokenize.json
-	response=$TMPDIR_BENCH/tokenize-response.json
-	jq -Rs --arg model "$MODEL" '{model:$model,content:.,add_special:false}' \
-		<"$prompt" >"$request" || return 1
-	http -H 'Content-Type: application/json' --data-binary "@$request" \
-		"$ROUTER_URL/tokenize" >"$response" || return 1
-	jq -er '.tokens | length' "$response"
+	stats=$(awk -v first="$first_line" 'NR >= first { if (peak == "" || $1 > peak) peak = $1 } END { if (peak == "") print "null"; else print peak }' "$VRAM_LOG")
+	peak=$stats
+	if [ "$peak" = null ]; then
+		printf '{"peak_used_bytes":null,"min_free_bytes":null,"headroom_ok":null}'
+		return
+	fi
+	min_free=$((VRAM_TOTAL - peak))
+	jq -nc --argjson peak "$peak" --argjson free "$min_free" --argjson target "$MIN_FREE_BYTES" \
+		'{peak_used_bytes:$peak,min_free_bytes:$free,headroom_ok:($free >= $target)}'
 }
 
 make_content() {
-	records=$1
-	variant=$2
-	output=$3
-	awk -v records="$records" -v variant="$variant" 'BEGIN {
-		words = "kernel network packet route queue socket memory scheduler process thread cache vector tensor model token context inference protocol ethernet bridge namespace container filesystem interrupt dma pcie rocm compute shader buffer latency throughput lock atomic timer syscall compiler branch register page table descriptor ring batch prompt decode speculative expert mixture dispatch topology numa"
-		count = split(words, word, " ")
+	local records="$1" output="$2"
+	awk -v records="$records" 'BEGIN {
 		for (i = 0; i < records; i++) {
-			printf "record %06d variant %d:", i, variant
-			for (j = 0; j < 18; j++) {
-				k = ((i * 37 + j * 17 + j * j + i * j + variant * 11) % count) + 1
-				printf " %s", word[k]
-			}
-			printf ". value=%d state=%d.\n", (i * 7919 + variant) % 1000003, (i * 13 + variant) % 97
+			module = (i * 17 + 11) % 997
+			line = (i * 7919 + 23) % 1000003
+			printf "module shard_%04d { fn process_%06d(packet: &mut Packet, state: &State) -> Result<usize, Error> { ", module, i
+			printf "let slot = (%d + packet.len()) %% state.queues.len(); ", line
+			printf "if state.queues[slot].is_full() { return Err(Error::Backpressure(%d)); } ", module
+			printf "state.queues[slot].push(packet)?; Ok(slot) } } "
+			printf "diagnostic: worker=%d generation=%d cache_line=%d latency_us=%d.\n", i % 64, i / 64, (i * 13) % 4096, (i * 37) % 20000
 		}
-		print "Analyze the preceding technical corpus and continue with a detailed explanation of efficient Linux packet processing, memory locality, and concurrency tradeoffs."
+		print "Review the preceding systems code and diagnostics. Continue with a detailed implementation explaining ownership, bounded queues, error handling, memory locality, and concurrency. Include concrete code and tests."
 	}' >"$output"
 }
 
-build_workload() {
-	target=$1
-	variant=$2
-	bw_content=$3
-	bw_rendered=$4
-	sample_content=$TMPDIR_BENCH/sample-$variant.txt
-	sample_rendered=$TMPDIR_BENCH/sample-rendered-$variant.txt
+input_tokens() {
+	local content="$1" request="$TMPDIR_BENCH/input-tokens.json" response="$TMPDIR_BENCH/input-tokens-response.json"
+	jq -Rs --arg model "$MODEL" --argjson max "$DECODE_TOKENS" \
+		'{model:$model,messages:[{role:"user",content:.}],max_tokens:$max}' \
+		<"$content" >"$request" || return 1
+	http -H 'Content-Type: application/json' --data-binary "@$request" \
+		"$ROUTER_URL/v1/chat/completions/input_tokens" >"$response" 2>/dev/null || return 1
+	jq -er '.input_tokens | select(type == "number" and . > 0)' "$response"
+}
 
-	# Estimate tokens-per-record from a small deterministic sample so the
-	# full-size splice converges in one verification pass. Note: the helpers
-	# below mutate globals (content, records, output, prompt); bw_* names are
-	# chosen to be immune to that clobbering.
-	make_content 64 "$variant" "$sample_content" || return 1
-	render_prompt "$sample_content" "$sample_rendered" || return 1
-	sample_tokens=$(token_count "$sample_rendered") || return 1
-	[ "$sample_tokens" -gt 0 ] || return 1
-	bw_records=$((target * 64 / sample_tokens))
-	[ "$bw_records" -ge 1 ] || bw_records=1
-	i=0
-	while [ "$i" -lt 4 ]; do
-		make_content "$bw_records" "$variant" "$bw_content" || return 1
-		render_prompt "$bw_content" "$bw_rendered" || return 1
-		actual=$(token_count "$bw_rendered") || return 1
-		lower=$((target * 99 / 100))
-		# Accept only at or below the target so prefill+decode never overshoots
-		# the model's context, even at the exact-capacity anchor.
-		[ "$actual" -ge "$lower" ] && [ "$actual" -le "$target" ] && break
-		[ "$actual" -gt 0 ] || return 1
-		bw_records=$((bw_records * target / actual))
-		[ "$bw_records" -ge 1 ] || bw_records=1
-		i=$((i + 1))
+build_workload() {
+	local total="$1" output="$2" target sample sample_tokens records actual next iteration=0 tolerance=1024
+	target=$((total - DECODE_TOKENS))
+	sample=$TMPDIR_BENCH/sample.txt
+	make_content 128 "$sample"
+	sample_tokens=$(input_tokens "$sample") || return 1
+	records=$((target * 128 / sample_tokens))
+	[ "$records" -gt 0 ] || records=1
+	while [ "$iteration" -lt 6 ]; do
+		make_content "$records" "$output"
+		actual=$(input_tokens "$output") || return 1
+		if [ "$actual" -le "$target" ] && [ "$actual" -ge $((target - tolerance)) ]; then
+			printf '%s\n' "$actual"
+			return 0
+		fi
+		next=$((records * target / actual))
+		if [ "$next" -eq "$records" ]; then
+			if [ "$actual" -gt "$target" ]; then next=$((records - 1)); else next=$((records + 1)); fi
+		fi
+		[ "$next" -gt 0 ] || next=1
+		records=$next
+		iteration=$((iteration + 1))
 	done
+	[ "$actual" -le "$target" ] && [ "$actual" -ge $((target - tolerance * 2)) ] || return 1
 	printf '%s\n' "$actual"
 }
 
-run_stream() {
-	url=$1
-	request=$2
-	output=$3
-	BENCH_URL=$url BENCH_REQUEST=$request BENCH_OUTPUT=$output \
-		node <<'NODE'
-const fs = require('fs');
-const crypto = require('crypto');
-const http = require('http');
-const https = require('https');
-
-const url = new URL(process.env.BENCH_URL);
-const body = fs.readFileSync(process.env.BENCH_REQUEST);
-const started = process.hrtime.bigint();
-const transport = url.protocol === 'https:' ? https : http;
-const result = {
-  http_status: null,
-  protocol_valid: false,
-  parse_errors: 0,
-  error: null,
-  chunks: 0,
-  done: false,
-  ttft_seconds: null,
-  wall_seconds: null,
-  finish_reason: null,
-  usage: null,
-  timings: null,
-  content: '',
-  reasoning: ''
-};
-
-function seconds() {
-  return Number(process.hrtime.bigint() - started) / 1e9;
-}
-function finish() {
-  result.wall_seconds = seconds();
-  const generated = result.content + result.reasoning;
-  result.output_bytes = Buffer.byteLength(generated);
-  result.output_sha256 = crypto.createHash('sha256').update(generated).digest('hex');
-  result.content_bytes = Buffer.byteLength(result.content);
-  result.reasoning_bytes = Buffer.byteLength(result.reasoning);
-  if (!result.protocol_valid && !result.error) result.error = 'invalid_stream';
-  fs.writeFileSync(process.env.BENCH_OUTPUT, JSON.stringify(result));
-}
-function invalid(message) {
-  result.parse_errors += 1;
-  if (!result.error) result.error = message;
-}
-function handleData(data) {
-  if (data === '[DONE]') {
-    result.done = true;
-    return;
-  }
-  let item;
-  try { item = JSON.parse(data); }
-  catch (_) { invalid('invalid_sse_json'); return; }
-  result.chunks += 1;
-  if (item.error) invalid('server_error');
-  if (item.usage) result.usage = item.usage;
-  if (item.timings) result.timings = item.timings;
-  const choice = item.choices && item.choices[0];
-  if (!choice) return;
-  if (choice.finish_reason) result.finish_reason = choice.finish_reason;
-  const delta = choice.delta || {};
-  const content = typeof delta.content === 'string' ? delta.content : '';
-  const reasoning = typeof delta.reasoning_content === 'string' ? delta.reasoning_content : '';
-  if (result.ttft_seconds === null && (content.length || reasoning.length || delta.tool_calls)) {
-    result.ttft_seconds = seconds();
-  }
-  result.content += content;
-  result.reasoning += reasoning;
-}
-
-const request = transport.request({
-  method: 'POST',
-  hostname: url.hostname,
-  port: url.port || (url.protocol === 'https:' ? 443 : 80),
-  path: `${url.pathname}${url.search}`,
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'text/event-stream',
-    'Content-Length': body.length,
-    ...(process.env.BENCH_API_KEY ? {Authorization: `Bearer ${process.env.BENCH_API_KEY}`} : {})
-  }
-}, response => {
-  result.http_status = response.statusCode;
-  let buffer = '';
-  response.setEncoding('utf8');
-  response.on('data', chunk => {
-    buffer += chunk;
-    let index;
-    while ((index = buffer.indexOf('\n')) >= 0) {
-      const line = buffer.slice(0, index).replace(/\r$/, '');
-      buffer = buffer.slice(index + 1);
-      if (line.startsWith('data:')) handleData(line.slice(5).trim());
-    }
-  });
-  response.on('end', () => {
-    if (buffer.trim().startsWith('data:')) handleData(buffer.trim().slice(5).trim());
-    if (result.http_status !== 200) invalid(`http_${result.http_status}`);
-    if (!result.done) invalid('missing_done');
-    if (result.chunks === 0) invalid('no_sse_chunks');
-    if (result.ttft_seconds === null) invalid('no_first_token');
-    if (!result.finish_reason) invalid('missing_finish_reason');
-    result.protocol_valid = result.http_status === 200 && result.parse_errors === 0 &&
-      result.done && result.chunks > 0 && result.ttft_seconds !== null &&
-      result.finish_reason !== null && (result.content.length + result.reasoning.length > 0);
-    finish();
-  });
-});
-request.on('error', error => {
-  result.error = error.message;
-  finish();
-});
-request.write(body);
-request.end();
-NODE
-}
-
 run_trial() {
-	mode=$1
-	total=$2
-	run=$3
-	content=$4
-	actual=$5
-	request=$TMPDIR_BENCH/request-$mode-$total-$run.json
-	response=$TMPDIR_BENCH/response-$mode-$total-$run.json
-	before_lines=$(wc -l <"$VRAM_FILE")
-	if [ "$mode" = cold ]; then
-		CACHE_PROMPT=false
-	else
-		CACHE_PROMPT=true
-	fi
+	local context="$1" run="$2" cache="$3" content="$4" actual="$5"
+	local request="$TMPDIR_BENCH/request-$context-$run.json"
+	local response="$TMPDIR_BENCH/response-$context-$run.json"
+	local summary="$TMPDIR_BENCH/summary-$context-$run.json"
 	jq -Rs \
 		--arg model "$MODEL" \
-		--argjson n "$DECODE_TOKENS" \
-		--argjson seed "$SEED" \
-		--argjson cache_prompt "$CACHE_PROMPT" \
-		'{model:$model,messages:[{role:"user",content:.}],stream:true,stream_options:{include_usage:true},n_predict:$n,seed:$seed,cache_prompt:$cache_prompt,response_fields:["timings","generation_settings"]}' \
+		--argjson max "$DECODE_TOKENS" \
+		--argjson cache "$cache" \
+		'{model:$model,messages:[{role:"user",content:.}],stream:false,max_tokens:$max,seed:1,ignore_eos:true,cache_prompt:$cache,response_fields:["timings"]}' \
 		<"$content" >"$request" || return 1
-
-	start_vram_monitor &
-	MONITOR_PID=$!
-	run_stream "$ROUTER_URL/v1/chat/completions" "$request" "$response"
-	stream_rc=$?
-	stop_vram_monitor
-	[ "$stream_rc" -eq 0 ] || true
-
-	total_vram=$(vram_total)
-	if [ "$total_vram" = null ]; then
-		min_free=null
-		peak_used=null
-	else
-		stats=$(awk -v total="$total_vram" -v before="$before_lines" 'NR > before {
-			free = total - $1
-			if (min == "" || free < min) min = free
-			if (max == "" || $1 > max) max = $1
-		}
-		END { if (min == "") print "null null"; else print min, max }' "$VRAM_FILE")
-		min_free=${stats%% *}
-		peak_used=${stats#* }
+	if ! http -H 'Content-Type: application/json' --data-binary "@$request" \
+		"$ROUTER_URL/v1/chat/completions" >"$response" 2>/dev/null; then
+		jq -nc --argjson run "$run" --argjson cache "$cache" \
+			'{run:$run,cache_prompt:$cache,valid:false,error:"request_failed"}' >"$summary"
+		printf '%s\n' "$summary"
+		return 1
 	fi
-
-	if [ ! -s "$response" ]; then
-		STABILITY_FAILURE=1
+	if ! jq -e . "$response" >/dev/null 2>&1; then
+		jq -nc --argjson run "$run" --argjson cache "$cache" \
+			'{run:$run,cache_prompt:$cache,valid:false,error:"invalid_json"}' >"$summary"
+		printf '%s\n' "$summary"
 		return 1
 	fi
 	jq -c \
-		--arg mode "$mode" \
-		--argjson target "$total" \
-		--argjson actual "$actual" \
 		--argjson run "$run" \
-		--argjson nctx "$N_CTX" \
-		--argjson min_free "$min_free" \
-		--argjson peak_used "$peak_used" \
-		'. + {
-			mode:$mode,
-			target_total_context_tokens:$target,
-			actual_prompt_tokens:$actual,
-			generated_tokens:(.usage.completion_tokens // .timings.predicted_n // null),
-			context_capacity_ok:(if (.usage.completion_tokens // .timings.predicted_n) == null then null else (($actual + (.usage.completion_tokens // .timings.predicted_n)) <= $nctx) end),
+		--argjson cache "$cache" \
+		--argjson expected "$DECODE_TOKENS" \
+		--argjson input "$actual" '
+		(.timings.predicted_n // .usage.completion_tokens // null) as $generated |
+		{
 			run:$run,
-			memory:{min_free_bytes:$min_free,peak_used_bytes:$peak_used}
-		} | del(.content,.reasoning)' \
-		"$response" >"$TMPDIR_BENCH/trial.json" || return 1
-	if [ "$run" -ne 0 ]; then
-		cat "$TMPDIR_BENCH/trial.json" >>"$RUNS_FILE"
-	fi
-
-	valid=$(jq -r '.protocol_valid // false' "$response")
-	if [ "$valid" != true ]; then
-		STABILITY_FAILURE=1
-	fi
-	if ! health; then
-		ABORTED=1
-		return 1
-	fi
-	return 0
+			cache_prompt:$cache,
+			valid:(($generated != null) and ($generated >= $expected) and ((.timings.predicted_per_second // 0) > 0)),
+			input_tokens:(.usage.prompt_tokens // $input),
+			generated_tokens:$generated,
+			finish_reason:(.choices[0].finish_reason // null),
+			prompt_seconds:(if .timings.prompt_ms == null then null else .timings.prompt_ms / 1000 end),
+			prompt_tokens_per_second:(.timings.prompt_per_second // null),
+			generation_seconds:(if .timings.predicted_ms == null then null else .timings.predicted_ms / 1000 end),
+			generation_tokens_per_second:(.timings.predicted_per_second // null),
+			cache_tokens:(.timings.cache_n // null),
+			evaluated_prompt_tokens:(.timings.prompt_n // null)
+		}' "$response" >"$summary" || return 1
+	printf '%s\n' "$summary"
+	jq -e '.valid == true' "$summary" >/dev/null 2>&1
 }
 
-# ---- preflight ------------------------------------------------------------
-
-health || fail_json server_unhealthy "router health check failed"
-ALL_MODELS=$(models_json) || fail_json models_unavailable "could not read /models"
-STATUS_JSON=$(printf '%s\n' "$ALL_MODELS" | jq -c --arg model "$MODEL" '.data[]? | select(.id == $model) | .status' | head -n 1)
-[ -n "$STATUS_JSON" ] || fail_json model_not_found "model is not present in router /models"
-
-CURRENT_STATE=$(printf '%s\n' "$STATUS_JSON" | jq -r '.value // empty')
-if [ "$EXCLUSIVE" -eq 0 ] && [ "$CURRENT_STATE" != loaded ]; then
-	fail_json model_not_loaded "model must already be loaded unless --exclusive is used"
-fi
-
-# ---- lifecycle ------------------------------------------------------------
-
-if [ "$EXCLUSIVE" -eq 1 ]; then
-	loaded_models=$(printf '%s\n' "$ALL_MODELS" | jq -r '.data[]? | select(.status.value == "loaded") | .id')
-	for loaded_model in $loaded_models; do
-		request=$TMPDIR_BENCH/unload.json
-		jq -nc --arg model "$loaded_model" '{model:$model}' >"$request" || fail_json request_build_failed "could not build unload request"
-		http -H 'Content-Type: application/json' --data-binary "@$request" "$ROUTER_URL/models/unload" >/dev/null ||
-			fail_json unload_failed "could not unload a loaded model"
-	done
-	wait_for_model_state unloaded >/dev/null 2>&1 || true
-
-	start_ms=$(now_ms)
-	SAW_DOWNLOADING=0
-	start_vram_monitor &
-	MONITOR_PID=$!
-	post_model_action load >/dev/null || {
-		stop_vram_monitor
-		fail_json load_request_failed "model load request failed"
-	}
-	if ! wait_for_model_state loaded; then
-		stop_vram_monitor
-		fail_json model_load_failed "model did not reach loaded state"
-	fi
-	stop_vram_monitor
-	end_ms=$(now_ms)
-	LOAD_MS=$((end_ms - start_ms))
-	LOAD_STATE=loaded
-	if [ "$SAW_DOWNLOADING" -eq 1 ]; then
-		LOAD_CACHED=false
-	else
-		LOAD_CACHED=true
-	fi
-else
-	LOAD_STATE=not_measured
-fi
-
-STATUS_JSON=$(model_status) || fail_json status_unavailable "could not read effective model status"
-PROPS_JSON=$(http -G --data-urlencode "model=$MODEL" "$ROUTER_URL/props") ||
-	fail_json props_unavailable "could not read model properties"
-N_CTX=$(printf '%s\n' "$PROPS_JSON" | jq -er '.default_generation_settings.n_ctx') ||
-	fail_json props_invalid "model properties did not include context size"
-BUILD_INFO=$(printf '%s\n' "$PROPS_JSON" | jq -r '.build_info // "unknown"')
-EFFECTIVE_ARGS=$(printf '%s\n' "$STATUS_JSON" | jq -c '.args // []')
-SAMPLING=$(printf '%s\n' "$PROPS_JSON" | jq -c '.default_generation_settings.params // {} | {temperature,top_k,top_p,min_p,repeat_penalty,presence_penalty,frequency_penalty,seed}')
-TOTAL_VRAM=$(vram_total)
-record_vram
-
-# A small streamed request warms model execution without entering measured data.
-WARMUP_CONTENT=$TMPDIR_BENCH/warmup.txt
-make_content 32 0 "$WARMUP_CONTENT"
-run_trial warmup 0 0 "$WARMUP_CONTENT" 512 >/dev/null 2>&1 || true
-# Remove warm-up data from measured output.
-: >"$RUNS_FILE"
-
-# ---- size planning --------------------------------------------------------
-
-# --gate-context defaults to the preset's real capacity in --full mode.
-if [ "$GATE_CONTEXT" = capacity ]; then
-	GATE_CONTEXT=$N_CTX
-fi
-
-if [ "$SIZES_SOURCE" = derive ]; then
-	# Anchors: 4k, 25%, 50%, 75%, 100% of capacity, rounded down to 1k.
-	oldifs=$IFS
-	DERIVED=
-	IFS='
-'
-	for size in $(printf '%s\n' \
-		"$((GATE_CONTEXT / 4 / 1024 * 1024))" \
-		"$((GATE_CONTEXT / 2 / 1024 * 1024))" \
-		"$((GATE_CONTEXT * 3 / 4 / 1024 * 1024))" \
-		"$GATE_CONTEXT" |
-		awk -v cap="$GATE_CONTEXT" '{ if ($1 >= 4096 && $1 <= cap) print $1 }' |
-		sort -n -u); do
-		DERIVED="${DERIVED:+$DERIVED,}$size"
-	done
-	IFS=$oldifs
-	case ",$DERIVED," in
-	*,4096,*) ;;
-	*) [ "$GATE_CONTEXT" -ge 8192 ] && DERIVED="4096,$DERIVED" ;;
-	esac
-	SIZES_LIST=$DERIVED
-fi
-
-# ---- benchmark ------------------------------------------------------------
-
-oldifs=$IFS
-IFS=,
-for total in $SIZES_LIST; do
-	case "$total" in
-	'' | *[!0-9]*) fail_json invalid_sizes "--sizes element is not a positive integer: $total" ;;
-	esac
-	[ "$total" -ge 4096 ] || fail_json invalid_sizes "--sizes elements must be >= 4096: $total"
-	[ $((total - DECODE_TOKENS)) -ge 1024 ] || fail_json invalid_sizes "size $total leaves no room for the decode budget: $DECODE_TOKENS"
-
-	# Skip sizes that cannot fit the model's real context with the decode budget.
+for total in $CONTEXTS; do
 	if [ "$total" -gt "$N_CTX" ]; then
-		SKIPPED_SIZES="${SKIPPED_SIZES:+$SKIPPED_SIZES,}$total"
+		jq -nc --argjson context "$total" --argjson nctx "$N_CTX" \
+			'{context_tokens:$context,status:"unsupported",reason:"server_context_too_small",server_context_tokens:$nctx,input_tokens:null,prefill:null,generation:null,memory:{peak_used_bytes:null,min_free_bytes:null,headroom_ok:null},usable:false}' \
+			>>"$RESULTS_FILE"
 		continue
 	fi
 
-	prompt_target=$((total - DECODE_TOKENS))
-
-	trial_failed() {
-		trial_mode=$1
-		# Cold trials must have performed a real prefill: with cache_prompt:false
-		# the server reports cache_n = 0 and prompt_n = full length. A near-total
-		# cache hit means the server ignored cache_prompt and we measured nothing.
-		jq -e --arg m "$trial_mode" '
-			.protocol_valid == true and
-			.context_capacity_ok != false and
-			(if $m == "cold"
-			 then ((.timings.cache_n // 0) < (.timings.prompt_n // 0))
-			 else true end)' \
-			"$TMPDIR_BENCH/trial.json" >/dev/null 2>&1
+	content=$TMPDIR_BENCH/content-$total.txt
+	actual=$(build_workload "$total" "$content") || {
+		jq -nc --argjson context "$total" \
+			'{context_tokens:$context,status:"failed",reason:"workload_build_failed",input_tokens:null,prefill:null,generation:null,memory:{peak_used_bytes:null,min_free_bytes:null,headroom_ok:null},usable:false}' \
+			>>"$RESULTS_FILE"
+		continue
 	}
 
-	if [ "$MODE" = both ] || [ "$MODE" = warm ]; then
-		warm_content=$TMPDIR_BENCH/warm-$total.txt
-		warm_rendered=$TMPDIR_BENCH/warm-rendered-$total.txt
-		warm_actual=$(build_workload "$prompt_target" 0 "$warm_content" "$warm_rendered") ||
-			fail_json prompt_build_failed "could not build warm prompt"
+	before_lines=$(($(wc -l <"$VRAM_LOG") + 1))
+	run1_file=$(run_trial "$total" 1 false "$content" "$actual" || true)
+	run2_file=$(run_trial "$total" 2 true "$content" "$actual" || true)
+	record_vram 2>/dev/null || true
+	memory=$(vram_for_range "$before_lines")
 
-		# Uncounted probe run primes the prompt cache and validates the size.
-		run_trial warm "$total" 0 "$warm_content" "$warm_actual" >/dev/null 2>&1 || true
-		if ! trial_failed warm; then
-			CEILING_SIZE=$total
-			CEILING_REASON=probe_failed
-			break
-		fi
+	if [ -n "$run1_file" ] && [ -s "$run1_file" ]; then run1=$(cat "$run1_file"); else run1='{"run":1,"cache_prompt":false,"valid":false,"error":"missing_result"}'; fi
+	if [ -n "$run2_file" ] && [ -s "$run2_file" ]; then run2=$(cat "$run2_file"); else run2='{"run":2,"cache_prompt":true,"valid":false,"error":"missing_result"}'; fi
 
-		run=1
-		while [ "$run" -le "$REPETITIONS" ]; do
-			run_trial warm "$total" "$run" "$warm_content" "$warm_actual" || break
-			run=$((run + 1))
-		done
-		[ "$ABORTED" -eq 0 ] || break
-	fi
-
-	if [ "$MODE" = both ] || [ "$MODE" = cold ]; then
-		run=1
-		while [ "$run" -le "$REPETITIONS" ]; do
-			cold_content=$TMPDIR_BENCH/cold-$total-$run.txt
-			cold_rendered=$TMPDIR_BENCH/cold-rendered-$total-$run.txt
-			cold_actual=$(build_workload "$prompt_target" "$run" "$cold_content" "$cold_rendered") ||
-				fail_json prompt_build_failed "could not build cold prompt"
-			run_trial cold "$total" "$run" "$cold_content" "$cold_actual" || break
-			# The first cold run doubles as the cold-mode probe.
-			if [ "$run" -eq 1 ] && ! trial_failed cold; then
-				CEILING_SIZE=$total
-				CEILING_REASON=probe_failed
-				break 2
-			fi
-			run=$((run + 1))
-		done
-		[ "$ABORTED" -eq 0 ] || break
-	fi
-
-	# Any failed or over-capacity measured run means this size (and anything
-	# larger) cannot be trusted; sizes are ascending, so stop the sweep.
-	[ "$ABORTED" -eq 0 ] || {
-		CEILING_SIZE=$total
-		CEILING_REASON=server_unhealthy
-		break
-	}
-	size_bad=$(jq -s --argjson t "$total" \
-		'any(.[]; .target_total_context_tokens == $t and
-			(.protocol_valid != true or .context_capacity_ok == false))' \
-		"$RUNS_FILE")
-	[ "$size_bad" = true ] || continue
-	CEILING_SIZE=$total
-	CEILING_REASON=context_or_protocol
-	break
+	jq -nc \
+		--argjson context "$total" \
+		--argjson input "$actual" \
+		--argjson decode "$DECODE_TOKENS" \
+		--argjson nctx "$N_CTX" \
+		--argjson one "$run1" \
+		--argjson two "$run2" \
+		--argjson memory "$memory" '
+		[$one,$two] as $runs |
+		([$runs[].generation_tokens_per_second] | map(select(. != null)) | sort) as $rates |
+		(($one.valid == true) and ($two.valid == true) and (($input + $decode) <= $nctx)) as $capacity_ok |
+		($capacity_ok and ($memory.headroom_ok != false)) as $usable |
+		{
+			context_tokens:$context,
+			status:(if $usable then "passed" else "failed" end),
+			reason:(if $capacity_ok|not then "generation_failed" elif $memory.headroom_ok == false then "insufficient_vram_headroom" else null end),
+			input_tokens:$input,
+			prefill:{seconds:$one.prompt_seconds,tokens_per_second:$one.prompt_tokens_per_second},
+			generation:{tokens:$decode,runs:$runs,median_tokens_per_second:(if ($rates|length) == 2 then (($rates[0]+$rates[1])/2) else null end)},
+			memory:$memory,
+			usable:$usable
+		}' >>"$RESULTS_FILE"
 done
-IFS=$oldifs
 
-[ "$ABORTED" -eq 0 ] || fail_json server_unhealthy "router became unhealthy during benchmark"
-
-# ---- result ---------------------------------------------------------------
-
-VRAM_STATS=$(vram_stats_json "$TOTAL_VRAM")
-RESULTS=$(jq -s '
-	def median:
-		map(select(. != null)) | sort as $s | ($s|length) as $n |
-		if $n == 0 then null
-		elif ($n % 2) == 1 then $s[(($n / 2)|floor)]
-		else (($s[($n / 2)|floor] + $s[(($n / 2)|floor)-1]) / 2)
-		end;
-	group_by(.mode, .target_total_context_tokens) |
-	map({
-		mode:.[0].mode,
-		target_total_context_tokens:.[0].target_total_context_tokens,
-		runs:length,
-		actual_prompt_tokens_median:([.[].actual_prompt_tokens]|median),
-		ttft_seconds_median:([.[].ttft_seconds]|median),
-		prompt_tokens_per_second_median:([.[].timings.prompt_per_second]|median),
-		generation_tokens_per_second_median:([.[].timings.predicted_per_second]|median),
-		wall_seconds_median:([.[].wall_seconds]|median),
-		protocol_valid:all(.protocol_valid == true),
-		context_capacity_ok:all(.context_capacity_ok != false),
-		failures:map(select(.protocol_valid != true)|.error)
-	})
-' "$RUNS_FILE")
-
-GATE_OK=$(printf '%s\n' "$RESULTS" | jq -r \
-	--argjson gate_ctx "$GATE_CONTEXT" \
-	--argjson gate_runs "$GATE_RUNS" \
-	'any(.[]; .target_total_context_tokens == $gate_ctx and .protocol_valid == true and .context_capacity_ok == true and .runs >= $gate_runs)')
-[ "$GATE_OK" = true ] || CONTEXT_FAILURE=1
-[ "$STABILITY_FAILURE" -eq 0 ] || OVERALL=failed
-[ "$CONTEXT_FAILURE" -eq 0 ] || OVERALL=failed
-: "${OVERALL:=passed}"
-
-CEILING_JSON=null
-if [ -n "$CEILING_SIZE" ]; then
-	peak=$(jq -r '.memory.peak_used_bytes // null' "$TMPDIR_BENCH/trial.json" 2>/dev/null)
-	if [ -n "$peak" ] && [ "$peak" != null ] && [ "$TOTAL_VRAM" != null ] &&
-		[ "$peak" -ge $((TOTAL_VRAM * 98 / 100)) ]; then
-		CEILING_REASON=vram_peak
-	fi
-	CEILING_JSON=$(jq -nc --argjson size "$CEILING_SIZE" --arg reason "$CEILING_REASON" '{size:$size,reason:$reason}')
+if [ -n "$VRAM_MONITOR_PID" ]; then
+	kill "$VRAM_MONITOR_PID" 2>/dev/null || true
+	wait "$VRAM_MONITOR_PID" 2>/dev/null || true
+	VRAM_MONITOR_PID=
 fi
-RAW_RUNS_JSON=$(jq -s '.' "$RUNS_FILE")
+record_vram 2>/dev/null || true
+
+RESULTS=$(jq -s '.' "$RESULTS_FILE")
+MINIMUM_OK=$(printf '%s\n' "$RESULTS" | jq -r --argjson context "$MIN_CONTEXT" 'any(.[]; .context_tokens == $context and .usable == true)')
+PREFERRED_OK=$(printf '%s\n' "$RESULTS" | jq -r --argjson context "$PREFERRED_CONTEXT" 'any(.[]; .context_tokens == $context and .usable == true)')
+if [ "$MINIMUM_OK" != true ]; then
+	VERDICT=failed
+elif [ "$PREFERRED_OK" = true ]; then
+	VERDICT=preferred
+else
+	VERDICT=minimum
+fi
+
+if [ "$VRAM_TOTAL" = null ]; then
+	MEMORY=$(jq -nc --argjson target "$MIN_FREE_BYTES" \
+		'{available:false,source:null,total_bytes:null,baseline_used_bytes:null,peak_used_bytes:null,min_free_bytes:null,target_free_bytes:$target,headroom_ok:null}')
+else
+	PEAK=$(awk '{if (peak == "" || $1 > peak) peak=$1} END {if (peak == "") print "null"; else print peak}' "$VRAM_LOG")
+	if [ "$PEAK" = null ]; then
+		MIN_FREE=null
+		HEADROOM=null
+	else
+		MIN_FREE=$((VRAM_TOTAL - PEAK))
+		if [ "$MIN_FREE" -ge "$MIN_FREE_BYTES" ]; then HEADROOM=true; else HEADROOM=false; fi
+	fi
+	MEMORY=$(jq -nc \
+		--argjson source "$VRAM_SOURCE" \
+		--argjson total "$VRAM_TOTAL" \
+		--argjson baseline "$VRAM_BASELINE" \
+		--argjson peak "$PEAK" \
+		--argjson free "$MIN_FREE" \
+		--argjson target "$MIN_FREE_BYTES" \
+		--argjson ok "$HEADROOM" \
+		'{available:true,source:$source,total_bytes:$total,baseline_used_bytes:$baseline,peak_used_bytes:$peak,min_free_bytes:$free,target_free_bytes:$target,headroom_ok:$ok}')
+fi
 
 jq -nc \
+	--arg status "$VERDICT" \
+	--arg provider "$PI_PROVIDER" \
 	--arg model "$MODEL" \
-	--arg url "$ROUTER_URL" \
+	--arg router "$ROUTER_URL" \
 	--arg build "$BUILD_INFO" \
-	--argjson exclusive "$EXCLUSIVE" \
-	--argjson status "$STATUS_JSON" \
 	--argjson args "$EFFECTIVE_ARGS" \
-	--argjson sampling "$SAMPLING" \
 	--argjson nctx "$N_CTX" \
-	--arg load_state "$LOAD_STATE" \
-	--argjson load_ms "$LOAD_MS" \
-	--argjson load_cached "$LOAD_CACHED" \
-	--argjson total_vram "$TOTAL_VRAM" \
-	--argjson memory "$VRAM_STATS" \
-	--argjson results "$RESULTS" \
-	--argjson raw_runs "$RAW_RUNS_JSON" \
-	--argjson runs "$REPETITIONS" \
+	--argjson workload "$WORKLOAD_VERSION" \
 	--argjson decode "$DECODE_TOKENS" \
-	--arg mode "$MODE" \
-	--arg sizes "$SIZES_LIST" \
-	--argjson gate_ctx "$GATE_CONTEXT" \
-	--argjson gate_runs "$GATE_RUNS" \
-	--arg skipped "$SKIPPED_SIZES" \
-	--argjson ceiling "$CEILING_JSON" \
-	--arg overall "$OVERALL" \
-	--argjson stable "$STABILITY_FAILURE" \
-	--argjson context_failure "$CONTEXT_FAILURE" \
-	'{schema_version:2,status:$overall,model:$model,router_url:$url,exclusive:$exclusive,mode:$mode,server:{build_info:$build,effective_args:$args,status:$status,sampling:$sampling,context_size:$nctx},requirements:{repetitions:$runs,generation_tokens:$decode,gate:{context:$gate_ctx,runs:$gate_runs}},sizes:($sizes|split(",")|map(tonumber)),skipped_sizes:($skipped|if . == "" then [] else (split(",")|map(tonumber)) end),capacity_ceiling:$ceiling,load:{state:$load_state,elapsed_ms:$load_ms,cached:$load_cached},memory:$memory,results:$results,raw_runs:$raw_runs,gates:{stability:(if $stable == 0 then "passed" else "failed" end),context_gate:(if $context_failure == 0 then "passed" else "failed" end)}}'
+	--argjson minimum "$MIN_CONTEXT" \
+	--argjson preferred "$PREFERRED_CONTEXT" \
+	--argjson memory "$MEMORY" \
+	--argjson results "$RESULTS" \
+	'{schema_version:1,status:$status,provider:$provider,model:$model,router_url:$router,server:{build_info:$build,context_tokens:$nctx,effective_args:$args},workload:{version:$workload,contexts:[8192,65536,100000],generation_tokens:$decode,runs_per_context:2,minimum_context:$minimum,preferred_context:$preferred},memory:$memory,results:$results}'
 
-[ "$OVERALL" = passed ]
+[ "$VERDICT" != failed ]
