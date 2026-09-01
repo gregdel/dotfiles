@@ -348,6 +348,7 @@ export default function footerExtension(pi: ExtensionAPI) {
 							providerOptional,
 							width,
 						),
+						"",
 					];
 				},
 			};

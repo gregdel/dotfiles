@@ -1,5 +1,6 @@
 #!/bin/sh
-# Benchmark the llama.cpp model currently selected in Pi.
+# Benchmark the sole active model reported by the local llama.cpp router.
+# PI_PROVIDER and PI_MODEL are intentionally ignored.
 #
 # Fixed workload:
 #   - total context: 8,192, 65,536, and 100,000 tokens
@@ -36,8 +37,9 @@ usage() {
 	cat <<EOF
 Usage: $(basename "$0") [--help]
 
-Benchmark the model currently selected by Pi. PI_PROVIDER must be llama.cpp,
-and the selected model must already be loaded or sleeping.
+Benchmark the sole model currently loaded or sleeping in the configured
+llama.cpp router. PI_PROVIDER and PI_MODEL are ignored; the target is
+selected from the router's model catalog.
 
 Fixed workload:
   contexts     8192, 65536, 100000 total tokens
@@ -87,21 +89,18 @@ RESULTS_FILE=$TMPDIR_BENCH/results.jsonl
 : >"$VRAM_LOG"
 : >"$RESULTS_FILE"
 
+MODEL=
+
 fail_json() {
 	local code="$1" message="$2"
 	jq -nc \
 		--arg code "$code" \
 		--arg message "$message" \
-		--arg provider "${PI_PROVIDER:-}" \
-		--arg model "${PI_MODEL:-}" \
+		--arg provider "llama.cpp" \
+		--arg model "${MODEL:-}" \
 		'{schema_version:1,status:"failed",provider:$provider,model:$model,error:{code:$code,message:$message}}'
 	exit 1
 }
-
-[ "${PI_PROVIDER:-}" = "llama.cpp" ] ||
-	fail_json wrong_provider "select a loaded llama.cpp model in Pi before running the benchmark"
-MODEL=${PI_MODEL:-}
-[ -n "$MODEL" ] || fail_json missing_model "PI_MODEL is not set"
 
 PI_DIR=${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}
 AUTH_JSON=$PI_DIR/auth.json
@@ -139,12 +138,23 @@ printf '%s\n' "$HEALTH" | jq -e '.status == "ok"' >/dev/null 2>&1 ||
 
 MODELS=$(http "$ROUTER_URL/models" 2>/dev/null) ||
 	fail_json models_unavailable "could not read the llama.cpp model catalog"
-STATUS_JSON=$(printf '%s\n' "$MODELS" | jq -c --arg model "$MODEL" '.data[]? | select(.id == $model)' | head -n 1)
-[ -n "$STATUS_JSON" ] || fail_json model_not_found "PI_MODEL is absent from the configured router"
+ACTIVE_MODELS=$(printf '%s\n' "$MODELS" | jq -c '
+	[.data[]? | select(.status.value == "loaded" or .status.value == "sleeping")]
+' 2>/dev/null) ||
+	fail_json models_invalid "the llama.cpp model catalog was not valid JSON"
+ACTIVE_COUNT=$(printf '%s\n' "$ACTIVE_MODELS" | jq -r 'length')
+case "$ACTIVE_COUNT" in
+	0) fail_json no_active_model "the llama.cpp router has no loaded or sleeping model" ;;
+	1) ;;
+	*) fail_json ambiguous_active_models "the llama.cpp router has multiple loaded or sleeping models" ;;
+esac
+STATUS_JSON=$(printf '%s\n' "$ACTIVE_MODELS" | jq -c '.[0]')
+MODEL=$(printf '%s\n' "$STATUS_JSON" | jq -r '.id // empty')
+[ -n "$MODEL" ] || fail_json active_model_invalid "the active llama.cpp model has no ID"
 MODEL_STATE=$(printf '%s\n' "$STATUS_JSON" | jq -r '.status.value // empty')
 case "$MODEL_STATE" in
 	loaded | sleeping) ;;
-	*) fail_json model_not_loaded "load the selected model with /llama before benchmarking" ;;
+	*) fail_json model_not_loaded "the active llama.cpp model is not loaded or sleeping" ;;
 esac
 
 PROPS=$(http -G --data-urlencode "model=$MODEL" "$ROUTER_URL/props" 2>/dev/null) ||
@@ -435,7 +445,7 @@ fi
 
 jq -nc \
 	--arg status "$VERDICT" \
-	--arg provider "$PI_PROVIDER" \
+	--arg provider "llama.cpp" \
 	--arg model "$MODEL" \
 	--arg router "$ROUTER_URL" \
 	--arg build "$BUILD_INFO" \

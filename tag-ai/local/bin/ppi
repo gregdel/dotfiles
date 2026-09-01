@@ -123,7 +123,6 @@ run() {
 		-e "TERM=${TERM:-xterm-256color}" \
 		-e "COLORTERM=${COLORTERM:-truecolor}" \
 		-v "$state_dir:$home/.pi/agent:z" \
-		--mount type=bind,source=/sys,target=/run/host-sys,readonly \
 		-v "$config_dir:$home/.config/pi:ro,z" \
 		-v "$config_dir/agent/settings.json:$home/.pi/agent/settings.json:ro,z" \
 		-v "$config_dir/agent/AGENTS.md:$home/.pi/agent/AGENTS.md:ro,z" \

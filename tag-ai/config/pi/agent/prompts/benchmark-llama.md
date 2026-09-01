@@ -1,11 +1,12 @@
 ---
-description: Benchmark and tune the active Pi llama.cpp model
+description: Benchmark and tune the active local llama.cpp model
 ---
 
-Benchmark the llama.cpp model currently selected in Pi, summarize its usable
-context and generation speed, then optionally make one local preset-key change.
-The benchmark itself is read-only. Deployment and verification are always
-manual and happen after this invocation.
+Benchmark the model currently active in the local llama.cpp router, summarize
+its usable context and generation speed, then optionally make one local
+preset-key change. Pi may be using any provider; the benchmark target is
+independent of the current Pi conversation. The benchmark itself is read-only.
+Deployment and verification are always manual and happen after this invocation.
 
 ## Preconditions
 
@@ -23,26 +24,36 @@ Before running anything:
    - `tag-ai/config/llama-cpp/preset.ini`
    - `tag-ai/local/bin/llama-cpp-benchmark`
 
-3. Check `PI_PROVIDER` and `PI_MODEL` through the shell environment.
-   `PI_PROVIDER` must be `llama.cpp`. If not, tell the user to load the desired
-   preset with `/llama`, select it with `/model`, and invoke this prompt again.
+3. Check that `PI_SESSION_ID` is set and non-empty. If it is unavailable,
+   explain that the required `/tmp` result filename cannot be constructed and
+   stop.
 
-4. Confirm the selected model has a matching local preset section. Do not infer
-   a different preset from an HF repository name.
+4. Use the configured llama.cpp router, not Pi's `PI_PROVIDER` or `PI_MODEL`,
+   to identify the target. Through read-only health/model-catalog requests,
+   confirm that exactly one model is `loaded` or `sleeping`, and record its
+   exact router model ID. Reject zero or multiple active models. Do not infer a
+   different model from an HF repository name. The benchmark script repeats
+   this discovery as a safety check.
 
-5. Inspect `git status` and the existing diff for `preset.ini`. Never overwrite
+5. Confirm that the exact router model ID has a matching local preset section.
+   Do not infer a different preset from an HF repository name.
+
+6. Inspect `git status` and the existing diff for `preset.ini`. Never overwrite
    or fold unrelated user changes into a benchmark adjustment.
 
-6. Ask whether the machine is in its normal representative state and ready for
+7. Ask whether the machine is in its normal representative state and ready for
    a long benchmark. Concurrent inference or unusual GPU load makes comparisons
    invalid. Do not run until confirmed.
 
 ## Run once
 
 Run `llama-cpp-benchmark` exactly once with no arguments and a timeout of at
-least 30 minutes. Save its stdout under `/tmp` using `PI_SESSION_ID` in the
-filename, while retaining its exit status. Do not invoke any router lifecycle
-endpoint and do not alter files during the run.
+least 30 minutes. Save its stdout to `/tmp` using `PI_SESSION_ID` in the
+filename, for example `/tmp/llama-cpp-benchmark-$PI_SESSION_ID.json`, while
+retaining its exit status independently of output validation. The script
+selects the active router model itself and ignores `PI_PROVIDER` and
+`PI_MODEL`. Do not invoke any router lifecycle endpoint and do not alter
+repository or preset files during the run.
 
 The fixed workload measures:
 
@@ -68,6 +79,7 @@ Show a compact table with one row per context depth:
 
 Then show:
 
+- the exact discovered router model ID;
 - effective server context and relevant preset arguments
 - global peak/free VRAM and whether it was measurable
 - final verdict: `failed`, `minimum`, or `preferred`
@@ -77,8 +89,9 @@ whether the model uses long context intelligently.
 
 ## Compare and diagnose
 
-When a previous schema-v1 result for the same model and workload version exists
-in the conversation, compare only if the benchmark contract is identical and
+When a previous schema-v1 result for the same discovered router model and
+workload version exists in the conversation, compare only if the benchmark
+contract is identical and
 the preset differs by the intended key. Compute proportional deltas at 65,536
 and 100,000 tokens. Treat changes within ±5% as inconclusive.
 

@@ -1,0 +1,32 @@
+[Unit]
+Description=llama.cpp ROCm model router
+Documentation=https://github.com/ggml-org/llama.cpp
+BindsTo=suspend-sensitive.target
+After=suspend-sensitive.target
+
+[Container]
+Image=ghcr.io/ggml-org/llama.cpp:server-rocm
+Pull=missing
+ContainerName=llama-cpp
+HostName=llama-cpp
+Network=host
+PodmanArgs=--ipc=host
+AddDevice=/dev/kfd
+AddDevice=/dev/dri
+GroupAdd=keep-groups
+SeccompProfile=unconfined
+AddCapability=SYS_PTRACE
+Environment=HSA_OVERRIDE_GFX_VERSION=10.3.0
+Environment=HF_HUB_CACHE=/models
+Environment=HF_HOME=/models
+Volume=%h/.dotfiles:%h/.dotfiles:ro
+Volume=%h/.config/llama-cpp/preset.ini:/preset.ini:ro
+Volume=%h/ai/models:/models
+Exec=--host 0.0.0.0 \
+     --port 10999 \
+     --models-preset /preset.ini \
+     --models-autoload \
+     --models-max 1
+
+[Service]
+TimeoutStartSec=900

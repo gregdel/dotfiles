@@ -17,7 +17,10 @@ implementation.
 
 For each unresolved decision:
 
-1. Ask me one focused question at a time.
+1. In an interactive TUI session, use `ask_question` to ask me exactly one
+   focused question at a time. Give one to three concise, meaningful options,
+   ordered with your recommendation first. In non-interactive sessions, ask in
+   plain assistant text.
 2. Explain the relevant trade-offs concisely.
 3. Give your recommended answer and why.
 4. Do not ask me for information you can determine reliably from the repository.

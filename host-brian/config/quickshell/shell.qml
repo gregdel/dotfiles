@@ -49,6 +49,10 @@ ShellRoot {
                     }
                     spacing: 0
 
+                    SystemdServiceIndicator {
+                        serviceName: "llama-cpp.service"
+                        icon: ""
+                    }
                     Volume { barWindow: bar }
                     SysInfo {}
                     Gaming {}

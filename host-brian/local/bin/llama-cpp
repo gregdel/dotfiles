@@ -1,0 +1,19 @@
+#!/bin/sh
+
+SERVICE=llama-cpp.service
+IMAGE=ghcr.io/ggml-org/llama.cpp:server-rocm
+
+if [ "$#" -eq 0 ]; then
+	systemctl --user start "$SERVICE" || exit
+	exec journalctl --user --unit "$SERVICE" --follow
+fi
+
+if [ "$1" = "update" ]; then
+	if [ "$#" -ne 1 ]; then
+		echo "usage: $0 [update|systemctl-action ...]" >&2
+		exit 1
+	fi
+	exec podman pull "$IMAGE"
+fi
+
+exec systemctl --user "$@" "$SERVICE"
