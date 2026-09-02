@@ -21,12 +21,13 @@ Environment=HF_HUB_CACHE=/models
 Environment=HF_HOME=/models
 Volume=%h/.dotfiles:%h/.dotfiles:ro
 Volume=%h/.config/llama-cpp/preset.ini:/preset.ini:ro
-Volume=%h/ai/models:/models
+Volume=/mnt/nvme2/ai/models:/models
 Exec=--host 0.0.0.0 \
      --port 10999 \
      --models-preset /preset.ini \
      --models-autoload \
-     --models-max 1
+     --models-max 1 \
+     --log-verbosity 2
 
 [Service]
 TimeoutStartSec=900

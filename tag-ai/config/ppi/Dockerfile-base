@@ -17,10 +17,11 @@ RUN apk add --no-cache \
         wayland-dev libx11-dev libxkbcommon-dev mesa-dev libxcursor-dev vulkan-headers \
     && addgroup -g "$GID" "$USER" \
     && adduser -D -u "$UID" -G "$USER" -s /bin/sh -h "$HOME" "$USER" \
-    && HOME=/root npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+    && HOME=/root npm install -g --ignore-scripts @earendil-works/pi-coding-agent yaml@2.9.0
 
 USER "$USER"
 ENV HOME="$HOME"
+ENV NODE_PATH=/usr/local/lib/node_modules
 ENV EDITOR=nvim
 WORKDIR /workspace
 ENTRYPOINT ["pi"]
