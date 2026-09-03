@@ -2,8 +2,8 @@ import QtQuick
 
 Text {
     color: "#d0d0d0"
-    font.family: "monospace"
-    font.pixelSize: 14
+    font.family: Appearance.barFontFamily
+    font.pixelSize: Appearance.barFontSize
     font.bold: true
 
     text: Qt.formatDateTime(new Date(), "ddd dd MMM  hh:mm")

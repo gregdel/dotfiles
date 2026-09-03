@@ -17,7 +17,7 @@ Item {
     }
 
     implicitWidth: gamingLabel.implicitWidth + 20
-    implicitHeight: 30
+    implicitHeight: Appearance.barHeight
 
     property bool disconnected: displayText === "󰖻"
 
@@ -42,8 +42,8 @@ Item {
         id: gamingLabel
         anchors.centerIn: parent
         color: parent.disconnected ? "#505050" : "#d0d0d0"
-        font.family: "monospace"
-        font.pixelSize: 14
+        font.family: Appearance.barFontFamily
+        font.pixelSize: Appearance.barFontSize
         text: parent.displayText
     }
 

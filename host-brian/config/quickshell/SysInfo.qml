@@ -6,7 +6,7 @@ Item {
     id: root
 
     implicitWidth: tempRow.implicitWidth + 8
-    implicitHeight: 30
+    implicitHeight: Appearance.barHeight
 
     property string cpuTemp: ""
     property string gpuTemp: ""
@@ -42,7 +42,7 @@ Item {
 
                 visible: modelData.temp !== ""
                 implicitWidth: tempText.implicitWidth + 18
-                implicitHeight: 30
+                implicitHeight: Appearance.barHeight
 
                 Rectangle {
                     anchors {
@@ -63,16 +63,16 @@ Item {
                     Text {
                         text: modelData.icon
                         color: modelData.temp == "?" ? "#505050" : "#909090"
-                        font.family: "monospace"
-                        font.pixelSize: 14
+                        font.family: Appearance.barFontFamily
+                        font.pixelSize: Appearance.barFontSize
                     }
 
                     Text {
                         id: tempText
                         text: modelData.temp + "°"
                         color: root.tempColor(modelData.temp)
-                        font.family: "monospace"
-                        font.pixelSize: 14
+                        font.family: Appearance.barFontFamily
+                        font.pixelSize: Appearance.barFontSize
                     }
                 }
             }

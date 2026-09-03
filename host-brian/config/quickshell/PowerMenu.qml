@@ -8,7 +8,7 @@ Item {
     property var barWindow
 
     implicitWidth: 36
-    implicitHeight: 30
+    implicitHeight: Appearance.barHeight
 
     Process {
         id: cmdRunner
@@ -24,8 +24,8 @@ Item {
         anchors.centerIn: parent
         text: "⏻"
         color: btnMouse.containsMouse ? "#c4a000" : "#d0d0d0"
-        font.family: "monospace"
-        font.pixelSize: 14
+        font.family: Appearance.barFontFamily
+        font.pixelSize: Appearance.barFontSize
     }
 
     MouseArea {

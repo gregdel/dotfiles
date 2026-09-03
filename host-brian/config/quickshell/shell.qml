@@ -10,20 +10,23 @@ ShellRoot {
             id: bar
 
             required property var modelData
+            property bool portrait: modelData.height > modelData.width
 
             screen: modelData
 
-            anchors.top: true
+            anchors.top: !portrait
+            anchors.bottom: portrait
             anchors.left: true
             anchors.right: true
 
-            implicitHeight: 30
+            implicitHeight: Appearance.barHeight
             exclusiveZone: implicitHeight
 
             color: "#101010"
 
             Item {
                 anchors.fill: parent
+                visible: !bar.portrait
 
                 RowLayout {
                     anchors {
@@ -60,6 +63,12 @@ ShellRoot {
                     ActionMenu { barWindow: bar }
                     PowerMenu { barWindow: bar }
                 }
+            }
+
+            Workspaces {
+                anchors.centerIn: parent
+                visible: bar.portrait
+                screen: bar.screen
             }
         }
     }

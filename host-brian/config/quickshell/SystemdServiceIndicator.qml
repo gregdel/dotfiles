@@ -11,7 +11,7 @@ Item {
     property bool active: false
 
     implicitWidth: serviceIcon.implicitWidth + 20
-    implicitHeight: 30
+    implicitHeight: Appearance.barHeight
 
     function refreshStatus() {
         if (!statusProc.running)
@@ -35,8 +35,8 @@ Item {
         anchors.centerIn: parent
         text: root.icon
         color: root.active ? "#c4a000" : "#505050"
-        font.family: "monospace"
-        font.pixelSize: 14
+        font.family: Appearance.barFontFamily
+        font.pixelSize: Appearance.barFontSize
     }
 
     MouseArea {

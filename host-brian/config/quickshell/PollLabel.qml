@@ -10,14 +10,14 @@ Item {
     property int rightPad: 10
 
     implicitWidth: label.implicitWidth + leftPad + rightPad
-    implicitHeight: 30
+    implicitHeight: Appearance.barHeight
 
     Text {
         id: label
         anchors.centerIn: parent
         color: "#d0d0d0"
-        font.family: "monospace"
-        font.pixelSize: 14
+        font.family: Appearance.barFontFamily
+        font.pixelSize: Appearance.barFontSize
     }
 
     Process {

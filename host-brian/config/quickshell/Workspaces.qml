@@ -9,9 +9,11 @@ RowLayout {
     property var screen
     property var monitor: screen ? I3.monitorFor(screen) : null
     property string outputName: screen ? screen.name : ""
-    property int pillHeight: 22
-    property int minPillWidth: 28
-    property int horizontalPadding: 10
+    property int itemHeight: Appearance.barHeight
+    property int pillHeight: Appearance.workspacePillHeight
+    property int minPillWidth: Appearance.workspaceMinPillWidth
+    property int horizontalPadding: Appearance.workspaceHorizontalPadding
+    property int fontPixelSize: Appearance.barFontSize
 
     function isActiveOnOutput(workspace) {
         return workspace.active
@@ -46,7 +48,7 @@ RowLayout {
 
             visible: onOutput
             implicitWidth: onOutput ? Math.max(root.minPillWidth, label.implicitWidth + root.horizontalPadding * 2) : 0
-            implicitHeight: onOutput ? 30 : 0
+            implicitHeight: onOutput ? root.itemHeight : 0
             color: "transparent"
 
             Rectangle {
@@ -87,8 +89,8 @@ RowLayout {
                         : focused ? "#f2d36b"
                         : activeOnOutput ? "#d0d0d0"
                         : parent.parent.hovered ? "#b8b8b8" : "#808080"
-                    font.family: "monospace"
-                    font.pixelSize: 14
+                    font.family: Appearance.barFontFamily
+                    font.pixelSize: root.fontPixelSize
                     font.bold: focused || urgent
 
                     Behavior on color {

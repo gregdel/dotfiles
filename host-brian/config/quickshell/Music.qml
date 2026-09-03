@@ -6,7 +6,7 @@ Item {
     id: root
 
     implicitWidth: musicText.implicitWidth + 20
-    implicitHeight: 30
+    implicitHeight: Appearance.barHeight
 
     // Find first playing player, fall back to first paused
     property var currentPlayer: {
@@ -46,8 +46,8 @@ Item {
         anchors.centerIn: parent
         text: trackText
         color: playing ? "#d0d0d0" : "#909090"
-        font.family: "monospace"
-        font.pixelSize: 14
+        font.family: Appearance.barFontFamily
+        font.pixelSize: Appearance.barFontSize
     }
 
     MouseArea {

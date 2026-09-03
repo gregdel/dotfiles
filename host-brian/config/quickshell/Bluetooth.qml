@@ -8,7 +8,7 @@ Item {
     property var barWindow
 
     implicitWidth: btLabel.implicitWidth + 24
-    implicitHeight: 30
+    implicitHeight: Appearance.barHeight
 
     property var adapter: Bluetooth.defaultAdapter
     property bool btEnabled: adapter && adapter.enabled
@@ -28,8 +28,8 @@ Item {
         anchors.centerIn: parent
         text: !root.btEnabled ? "󰂲" : (root.connectedCount > 0 ? "󰂱" : "󰂯")
         color: root.connectedCount > 0 ? "#d0d0d0" : "#505050"
-        font.family: "monospace"
-        font.pixelSize: 14
+        font.family: Appearance.barFontFamily
+        font.pixelSize: Appearance.barFontSize
     }
 
     MouseArea {

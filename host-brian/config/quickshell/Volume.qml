@@ -7,7 +7,7 @@ Item {
     property var barWindow
 
     implicitWidth: volumeRow.implicitWidth + 22
-    implicitHeight: 30
+    implicitHeight: Appearance.barHeight
 
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
@@ -66,8 +66,8 @@ Item {
         Text {
             text: root.outputIcon
             color: root.muted || !root.hasSink ? "#505050" : "#909090"
-            font.family: "monospace"
-            font.pixelSize: 14
+            font.family: Appearance.barFontFamily
+            font.pixelSize: Appearance.barFontSize
         }
 
         Text {
@@ -76,8 +76,8 @@ Item {
             color: root.muted || !root.hasSink
                 ? "#505050"
                 : (volMouse.containsMouse ? "#c4a000" : "#d0d0d0")
-            font.family: "monospace"
-            font.pixelSize: 14
+            font.family: Appearance.barFontFamily
+            font.pixelSize: Appearance.barFontSize
         }
     }
 
