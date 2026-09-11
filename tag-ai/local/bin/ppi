@@ -125,6 +125,7 @@ run() {
 		-v "$state_dir:$home/.pi/agent:z" \
 		-v "$config_dir:$home/.config/pi:ro,z" \
 		-v "$config_dir/agent/settings.json:$home/.pi/agent/settings.json:ro,z" \
+		-v "$config_dir/agent/models.json:$home/.pi/agent/models.json:ro,z" \
 		-v "$config_dir/agent/AGENTS.md:$home/.pi/agent/AGENTS.md:ro,z" \
 		-v "$config_dir/agent/prompts:$home/.pi/agent/prompts:ro,z" \
 		-v "$config_dir/agent/extensions:$home/.pi/agent/extensions:ro,z" \

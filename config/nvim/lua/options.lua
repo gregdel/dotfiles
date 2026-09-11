@@ -1,6 +1,12 @@
 -- Colors
 vim.opt.termguicolors = true
 
+vim.diagnostic.config({
+  virtual_text = {
+    source = true,
+  },
+})
+
 -- disable netrw
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1

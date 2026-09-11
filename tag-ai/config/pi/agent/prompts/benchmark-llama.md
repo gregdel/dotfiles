@@ -21,12 +21,11 @@ Before running anything:
 
 2. Read these files:
 
-   - `tag-ai/config/llama-cpp/preset.ini`
+   - `host-brian/config/llama-cpp/preset.ini`
    - `tag-ai/local/bin/llama-cpp-benchmark`
 
-3. Check that `PI_SESSION_ID` is set and non-empty. If it is unavailable,
-   explain that the required `/tmp` result filename cannot be constructed and
-   stop.
+3. Confirm that `$HOME/.dotfiles/tag-ai/local/bin/llama-cpp-benchmark` exists
+   and is executable. The script is not installed on `PATH`.
 
 4. Use the configured llama.cpp router, not Pi's `PI_PROVIDER` or `PI_MODEL`,
    to identify the target. Through read-only health/model-catalog requests,
@@ -35,8 +34,9 @@ Before running anything:
    different model from an HF repository name. The benchmark script repeats
    this discovery as a safety check.
 
-5. Confirm that the exact router model ID has a matching local preset section.
-   Do not infer a different preset from an HF repository name.
+5. Confirm that the exact router model ID has a matching local preset section
+   in `host-brian/config/llama-cpp/preset.ini`. Do not infer a different preset
+   from an HF repository name.
 
 6. Inspect `git status` and the existing diff for `preset.ini`. Never overwrite
    or fold unrelated user changes into a benchmark adjustment.
@@ -47,13 +47,12 @@ Before running anything:
 
 ## Run once
 
-Run `llama-cpp-benchmark` exactly once with no arguments and a timeout of at
-least 30 minutes. Save its stdout to `/tmp` using `PI_SESSION_ID` in the
-filename, for example `/tmp/llama-cpp-benchmark-$PI_SESSION_ID.json`, while
-retaining its exit status independently of output validation. The script
-selects the active router model itself and ignores `PI_PROVIDER` and
-`PI_MODEL`. Do not invoke any router lifecycle endpoint and do not alter
-repository or preset files during the run.
+Run `$HOME/.dotfiles/tag-ai/local/bin/llama-cpp-benchmark` exactly once with
+no arguments and a timeout of at least 30 minutes. Capture stdout in a
+`mktemp` file while retaining its exit status independently of output
+validation. The script selects the active router model itself and ignores
+`PI_PROVIDER` and `PI_MODEL`. Do not invoke any router lifecycle endpoint and
+do not alter repository or preset files during the run.
 
 The fixed workload measures:
 
@@ -112,6 +111,8 @@ The only tunable keys in this workflow are:
 - `spec-type`
 - `spec-draft-n-max`
 - `spec-draft-p-min`
+- `spec-draft-type-k`
+- `spec-draft-type-v`
 - `ctx-size` (never below 65,536)
 - `cache-type-k`
 - `cache-type-v`
@@ -119,7 +120,7 @@ The only tunable keys in this workflow are:
 Do not change the model artifact, sampling, template settings, device,
 GPU-layer policy, batch sizes, parallelism, or load policy.
 
-For the initial Tiel MTP preset, if capacity and VRAM pass and there is no prior
+For an active MTP preset, if capacity and VRAM pass and there is no prior
 comparison, testing `spec-type = none` is the first useful control. If capacity
 or VRAM fails, address placement or context before speculative decoding.
 
@@ -132,7 +133,7 @@ Ask for approval. Only after approval:
 
 1. Edit that one key in the active model's local preset section.
 2. Preserve INI formatting and all unrelated changes.
-3. Show `git diff -- tag-ai/config/llama-cpp/preset.ini`.
+3. Show `git diff -- host-brian/config/llama-cpp/preset.ini`.
 4. Stop. Tell the user to deploy the dotfiles change manually, reload/load the
    preset themselves, and invoke `/benchmark-llama` again for verification.
 

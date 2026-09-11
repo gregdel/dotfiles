@@ -1,0 +1,7 @@
+[Unit]
+Description=Collect llama.cpp %i metrics
+PartOf=llama-cpp@%i.service
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/llama-metrics %i

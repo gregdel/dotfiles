@@ -22,7 +22,7 @@ MIN_CONTEXT=65536
 PREFERRED_CONTEXT=100000
 MIN_FREE_BYTES=$((200 * 1024 * 1024))
 HTTP_TIMEOUT=1800
-WORKLOAD_VERSION=1
+WORKLOAD_VERSION=2
 
 TMPDIR_BENCH=
 AUTH_HEADER=
@@ -189,7 +189,7 @@ router_is_local() {
 }
 
 find_vram_counters() {
-	local root candidate total used count=0 found_total="" found_used=""
+	local root candidate total used largest=0 found_total="" found_used=""
 	for root in /run/host-sys /sys; do
 		[ -d "$root/class/drm" ] || continue
 		for candidate in "$root"/class/drm/card*/device/mem_info_vram_total; do
@@ -197,15 +197,15 @@ find_vram_counters() {
 			total=$(cat "$candidate" 2>/dev/null || true)
 			used=${candidate%_total}_used
 			case "$total" in "" | *[!0-9]*) continue ;; esac
-			[ "$total" -gt 0 ] 2>/dev/null || continue
+			[ "$total" -gt "$largest" ] 2>/dev/null || continue
 			[ -r "$used" ] || continue
-			count=$((count + 1))
+			largest=$total
 			found_total=$candidate
 			found_used=$used
 		done
-		[ "$count" -gt 0 ] && break
+		[ "$largest" -gt 0 ] && break
 	done
-	[ "$count" -eq 1 ] || return 1
+	[ "$largest" -gt 0 ] || return 1
 	VRAM_TOTAL_PATH=$found_total
 	VRAM_USED_PATH=$found_used
 	return 0

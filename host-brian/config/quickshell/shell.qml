@@ -53,11 +53,10 @@ ShellRoot {
                     spacing: 0
 
                     SystemdServiceIndicator {
-                        serviceName: "llama-cpp.service"
+                        serviceName: "llama-cpp@.service"
                         icon: ""
                     }
                     Volume { barWindow: bar }
-                    SysInfo {}
                     Gaming {}
                     Bluetooth { barWindow: bar }
                     ActionMenu { barWindow: bar }
@@ -65,10 +64,25 @@ ShellRoot {
                 }
             }
 
-            Workspaces {
-                anchors.centerIn: parent
+            Item {
+                anchors.fill: parent
                 visible: bar.portrait
-                screen: bar.screen
+
+                RowLayout {
+                    anchors {
+                        left: parent.left
+                        top: parent.top
+                        bottom: parent.bottom
+                    }
+                    spacing: 0
+
+                    SysInfo {}
+                }
+
+                Workspaces {
+                    anchors.centerIn: parent
+                    screen: bar.screen
+                }
             }
         }
     }

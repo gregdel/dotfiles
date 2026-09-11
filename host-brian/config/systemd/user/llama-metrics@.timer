@@ -1,0 +1,10 @@
+[Unit]
+Description=Update llama.cpp %i metrics
+PartOf=llama-cpp@%i.service
+After=llama-cpp@%i.service
+
+[Timer]
+OnActiveSec=5s
+OnUnitActiveSec=10s
+AccuracySec=1s
+Unit=llama-metrics@%i.service

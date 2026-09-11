@@ -1,8 +1,8 @@
 {
   "defaultProjectTrust": "ask",
   "enableInstallTelemetry": false,
-  "defaultProvider": "opencode-go",
-  "defaultModel": "deepseek-v4-flash",
+  "defaultProvider": "llama.cpp",
+  "defaultModel": "qwen3.6-35b-a3b",
   "defaultThinkingLevel": "high",
   "showCacheMissNotices": true,
   "packages": [

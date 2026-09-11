@@ -1,11 +1,12 @@
 [Unit]
-Description=llama.cpp ROCm model router
+Description=llama.cpp %i model router
 Documentation=https://github.com/ggml-org/llama.cpp
 BindsTo=suspend-sensitive.target
 After=suspend-sensitive.target
+Wants=llama-metrics@%i.timer
 
 [Container]
-Image=ghcr.io/ggml-org/llama.cpp:server-rocm
+Image=ghcr.io/ggml-org/llama.cpp:server-%i
 Pull=missing
 ContainerName=llama-cpp
 HostName=llama-cpp
@@ -27,7 +28,13 @@ Exec=--host 0.0.0.0 \
      --models-preset /preset.ini \
      --models-autoload \
      --models-max 1 \
-     --log-verbosity 2
+     --metrics \
+     --log-verbosity 3
 
 [Service]
 TimeoutStartSec=900
+ExecStopPost=/usr/bin/rm -f /var/lib/node_exporter/llama.prom
+
+[Install]
+DefaultInstance=rocm
+WantedBy=default.target

@@ -14,7 +14,6 @@ import {
 	type ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
 import { Input, Key, matchesKey, truncateToWidth } from "@earendil-works/pi-tui";
-import { parseDocument, stringify } from "yaml";
 
 type ThinkingLevel = ReturnType<ExtensionAPI["getThinkingLevel"]>;
 
@@ -122,7 +121,15 @@ function validateStep(value: unknown, index: number, configPath: string): Step {
 	return { command, provider, model, thinkingLevel: thinkingLevel as ThinkingLevel };
 }
 
-function loadFlow(ctx: ExtensionContext, name: string): Step[] {
+async function getYaml() {
+	try {
+		return await import("yaml");
+	} catch (error) {
+		throw new Error(`flow support requires yaml: ${error instanceof Error ? error.message : String(error)}`);
+	}
+}
+
+async function loadFlow(ctx: ExtensionContext, name: string): Promise<Step[]> {
 	assertProjectTrusted(ctx);
 	const flowPath = getFlowPath(ctx, name);
 	if (!existsSync(flowPath))
@@ -135,6 +142,7 @@ function loadFlow(ctx: ExtensionContext, name: string): Step[] {
 		throw new Error(`could not read flow ${name}: ${error instanceof Error ? error.message : String(error)}`);
 	}
 
+	const { parseDocument } = await getYaml();
 	let document: ReturnType<typeof parseDocument>;
 	try {
 		document = parseDocument(source);
@@ -160,8 +168,9 @@ function loadFlow(ctx: ExtensionContext, name: string): Step[] {
 	return config.steps.map((step, index) => validateStep(step, index, flowPath));
 }
 
-function saveFlow(ctx: ExtensionContext, name: string, workflow: Step[]): void {
+async function saveFlow(ctx: ExtensionContext, name: string, workflow: Step[]): Promise<void> {
 	assertProjectTrusted(ctx);
+	const { stringify } = await getYaml();
 	const flowPath = getFlowPath(ctx, name);
 	const tempPath = `${flowPath}.${process.pid}.${Date.now()}.tmp`;
 
@@ -442,7 +451,7 @@ export default function flow(pi: ExtensionAPI) {
 			if (action === "save") {
 				try {
 					validateWorkflow(ctx, workflow);
-					saveFlow(ctx, name, workflow);
+					await saveFlow(ctx, name, workflow);
 					ctx.ui.notify(`saved flow: ${name}`, "info");
 					return;
 				} catch (error) {
@@ -478,7 +487,7 @@ export default function flow(pi: ExtensionAPI) {
 		while (true) {
 			const flowNames = listFlowNames(ctx);
 			for (const name of flowNames)
-				loadFlow(ctx, name);
+				await loadFlow(ctx, name);
 
 			const actions: PickerItem[] = [
 				{ value: "create", label: "Create flow", description: "Create a named flow" },
@@ -510,7 +519,7 @@ export default function flow(pi: ExtensionAPI) {
 			if (!name || !flowNames.includes(name)) continue;
 
 			if (operation === "edit") {
-				await editFlow(ctx, name, loadFlow(ctx, name));
+				await editFlow(ctx, name, await loadFlow(ctx, name));
 			} else if (operation === "rename") {
 				const nextName = (await ctx.ui.editor("Rename flow", name))?.trim();
 				if (!nextName || nextName === name) continue;
@@ -618,7 +627,7 @@ export default function flow(pi: ExtensionAPI) {
 			}
 
 			try {
-				const workflow = loadFlow(ctx, name);
+				const workflow = await loadFlow(ctx, name);
 				validateWorkflow(ctx, workflow);
 				steps = workflow;
 				task = flowTask;

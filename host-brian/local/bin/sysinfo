@@ -1,0 +1,76 @@
+#!/bin/sh
+# shellcheck disable=3043
+# Output CPU and GPU telemetry for the quickshell bar as a single JSON line:
+#   {"cpu":<°C>,"edge":<°C>,"junc":<°C>,"mem":<°C>,"fan":<%>,"vram":<MB>,"vram_total":<MB>}
+# Unavailable sensors are null.
+
+# read a hwmon temperature in °C by driver name and label; empty if unavailable
+_read_temp() {
+    local driver="$1" label="$2" dir file lbl val
+    for dir in /sys/class/hwmon/hwmon*/; do
+        [ "$(cat "${dir}name" 2>/dev/null)" = "$driver" ] || continue
+        for file in "${dir}"temp*_label; do
+            [ -f "$file" ] || continue
+            lbl=$(cat "$file" 2>/dev/null)
+            [ "$lbl" = "$label" ] || continue
+            val=$(cat "${file%_label}_input" 2>/dev/null)
+            case "$val" in
+                ''|*[!0-9]*) continue ;;
+            esac
+            printf '%s' "$(( val / 1000 ))"
+            return 0
+        done
+    done
+}
+
+cpu=$(_read_temp k10temp Tctl)
+edge=$(_read_temp amdgpu edge)
+junc=$(_read_temp amdgpu junction)
+mem=$(_read_temp amdgpu mem)
+
+# fan percentage (card1 = dGPU)
+fan_input=""
+fan_max=""
+for fan_file in /sys/class/drm/card1/device/hwmon/hwmon*/fan1_input; do
+    [ -f "$fan_file" ] || continue
+    fan_input=$(cat "$fan_file" 2>/dev/null)
+    fan_max=$(cat "${fan_file%_input}_max" 2>/dev/null)
+    break
+done
+fan=""
+case "$fan_input" in
+    ''|*[!0-9]*) ;;
+    *)
+        if [ -n "$fan_max" ] && [ "$fan_max" -gt 0 ] 2>/dev/null; then
+            fan=$(( fan_input * 100 / fan_max ))
+        fi
+    ;;
+esac
+
+# VRAM in MB (card1 = dGPU)
+vram_used_bytes=$(cat /sys/class/drm/card1/device/mem_info_vram_used 2>/dev/null)
+vram_total_bytes=$(cat /sys/class/drm/card1/device/mem_info_vram_total 2>/dev/null)
+vram=""
+vram_total=""
+case "$vram_used_bytes" in
+    ''|*[!0-9]*) ;;
+    *)
+        if [ -n "$vram_total_bytes" ] && [ "$vram_total_bytes" -gt 0 ] 2>/dev/null; then
+            vram=$(( vram_used_bytes / 1048576 ))
+            vram_total=$(( vram_total_bytes / 1048576 ))
+        fi
+    ;;
+esac
+
+# collect as strings, let jq turn each into a JSON number or null
+jq -cn \
+    --arg cpu "$cpu" \
+    --arg edge "$edge" \
+    --arg junc "$junc" \
+    --arg mem "$mem" \
+    --arg fan "$fan" \
+    --arg vram "$vram" \
+    --arg vram_total "$vram_total" \
+    'def n: if . == "" then null else tonumber end;
+     {cpu: ($cpu | n), edge: ($edge | n), junc: ($junc | n), mem: ($mem | n),
+      fan: ($fan | n), vram: ($vram | n), vram_total: ($vram_total | n)}'

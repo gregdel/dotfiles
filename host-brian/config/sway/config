@@ -20,7 +20,7 @@ floating_modifier $mod
 
 # Borders
 smart_borders on
-default_border pixel 2
+default_border pixel 5
 default_floating_border pixel 2
 
 # Gaps
@@ -192,16 +192,24 @@ output "*" {
     bg /home/greg/pictures/wallpaper.jpg fill
 }
 
-# Monitor
-output "HDMI-A-2" {
-    scale 2
-    pos 0 0
+# Main monitor
+output "AOC U27G4XM 1322131231233" {
+    scale 1.5
+    pos 567 925
+    mode 3840x2160@160.001Hz
+    adaptive_sync on
 }
 
+# Vertical monitor
+output "Dell Inc. DELL S2722QC 5TX1MD3" {
+    scale 1.5
+    transform 270
+    pos 3127 435
+}
 # TV
-output "DP-1" {
+output "Samsung Electric Company SAMSUNG 0x00000001" {
     disable
-    pos 1920 0
+    pos 4567 1915
 }
 
 output "HEADLESS-*" {
