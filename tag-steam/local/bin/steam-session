@@ -5,18 +5,32 @@ export XDG_CURRENT_DESKTOP=gamescope
 export XDG_SESSION_DESKTOP=gamescope
 export SDL_VIDEODRIVER=wayland
 
+
 gamescope_config="$HOME/.config/gamescope"
 mkdir -p "$gamescope_config"
 export GAMESCOPE_MODE_SAVE_FILE="$gamescope_config/modes.cfg"
+export GAMESCOPE_LOGS="$HOME/gamescope.log"
 
 if pgrep --quiet steam; then
 	steam -shutdown >/dev/null 2>&1 || true
 	sleep 1
 fi
 
-case "$1" in
-	tv) set -- -O DP-1 ;;
-	*)  set --         ;;
+unset ENABLE_GAMESCOPE_WSI DXVK_HDR
+case "${1:-}" in
+	monitor)
+		export ENABLE_GAMESCOPE_WSI=1
+		export DXVK_HDR=1
+		set -- -O DP-2 --adaptive-sync --hdr-itm-enabled \
+			--hdr-itm-target-nits 1200
+		;;
+	tv)
+		set -- -O DP-1
+		;;
+	*)
+		echo "Usage: ${0##*/} {monitor|tv}" >&2
+		exit 2
+		;;
 esac
 
 gamescope \
@@ -25,4 +39,4 @@ gamescope \
 	--steam \
 	--fullscreen \
 	--xwayland-count 2 \
-	-- steam -gamepadui -steamos3 -steamdeck
+	-- steam -gamepadui -steamos3 -steamdeck 2>&1 | tee "$GAMESCOPE_LOGS"
