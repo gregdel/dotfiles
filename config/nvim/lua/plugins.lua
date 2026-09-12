@@ -352,15 +352,32 @@ require("lazy").setup({
     opts = {},
   },
   {
-    "romus204/tree-sitter-manager.nvim",
-    dependencies = {},
+    "nvim-treesitter/nvim-treesitter",
+    lazy = false,
+    build = ":TSUpdate",
     config = function()
-      require("tree-sitter-manager").setup({
-        ensure_installed = { "go", "bash", "zig", "c" },
-        auto_install = true,
-        highlight = true,
+      local treesitter = require("nvim-treesitter")
+      treesitter.install({
+        "go",
+        "bash",
+        "zig",
+        "c",
+        "json",
+        "yaml",
+        "toml",
+        "rust",
+        "gitcommit",
+        "lua",
       })
-    end
+      vim.treesitter.language.register("bash", { "sh", "bash" })
+
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "go", "sh", "bash", "zig", "c", "json", "yaml", "toml", "rust", "gitcommit", "lua" },
+        callback = function()
+          vim.treesitter.start()
+        end,
+      })
+    end,
   },
   {
     "saghen/blink.cmp",
