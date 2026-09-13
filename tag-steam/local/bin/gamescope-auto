@@ -1,5 +1,16 @@
 #!/bin/sh
 
+if [ "$#" -eq 0 ]; then
+	echo "Usage: ${0##*/} command [args...]" >&2
+	exit 2
+fi
+
+# Steam already runs inside Gamescope; preserve its environment and compositor.
+if [ "${XDG_SESSION_DESKTOP:-}" = gamescope ] &&
+	[ -n "${GAMESCOPE_WAYLAND_DISPLAY:-}" ]; then
+	exec "$@"
+fi
+
 _notify() {
 	notify-send -i sc-controller "gamescope-auto" "$@"
 }
@@ -23,12 +34,6 @@ case "$capabilities" in
 		;;
 esac
 
-# Async shader compilation: reduces stutter at the cost of rare first-frame glitches
-export DXVK_ASYNC=1
-# gpl: reduces shader compilation stutter (not default on my 6700XT)
-# sam: leverages ReBAR for better VRAM placement
-export RADV_PERFTEST=gpl,sam
-
 export ENABLE_GAMESCOPE_WSI=0
 export GAMESCOPE_DISABLE_EXPLICIT_SYNC=1
 export MESA_VK_WSI_PRESENT_MODE=immediate
@@ -50,7 +55,7 @@ env -u LD_PRELOAD \
 gamemoderun gamescope \
 	--mangoapp \
 	--rt \
-	--xwayland-count 1 \
+	--xwayland-count 2 \
 	--framerate-limit "$refresh" \
 	--nested-refresh "$refresh" \
 	--output-width "$width" \

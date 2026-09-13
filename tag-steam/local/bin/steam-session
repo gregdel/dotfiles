@@ -3,8 +3,6 @@
 export XDG_SESSION_TYPE=wayland
 export XDG_CURRENT_DESKTOP=gamescope
 export XDG_SESSION_DESKTOP=gamescope
-export SDL_VIDEODRIVER=wayland
-
 
 gamescope_config="$HOME/.config/gamescope"
 mkdir -p "$gamescope_config"
@@ -21,8 +19,8 @@ case "${1:-}" in
 	monitor)
 		export ENABLE_GAMESCOPE_WSI=1
 		export DXVK_HDR=1
-		set -- -O DP-2 --adaptive-sync --hdr-itm-enabled \
-			--hdr-itm-target-nits 1200
+		# Native HDR games use HDR; SDR content stays color-managed SDR.
+		set -- -O DP-2 --adaptive-sync --hdr-enabled
 		;;
 	tv)
 		set -- -O DP-1

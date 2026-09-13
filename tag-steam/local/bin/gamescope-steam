@@ -1,0 +1,96 @@
+#!/bin/sh
+
+_die() {
+	printf 'gamescope-steam: %s\n' "$*" >&2
+	exit 1
+}
+
+case "$#:${1:-}" in
+	0:) ;;
+	1:--hdr) set -- --hdr-enabled ;;
+	1:--help)
+		echo "Usage: ${0##*/} [--hdr]"
+		echo "Run Steam inside Gamescope on the focused Sway output."
+		echo "HDR requires an HDR-enabled output and compatible Sway color management."
+		exit 0
+		;;
+	*)
+		echo "Usage: ${0##*/} [--hdr]" >&2
+		exit 2
+		;;
+esac
+
+[ -z "${GAMESCOPE_WAYLAND_DISPLAY:-}" ] ||
+	_die "Already inside Gamescope; use the existing Steam session."
+[ -n "${SWAYSOCK:-}" ] && [ -n "${WAYLAND_DISPLAY:-}" ] ||
+	_die "Run this from Sway; use steam-session from a TTY."
+
+for command in gamescope steam swaymsg jq pgrep; do
+	command -v "$command" >/dev/null 2>&1 || _die "Missing command: $command"
+done
+
+# Validate the focused output before shutting down the desktop Steam client.
+outputs=$(swaymsg -t get_outputs) || _die "Cannot query Sway outputs."
+mode=$(printf '%s\n' "$outputs" | jq -er '
+	[.[] | select(.active and .focused) | .current_mode |
+		select([.width, .height, .refresh] | all(type == "number" and . > 0 and . == floor)) |
+		select(.refresh >= 1000)] |
+	if length == 1 then
+		.[0] | "\(.width) \(.height) \(.refresh / 1000 | floor)"
+	else error("No unique focused output with a valid mode") end
+') || _die "Cannot determine the focused output mode."
+read -r width height refresh <<EOF
+$mode
+EOF
+
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/gamescope"
+mkdir -p "$state_dir" || _die "Cannot create $state_dir"
+log="$state_dir/steam.log"
+: >> "$log" || _die "Cannot write $log"
+
+uid=$(id -u) || exit 1
+if pgrep -u "$uid" -x steam >/dev/null; then
+	steam -shutdown || _die "Could not request Steam shutdown."
+	remaining=30
+	while pgrep -u "$uid" -x steam >/dev/null; do
+		[ "$remaining" -gt 0 ] || _die "Steam did not exit within 30 seconds; close it manually."
+		sleep 1
+		remaining=$((remaining - 1))
+	done
+fi
+
+printf 'Starting Steam at %sx%s@%s Hz. Log: %s\n' "$width" "$height" "$refresh" "$log" >&2
+if command -v notify-send >/dev/null 2>&1; then
+	notify-send -i sc-controller gamescope-steam "Starting Steam at ${width}x${height}@${refresh} Hz" || :
+fi
+
+# The parent compositor controls physical HDR/VRR. Gamescope negotiates HDR
+# support and sets DXVK_HDR for its clients; never force support or use ITM.
+unset DXVK_HDR
+
+# Keep Sway's environment for Gamescope, but use Xwayland for Steam and its
+# clients. Scope the session identifiers to Steam so gamescope-auto bypasses.
+set -- gamescope "$@" \
+	--backend wayland \
+	--mangoapp \
+	--rt \
+	--steam \
+	--xwayland-count 2 \
+	--nested-refresh "$refresh" \
+	--output-width "$width" \
+	--output-height "$height" \
+	--nested-width "$width" \
+	--nested-height "$height" \
+	--fullscreen -- env -u OZONE_PLATFORM \
+		XDG_SESSION_TYPE=wayland \
+		XDG_CURRENT_DESKTOP=gamescope \
+		XDG_SESSION_DESKTOP=gamescope \
+		SDL_VIDEODRIVER=x11 SDL_VIDEO_DRIVER=x11 QT_QPA_PLATFORM=xcb \
+		ENABLE_GAMESCOPE_WSI=1 \
+		steam -gamepadui -steamos3 -steamdeck
+
+# GameMode is optional. Gamescope also falls back if realtime priority is unavailable.
+if command -v gamemoderun >/dev/null 2>&1; then
+	set -- gamemoderun "$@"
+fi
+exec "$@" >> "$log" 2>&1
