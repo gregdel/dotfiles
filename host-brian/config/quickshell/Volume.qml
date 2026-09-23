@@ -4,7 +4,6 @@ import Quickshell.Services.Pipewire
 
 Item {
     id: root
-    property var barWindow
 
     implicitWidth: volumeRow.implicitWidth + 22
     implicitHeight: Appearance.barHeight

@@ -5,7 +5,6 @@ import Quickshell.Bluetooth
 
 Item {
     id: root
-    property var barWindow
 
     implicitWidth: btLabel.implicitWidth + 24
     implicitHeight: Appearance.barHeight
@@ -56,12 +55,12 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            color: "#202020"
-            radius: 8
+            color: Appearance.popupBackground
+            radius: Appearance.popupRadius
             antialiasing: true
             clip: true
             border.width: 1
-            border.color: "#303030"
+            border.color: Appearance.popupBorder
 
             Column {
                 id: btCol

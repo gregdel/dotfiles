@@ -1,0 +1,348 @@
+#!/bin/sh
+
+set -eu
+
+backend=${1:?usage: llama-metrics <backend>}
+
+case "$backend" in
+    *[!A-Za-z0-9_.-]*|'')
+        echo "invalid backend: $backend" >&2
+        exit 2
+        ;;
+esac
+
+llama_url=${LLAMA_URL:-http://127.0.0.1:10999}
+out_dir=${TEXTFILE_DIR:-/var/lib/node_exporter}
+out="$out_dir/llama.prom"
+
+umask 022
+
+tmp=$(mktemp "$out_dir/.llama.XXXXXX")
+
+cleanup()
+{
+    rm -f "$tmp"
+}
+
+trap cleanup EXIT HUP INT TERM
+
+label_escape()
+{
+    # Model/backend names are expected to be single-line strings.
+    printf '%s' "$1" |
+        sed 's/\\/\\\\/g; s/"/\\"/g'
+}
+
+read_sysfs()
+{
+    [ -r "$1" ] || return 1
+    cat "$1" 2>/dev/null
+}
+
+metric()
+{
+    printf '%s\n' "$llama_metrics" |
+        awk -v name="$1" '$1 == name { print $2; exit }'
+}
+
+emit_llama()
+{
+    dst=$1
+    src=$2
+
+    value=$(metric "$src")
+    [ -n "$value" ] || return 0
+
+    printf '%s{model="%s",backend="%s"} %s\n' \
+        "$dst" "$model_label" "$backend_label" "$value"
+}
+
+emit_gpu()
+{
+    name=$1
+    value=$2
+
+    printf '%s{backend="%s",pci="%s"} %s\n' \
+        "$name" "$backend_label" "$gpu_pci_label" "$value"
+}
+
+backend_label=$(label_escape "$backend")
+
+{
+    #
+    # llama.cpp router
+    #
+
+    router_up=0
+    model=
+
+    if models_json=$(
+        curl -fsS \
+            --max-time 2 \
+            "$llama_url/v1/models" \
+            2>/dev/null
+    ); then
+        router_up=1
+
+        model=$(
+            printf '%s\n' "$models_json" |
+                jq -r '
+                    .data[]
+                    | select(.status.value == "loaded")
+                    | .id
+                ' 2>/dev/null |
+                head -n 1
+        ) || model=
+    fi
+
+    printf 'llama_router_up{backend="%s"} %s\n' \
+        "$backend_label" "$router_up"
+
+    if [ -n "$model" ]; then
+        model_label=$(label_escape "$model")
+
+        printf 'llama_model_info{model="%s",backend="%s"} 1\n' \
+            "$model_label" "$backend_label"
+
+        if llama_metrics=$(
+            curl -fsS \
+                --max-time 2 \
+                --get \
+                --data-urlencode "model=$model" \
+                --data-urlencode 'autoload=false' \
+                "$llama_url/metrics" \
+                2>/dev/null
+        ); then
+            #
+            # Work / timing counters.
+            #
+            emit_llama \
+                llama_prompt_tokens_total \
+                'llamacpp:prompt_tokens_total'
+
+            emit_llama \
+                llama_prompt_seconds_total \
+                'llamacpp:prompt_seconds_total'
+
+            emit_llama \
+                llama_generated_tokens_total \
+                'llamacpp:tokens_predicted_total'
+
+            emit_llama \
+                llama_generation_seconds_total \
+                'llamacpp:tokens_predicted_seconds_total'
+
+            #
+            # llama.cpp's direct throughput gauges.
+            #
+            # These are currently affected by an upstream regression
+            # where they frequently report zero. Keep the counters
+            # above and derive reliable historical PP/TG rates in
+            # Prometheus.
+            #
+            emit_llama \
+                llama_prompt_tokens_per_second \
+                'llamacpp:prompt_tokens_seconds'
+
+            emit_llama \
+                llama_generation_tokens_per_second \
+                'llamacpp:predicted_tokens_seconds'
+
+            #
+            # Router/server state.
+            #
+            emit_llama \
+                llama_requests_processing \
+                'llamacpp:requests_processing'
+
+            emit_llama \
+                llama_requests_deferred \
+                'llamacpp:requests_deferred'
+
+            #
+            # Context / KV cache.
+            #
+            emit_llama \
+                llama_context_high_watermark_tokens \
+                'llamacpp:n_tokens_max'
+
+            emit_llama \
+                llama_kv_cache_tokens \
+                'llamacpp:kv_cache_tokens'
+
+            emit_llama \
+                llama_kv_cache_cells \
+                'llamacpp:kv_cache_cells'
+
+            emit_llama \
+                llama_prompt_cache_tokens_total \
+                'llamacpp:prompt_tokens_cache_total'
+
+            emit_llama \
+                llama_context_shifts_total \
+                'llamacpp:n_ctx_shift_total'
+
+            #
+            # Decode activity.
+            #
+            emit_llama \
+                llama_decode_total \
+                'llamacpp:n_decode_total'
+
+            emit_llama \
+                llama_busy_slots_per_decode \
+                'llamacpp:n_busy_slots_per_decode'
+
+            #
+            # Speculative decoding / MTP.
+            #
+            emit_llama \
+                llama_spec_draft_tokens_total \
+                'llamacpp:spec_decode_num_draft_tokens_total'
+
+            emit_llama \
+                llama_spec_accepted_tokens_total \
+                'llamacpp:spec_decode_num_accepted_tokens_total'
+
+            emit_llama \
+                llama_spec_drafts_total \
+                'llamacpp:spec_decode_num_drafts_total'
+        fi
+    fi
+
+    #
+    # AMDGPU
+
+    # Select the AMD device with the largest VRAM allocation. This
+    # avoids accidentally selecting the Ryzen 7600X iGPU.
+    #
+
+    gpu=
+    largest=0
+
+    for dev in /sys/class/drm/card[0-9]*/device; do
+        vendor=$(read_sysfs "$dev/vendor") || continue
+        [ "$vendor" = "0x1002" ] || continue
+
+        total=$(read_sysfs "$dev/mem_info_vram_total") || continue
+
+        case "$total" in
+            ''|*[!0-9]*)
+                continue
+                ;;
+        esac
+
+        if [ "$total" -gt "$largest" ]; then
+            largest=$total
+            gpu=$dev
+        fi
+    done
+
+    if [ -n "$gpu" ]; then
+        gpu_pci=$(basename "$(readlink -f "$gpu")")
+        gpu_pci_label=$(label_escape "$gpu_pci")
+
+        printf 'amdgpu_info{backend="%s",pci="%s"} 1\n' \
+            "$backend_label" "$gpu_pci_label"
+
+        if value=$(read_sysfs "$gpu/mem_info_vram_used"); then
+            emit_gpu amdgpu_vram_used_bytes "$value"
+        fi
+
+        if value=$(read_sysfs "$gpu/mem_info_vram_total"); then
+            emit_gpu amdgpu_vram_total_bytes "$value"
+        fi
+
+        if value=$(read_sysfs "$gpu/gpu_busy_percent"); then
+            emit_gpu amdgpu_busy_percent "$value"
+        fi
+
+        if value=$(read_sysfs "$gpu/mem_busy_percent"); then
+            emit_gpu amdgpu_memory_busy_percent "$value"
+        fi
+
+        #
+        # HWMON
+        #
+
+        for hwmon in "$gpu"/hwmon/hwmon*; do
+            [ -d "$hwmon" ] || continue
+
+            hwmon_name=$(read_sysfs "$hwmon/name") || continue
+            [ "$hwmon_name" = "amdgpu" ] || continue
+
+            #
+            # Temperatures: edge, junction/hotspot, VRAM.
+            #
+            for label_file in "$hwmon"/temp*_label; do
+                [ -e "$label_file" ] || continue
+
+                label=$(read_sysfs "$label_file") || continue
+                input="${label_file%_label}_input"
+
+                case "$label" in
+                    edge|junction|mem)
+                        if value=$(read_sysfs "$input"); then
+                            awk \
+                                -v backend="$backend_label" \
+                                -v pci="$gpu_pci_label" \
+                                -v sensor="$label" \
+                                -v value="$value" '
+                                BEGIN {
+                                    printf "amdgpu_temperature_celsius{backend=\"%s\",pci=\"%s\",sensor=\"%s\"} %.3f\n",
+                                           backend, pci, sensor, value / 1000
+                                }'
+                        fi
+                        ;;
+                esac
+            done
+
+            #
+            # Power. HWMON reports microwatts.
+            #
+            value=
+
+            if value=$(read_sysfs "$hwmon/power1_average"); then
+                :
+            elif value=$(read_sysfs "$hwmon/power1_input"); then
+                :
+            fi
+
+            if [ -n "$value" ]; then
+                awk \
+                    -v backend="$backend_label" \
+                    -v pci="$gpu_pci_label" \
+                    -v value="$value" '
+                    BEGIN {
+                        printf "amdgpu_power_watts{backend=\"%s\",pci=\"%s\"} %.3f\n",
+                               backend, pci, value / 1000000
+                    }'
+            fi
+
+            #
+            # Current clocks.
+            #
+            if value=$(read_sysfs "$hwmon/freq1_input"); then
+                printf 'amdgpu_clock_hz{backend="%s",pci="%s",clock="gfx"} %s\n' \
+                    "$backend_label" "$gpu_pci_label" "$value"
+            fi
+
+            if value=$(read_sysfs "$hwmon/freq2_input"); then
+                printf 'amdgpu_clock_hz{backend="%s",pci="%s",clock="memory"} %s\n' \
+                    "$backend_label" "$gpu_pci_label" "$value"
+            fi
+
+            if value=$(read_sysfs "$hwmon/fan1_input"); then
+                printf 'amdgpu_fan_rpm{backend="%s",pci="%s"} %s\n' \
+                    "$backend_label" "$gpu_pci_label" "$value"
+            fi
+
+            break
+        done
+    fi
+
+} >"$tmp"
+
+chmod 0644 "$tmp"
+mv "$tmp" "$out"
+trap - EXIT

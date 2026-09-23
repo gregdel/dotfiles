@@ -161,7 +161,7 @@ bindsym XF86AudioStop exec playerctl stop
 # windows specific configurations
 for_window [app_id="firefox"] [title="^Extension:.+"] floating enable
 
-for_window [app_id="^polochon.*"] floating enable
+for_window [app_id="^pepe$"] floating enable
 
 for_window [class="^steam_app_\d+$"] {
     fullscreen enable

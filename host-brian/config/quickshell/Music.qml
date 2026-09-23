@@ -44,7 +44,9 @@ Item {
     Text {
         id: musicText
         anchors.centerIn: parent
+        width: Math.max(0, root.width - 20)
         text: trackText
+        elide: Text.ElideRight
         color: playing ? "#d0d0d0" : "#909090"
         font.family: Appearance.barFontFamily
         font.pixelSize: Appearance.barFontSize

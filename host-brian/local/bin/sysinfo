@@ -23,20 +23,61 @@ _read_temp() {
     done
 }
 
-cpu=$(_read_temp k10temp Tctl)
-edge=$(_read_temp amdgpu edge)
-junc=$(_read_temp amdgpu junction)
-mem=$(_read_temp amdgpu mem)
+# Find the amdgpu DRM device with the most VRAM. DRM card numbers are not
+# stable, while the device selected here is used consistently for all GPU data.
+_find_gpu_device() {
+    local card device driver total best_device="" best_total=-1
+    for card in /sys/class/drm/card[0-9]*; do
+        [ -e "$card/device" ] || continue
+        device=$(readlink -f "$card/device") || continue
+        driver=$(basename "$(readlink -f "$device/driver")")
+        [ "$driver" = "amdgpu" ] || continue
 
-# fan percentage (card1 = dGPU)
+        total=$(cat "$device/mem_info_vram_total" 2>/dev/null)
+        case "$total" in
+            ''|*[!0-9]*) continue ;;
+        esac
+        if [ "$total" -gt "$best_total" ]; then
+            best_device=$device
+            best_total=$total
+        fi
+    done
+    printf '%s' "$best_device"
+}
+
+_read_device_temp() {
+    local device="$1" label="$2" file lbl val
+    [ -n "$device" ] || return 0
+    for file in "$device"/hwmon/hwmon*/temp*_label; do
+        [ -f "$file" ] || continue
+        lbl=$(cat "$file" 2>/dev/null)
+        [ "$lbl" = "$label" ] || continue
+        val=$(cat "${file%_label}_input" 2>/dev/null)
+        case "$val" in
+            ''|*[!0-9]*) continue ;;
+        esac
+        printf '%s' "$(( val / 1000 ))"
+        return 0
+    done
+}
+
+gpu_device=$(_find_gpu_device)
+cpu=$(_read_temp k10temp Tctl)
+edge=$(_read_device_temp "$gpu_device" edge)
+junc=$(_read_device_temp "$gpu_device" junction)
+mem=$(_read_device_temp "$gpu_device" mem)
+
+# fan percentage
 fan_input=""
 fan_max=""
-for fan_file in /sys/class/drm/card1/device/hwmon/hwmon*/fan1_input; do
-    [ -f "$fan_file" ] || continue
-    fan_input=$(cat "$fan_file" 2>/dev/null)
-    fan_max=$(cat "${fan_file%_input}_max" 2>/dev/null)
-    break
-done
+if [ -n "$gpu_device" ]; then
+    for fan_file in "$gpu_device"/hwmon/hwmon*/fan1_input; do
+        [ -f "$fan_file" ] || continue
+        fan_input=$(cat "$fan_file" 2>/dev/null)
+        fan_max=$(cat "${fan_file%_input}_max" 2>/dev/null)
+        break
+    done
+fi
 fan=""
 case "$fan_input" in
     ''|*[!0-9]*) ;;
@@ -47,9 +88,13 @@ case "$fan_input" in
     ;;
 esac
 
-# VRAM in MB (card1 = dGPU)
-vram_used_bytes=$(cat /sys/class/drm/card1/device/mem_info_vram_used 2>/dev/null)
-vram_total_bytes=$(cat /sys/class/drm/card1/device/mem_info_vram_total 2>/dev/null)
+# VRAM in MB
+vram_used_bytes=""
+vram_total_bytes=""
+if [ -n "$gpu_device" ]; then
+    vram_used_bytes=$(cat "$gpu_device/mem_info_vram_used" 2>/dev/null)
+    vram_total_bytes=$(cat "$gpu_device/mem_info_vram_total" 2>/dev/null)
+fi
 vram=""
 vram_total=""
 case "$vram_used_bytes" in

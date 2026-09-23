@@ -17,12 +17,11 @@ PopupWindow {
     color: "transparent"
 
     onPlayerChanged: {
-        if (!player) visible = false
-        else currentPosition = player.position
+        if (!player)
+            visible = false
     }
-    onVisibleChanged: { if (visible && player) currentPosition = player.position }
 
-    property real currentPosition: 0
+    property real currentPosition: player ? player.position : 0
     property real playerLength: player ? player.length : 0
     property string artUrl: player && player.trackArtUrl ? player.trackArtUrl : ""
     property string title: player && player.trackTitle ? player.trackTitle : ""
@@ -36,12 +35,12 @@ PopupWindow {
     Timer {
         interval: 1000
         repeat: true
-        running: musicPopup.visible && playerLength > 0
-        onTriggered: currentPosition = player ? player.position : currentPosition
+        running: musicPopup.visible && musicPopup.playing && playerLength > 0
+        onTriggered: player.positionChanged()
     }
 
-    function formatTime(ms) {
-        var s = Math.floor(Math.max(0, ms) / 1000)
+    function formatTime(seconds) {
+        var s = Math.floor(Math.max(0, seconds))
         var m = Math.floor(s / 60)
         s = s % 60
         return m + ":" + (s < 10 ? "0" : "") + s
@@ -49,12 +48,12 @@ PopupWindow {
 
     Rectangle {
         anchors.fill: parent
-        color: "#202020"
-        radius: 8
+        color: Appearance.popupBackground
+        radius: Appearance.popupRadius
         antialiasing: true
         clip: true
         border.width: 1
-        border.color: "#303030"
+        border.color: Appearance.popupBorder
 
         Column {
             id: popupCol
@@ -150,11 +149,11 @@ PopupWindow {
 
                     MouseArea {
                         anchors.fill: seekBg
-                        cursorShape: Qt.PointingHandCursor
+                        enabled: !!player && player.canSeek && playerLength > 0
+                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                         acceptedButtons: Qt.LeftButton
                         onClicked: mouse => {
-                            if (player && playerLength > 0)
-                                player.position = (mouseX / seekBg.width) * playerLength
+                            player.position = (mouseX / seekBg.width) * playerLength
                         }
                     }
                 }

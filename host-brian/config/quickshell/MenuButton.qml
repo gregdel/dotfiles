@@ -6,8 +6,8 @@ import Quickshell.Io
 
 Item {
     id: menuBtn
-    property string iconProc: ""    // command to poll for icon text
-    property string staticIcon: ""  // fixed icon (if iconProc is empty)
+    property var iconCommand: []     // command and arguments to poll for icon text
+    property string staticIcon: ""  // fixed icon (if iconCommand is empty)
     property int iconInterval: 5000
     property string label: ""
 
@@ -20,19 +20,25 @@ Item {
 
     Process {
         id: iconPollProc
-        command: ["sh", "-c", menuBtn.iconProc + "; echo"]
-        stdout: SplitParser {
-            splitMarker: "\n"
-            onRead: data => { if (data.length > 0) menuBtn.currentIcon = data }
+        command: menuBtn.iconCommand
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const output = text.trim()
+                if (output.length > 0)
+                    menuBtn.currentIcon = output
+            }
         }
     }
 
     Timer {
         interval: menuBtn.iconInterval
         repeat: true
-        running: menuBtn.iconProc.length > 0
+        running: menuBtn.iconCommand.length > 0
         triggeredOnStart: true
-        onTriggered: iconPollProc.running = true
+        onTriggered: {
+            if (!iconPollProc.running)
+                iconPollProc.running = true
+        }
     }
 
     Rectangle {

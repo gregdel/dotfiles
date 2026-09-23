@@ -14,8 +14,8 @@ export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
 export SDL_VIDEODRIVER=wayland
 
 # Config paths
-export XDG_CONFIG_HOME=$HOME/.config
-export XDG_CACHE_HOME=$HOME/.cache
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
 
 # Electron/Chromium
 export OZONE_PLATFORM=wayland

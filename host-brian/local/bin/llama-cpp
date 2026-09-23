@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SERVICE=llama-cpp.service
+SERVICE=llama-cpp@rocm.service
 IMAGE=ghcr.io/ggml-org/llama.cpp:server-rocm
 
 if [ "$#" -eq 0 ]; then

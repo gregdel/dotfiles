@@ -5,19 +5,27 @@ import Quickshell.Io
 
 Item {
     id: root
-    property var barWindow
 
     implicitWidth: 36
     implicitHeight: Appearance.barHeight
 
     Process {
-        id: cmdRunner
-        command: ["sh", "-c", "true"]
+        id: actionProc
+        stderr: StdioCollector {
+            onStreamFinished: {
+                const message = text.trim()
+                if (message.length > 0)
+                    console.warn("Power action failed:", message)
+            }
+        }
     }
 
-    function runCmd(cmd) {
-        cmdRunner.command = ["sh", "-c", cmd]
-        cmdRunner.running = true
+    function runCommand(command) {
+        if (actionProc.running)
+            return
+
+        actionProc.command = command
+        actionProc.running = true
     }
 
     Text {
@@ -54,12 +62,12 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            color: "#202020"
-            radius: 8
+            color: Appearance.popupBackground
+            radius: Appearance.popupRadius
             antialiasing: true
             clip: true
             border.width: 1
-            border.color: "#303030"
+            border.color: Appearance.popupBorder
 
             Column {
                 id: powerCol
@@ -73,9 +81,9 @@ Item {
 
                 Repeater {
                     model: [
-                        { label: "Suspend",  cmd: "systemctl suspend" },
-                        { label: "Reboot",   cmd: "reboot" },
-                        { label: "Shutdown", cmd: "shutdown now" }
+                        { label: "Suspend",  command: ["systemctl", "suspend"] },
+                        { label: "Reboot",   command: ["reboot"] },
+                        { label: "Shutdown", command: ["shutdown", "now"] }
                     ]
 
                     Rectangle {
@@ -101,7 +109,7 @@ Item {
                             hoverEnabled: true
                             onClicked: {
                                 powerPopup.visible = false
-                                root.runCmd(modelData.cmd)
+                                root.runCommand(modelData.command)
                             }
                         }
                     }

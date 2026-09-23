@@ -124,12 +124,14 @@ Item {
     Process {
         id: sysinfoProc
         command: ["sysinfo"]
-        stdout: SplitParser {
-            onRead: data => {
-                if (data.length === 0)
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const output = text.trim()
+                if (output.length === 0)
                     return
+
                 var obj
-                try { obj = JSON.parse(data) } catch (err) { return }
+                try { obj = JSON.parse(output) } catch (err) { return }
                 root.updateData(obj)
             }
         }
@@ -140,6 +142,9 @@ Item {
         repeat: true
         running: true
         triggeredOnStart: true
-        onTriggered: sysinfoProc.running = true
+        onTriggered: {
+            if (!sysinfoProc.running)
+                sysinfoProc.running = true
+        }
     }
 }

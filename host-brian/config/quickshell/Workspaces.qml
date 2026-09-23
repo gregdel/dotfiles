@@ -7,17 +7,12 @@ RowLayout {
     id: root
 
     property var screen
-    property var monitor: screen ? I3.monitorFor(screen) : null
     property string outputName: screen ? screen.name : ""
     property int itemHeight: Appearance.barHeight
     property int pillHeight: Appearance.workspacePillHeight
     property int minPillWidth: Appearance.workspaceMinPillWidth
     property int horizontalPadding: Appearance.workspaceHorizontalPadding
     property int fontPixelSize: Appearance.barFontSize
-
-    function isActiveOnOutput(workspace) {
-        return workspace.active
-    }
 
     function isOnOutput(workspace) {
         var workspaceOutput = workspace.lastIpcObject.output
@@ -35,7 +30,7 @@ RowLayout {
             required property int index
 
             property bool focused: I3.focusedWorkspace === modelData
-            property bool activeOnOutput: root.isActiveOnOutput(modelData)
+            property bool activeOnOutput: modelData.active
             property bool urgent: modelData.urgent
             property bool onOutput: root.isOnOutput(modelData)
             property bool hovered: mouseArea.containsMouse
@@ -107,7 +102,7 @@ RowLayout {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
-                onClicked: I3.dispatch("workspace " + modelData.name)
+                onClicked: modelData.activate()
             }
         }
     }

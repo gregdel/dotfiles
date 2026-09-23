@@ -6,15 +6,20 @@ import Quickshell.Io
 
 Item {
     id: root
-    property var barWindow
     property var monitorValues: I3.monitors.values
 
     implicitWidth: 30
     implicitHeight: Appearance.barHeight
 
     Process {
-        id: cmdRunner
-        command: ["sh", "-c", "true"]
+        id: actionProc
+        stderr: StdioCollector {
+            onStreamFinished: {
+                const message = text.trim()
+                if (message.length > 0)
+                    console.warn("Action failed:", message)
+            }
+        }
     }
 
     Connections {
@@ -26,9 +31,12 @@ Item {
         }
     }
 
-    function runCmd(cmd) {
-        cmdRunner.command = ["sh", "-c", cmd]
-        cmdRunner.running = true
+    function runCommand(command) {
+        if (actionProc.running)
+            return
+
+        actionProc.command = command
+        actionProc.running = true
     }
 
     Text {
@@ -65,12 +73,12 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            color: "#202020"
-            radius: 8
+            color: Appearance.popupBackground
+            radius: Appearance.popupRadius
             antialiasing: true
             clip: true
             border.width: 1
-            border.color: "#303030"
+            border.color: Appearance.popupBorder
 
             Column {
                 id: actionCol
@@ -167,12 +175,12 @@ Item {
 
                 MenuButton {
                     width: parent.width
-                    iconProc: "swayidle-toggle icon"
+                    iconCommand: ["swayidle-toggle", "icon"]
                     iconInterval: 10000
                     label: "Toggle auto sleep"
                     onActivated: {
                         actionPopup.visible = false
-                        root.runCmd("swayidle-toggle toggle")
+                        root.runCommand(["swayidle-toggle", "toggle"])
                     }
                 }
 
@@ -182,7 +190,7 @@ Item {
                     label: "TV ON/OFF"
                     onActivated: {
                         actionPopup.visible = false
-                        root.runCmd("tv-remote")
+                        root.runCommand(["tv-remote"])
                     }
                 }
 
@@ -192,7 +200,7 @@ Item {
                     label: "Launch Steam"
                     onActivated: {
                         actionPopup.visible = false
-                        root.runCmd("steam")
+                        Quickshell.execDetached(["gamescope-steam"])
                     }
                 }
             }

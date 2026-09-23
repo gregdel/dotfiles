@@ -29,6 +29,7 @@ ShellRoot {
                 visible: !bar.portrait
 
                 RowLayout {
+                    id: leftRow
                     anchors {
                         left: parent.left
                         top: parent.top
@@ -37,14 +38,22 @@ ShellRoot {
                     spacing: 0
 
                     Workspaces { screen: bar.screen }
-                    Music {}
+                    Music { Layout.maximumWidth: bar.width / 3 }
                 }
 
-                Clock {
-                    anchors.centerIn: parent
+                Item {
+                    anchors {
+                        left: leftRow.right
+                        right: rightRow.left
+                        top: parent.top
+                        bottom: parent.bottom
+                    }
+
+                    Clock { anchors.centerIn: parent }
                 }
 
                 RowLayout {
+                    id: rightRow
                     anchors {
                         right: parent.right
                         top: parent.top
@@ -53,14 +62,25 @@ ShellRoot {
                     spacing: 0
 
                     SystemdServiceIndicator {
-                        serviceName: "llama-cpp@.service"
+                        serviceName: "llama-cpp@rocm.service"
+                        servicePattern: "llama-cpp@*.service"
+                        serviceOptions: [
+                            {
+                                "name": "llama-cpp@rocm.service",
+                                "label": "ROCm"
+                            },
+                            {
+                                "name": "llama-cpp@vulkan.service",
+                                "label": "Vulkan"
+                            }
+                        ]
                         icon: ""
                     }
-                    Volume { barWindow: bar }
+                    Volume {}
                     Gaming {}
-                    Bluetooth { barWindow: bar }
-                    ActionMenu { barWindow: bar }
-                    PowerMenu { barWindow: bar }
+                    Bluetooth {}
+                    ActionMenu {}
+                    PowerMenu {}
                 }
             }
 
