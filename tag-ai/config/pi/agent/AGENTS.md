@@ -49,6 +49,7 @@
 - Do not commit, push, rebase, reset, amend, or otherwise modify Git history unless explicitly requested.
 - Do not create or switch branches or worktrees unless explicitly requested.
 - Use Git primarily to inspect history, provenance, and the resulting diff.
+- Never stage or unstage files, or otherwise modify the Git index, unless explicitly requested by the user.
 
 ## Validation
 

@@ -7,6 +7,7 @@
   "showCacheMissNotices": true,
   "packages": [
     "npm:pi-web-access",
-    "npm:@upstash/context7-pi"
+    "npm:@upstash/context7-pi",
+    "npm:pi-keep-going"
   ]
 }
