@@ -1,0 +1,184 @@
+#!/bin/sh
+set -eu
+
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/pi"
+bun_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/bpi/bun"
+nvim_data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/nvim"
+nvim_state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/nvim"
+nvim_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/nvim"
+go_pkg_dir="$HOME/dev/go/pkg"
+go_build_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/go-build"
+dotfiles_dir="$HOME/.dotfiles"
+
+sandbox_runtime_dir="/run/user/$(id -u)"
+sandbox_home="/home/$(id -un)"
+
+usage() {
+	cat <<EOF
+Usage: bpi [ro] [--] [pi args...]
+
+Run gpkg-managed pi in a Bubblewrap sandbox. The current working directory is
+mounted at its original path. Pass ro to mount it read-only. The host
+~/.config/pi/agent is mounted writable at ~/.pi/agent. All remaining arguments
+are passed to pi; -- is optional.
+EOF
+}
+
+die() {
+	printf 'error: %s\n' "$*" >&2
+	exit 1
+}
+
+validate() {
+	command -v bwrap >/dev/null 2>&1 || die "bwrap is required"
+
+	workspace="$(realpath "${PWD:-.}")" || die "current working directory does not exist"
+	[ -d "$workspace" ] || die "'$workspace' is not a directory"
+	[ -d "$config_dir/agent" ] || die "Pi agent directory not found at $config_dir/agent"
+
+	pi_link="$HOME/.local/bin/pi"
+	[ -L "$pi_link" ] && [ "$(readlink "$pi_link")" = "$HOME/.cache/gpkg/pi/pi" ] ||
+		die "install pi with gpkg first"
+	pi_path="$(realpath "$pi_link")" || die "unable to resolve pi: $pi_link"
+	[ -x "$pi_path" ] || die "pi is not executable: $pi_path"
+	pi_dir="$(dirname "$pi_path")"
+
+	bun_path="$(command -v bun)" || die "bun is required"
+	bun_path="$(realpath "$bun_path")" || die "unable to resolve bun"
+	[ -x "$bun_path" ] || die "bun is not executable: $bun_path"
+}
+
+prepare_mounts() {
+	mkdir -p \
+		"$bun_cache_dir" \
+		"$nvim_data_dir" \
+		"$nvim_state_dir" \
+		"$nvim_cache_dir" \
+		"$go_pkg_dir" \
+		"$go_build_cache_dir"
+
+	workspace_mount=--bind
+	[ "$ro_mode" -eq 0 ] || workspace_mount=--ro-bind
+
+	dotfiles_mount=--ro-bind
+	dotfiles_workspace="$(realpath "$dotfiles_dir" 2>/dev/null)" || dotfiles_workspace=
+	[ "$workspace" != "$dotfiles_workspace" ] || dotfiles_mount="$workspace_mount"
+}
+
+build_path() {
+	sandbox_path=
+	remaining_path="${PATH:-}:"
+	while [ -n "$remaining_path" ]; do
+		entry="${remaining_path%%:*}"
+		remaining_path="${remaining_path#*:}"
+		case "$entry" in /*) ;; *) continue ;; esac
+		[ -d "$entry" ] || continue
+		case ":$sandbox_path:" in *":$entry:"*) continue ;; esac
+		sandbox_path="${sandbox_path:+$sandbox_path:}$entry"
+	done
+	[ -n "$sandbox_path" ] || die "PATH has no existing absolute directories"
+}
+
+launch() {
+	# Mount the workspace last so its read-only mode takes precedence over
+	# other mounts inside it, without exposing its host parent directories.
+	set -- \
+		"$workspace_mount" "$workspace" "$workspace" \
+		--chdir "$workspace" \
+		-- /opt/pi/pi "$@"
+
+	set -- \
+		--dir /opt \
+		--dir /opt/pi \
+		--ro-bind "$pi_dir" /opt/pi \
+		--ro-bind "$bun_path" "$bun_path" \
+		--dir /home \
+		--dir "$sandbox_home" \
+		--dir "$sandbox_home/.config" \
+		--dir "$sandbox_home/.local" \
+		--dir "$sandbox_home/.local/share" \
+		--dir "$sandbox_home/.local/state" \
+		--dir "$sandbox_home/.cache" \
+		--dir "$sandbox_home/dev" \
+		--dir "$sandbox_home/dev/go" \
+		--dir "$sandbox_home/.pi" \
+		--bind "$config_dir/agent" "$sandbox_home/.pi/agent" \
+		--ro-bind "$config_dir" "$sandbox_home/.config/pi" \
+		"$dotfiles_mount" "$dotfiles_dir" "$sandbox_home/.dotfiles" \
+		--ro-bind "$HOME/.cache/gpkg" "$sandbox_home/.cache/gpkg" \
+		--ro-bind "$HOME/.config/nvim" "$sandbox_home/.config/nvim" \
+		--bind "$go_pkg_dir" "$sandbox_home/dev/go/pkg" \
+		--bind "$nvim_data_dir" "$sandbox_home/.local/share/nvim" \
+		--bind "$nvim_state_dir" "$sandbox_home/.local/state/nvim" \
+		--bind "$nvim_cache_dir" "$sandbox_home/.cache/nvim" \
+		--bind "$go_build_cache_dir" "$sandbox_home/.cache/go-build" \
+		--bind "$bun_cache_dir" "$sandbox_home/.cache/bun" \
+		"$@"
+
+	remaining_path="$sandbox_path:"
+	while [ -n "$remaining_path" ]; do
+		entry="${remaining_path%%:*}"
+		remaining_path="${remaining_path#*:}"
+		# These are already available through the system mounts below.
+		case "$entry" in
+			/usr | /usr/* | /bin | /bin/* | /sbin | /sbin/* | /lib | /lib/* | /lib64 | /lib64/* | /etc | /etc/*) continue ;;
+		esac
+		set -- --ro-bind "$entry" "$entry" "$@"
+	done
+
+	exec bwrap \
+		--die-with-parent \
+		--unshare-all \
+		--share-net \
+		--new-session \
+		--ro-bind /usr /usr \
+		--ro-bind /bin /bin \
+		--ro-bind /sbin /sbin \
+		--ro-bind /lib /lib \
+		--ro-bind /lib64 /lib64 \
+		--ro-bind /etc /etc \
+		--proc /proc \
+		--dev /dev \
+		--tmpfs /tmp \
+		--dir /run \
+		--dir /run/user \
+		--perms 0700 --dir "$sandbox_runtime_dir" \
+		--clearenv \
+		--setenv HOME "$sandbox_home" \
+		--setenv XDG_RUNTIME_DIR "$sandbox_runtime_dir" \
+		--setenv PATH "$sandbox_path" \
+		--setenv XDG_CONFIG_HOME "$sandbox_home/.config" \
+		--setenv XDG_DATA_HOME "$sandbox_home/.local/share" \
+		--setenv XDG_STATE_HOME "$sandbox_home/.local/state" \
+		--setenv XDG_CACHE_HOME "$sandbox_home/.cache" \
+		--setenv EDITOR nvim \
+		--setenv GOPATH "$sandbox_home/dev/go" \
+		--setenv GOBIN "$sandbox_home/dev/go/bin" \
+		--setenv BUN_INSTALL_CACHE_DIR "$sandbox_home/.cache/bun" \
+		--setenv LANG C.UTF-8 \
+		--setenv LC_ALL C.UTF-8 \
+		--setenv TERM "${TERM:-xterm-256color}" \
+		--setenv COLORTERM "${COLORTERM:-truecolor}" \
+		"$@"
+}
+
+run() {
+	ro_mode=0
+	if [ "${1:-}" = ro ]; then
+		ro_mode=1
+		shift
+	fi
+	if [ "${1:-}" = -- ]; then
+		shift
+	fi
+
+	validate
+	prepare_mounts
+	build_path
+	launch "$@"
+}
+
+case "${1:-}" in
+	help | -h | --help) usage ;;
+	*) run "$@" ;;
+esac

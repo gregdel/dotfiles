@@ -1,0 +1,43 @@
+# vim: ft=sh :
+
+version=0.87.1
+cache_dir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
+bin_path="$HOME/.local/bin/pi"
+cli_path="node_modules/@earendil-works/pi-coding-agent/dist/bundle/cli.js"
+
+_gpkg_version() {
+	echo "$version"
+}
+
+_gpkg_install() {
+	command -v bun >/dev/null 2>&1 || _gpkg_log_error "bun is required to install pi"
+	if [ -e "$bin_path" ] || [ -L "$bin_path" ]; then
+		case "$(readlink "$bin_path")" in
+		"$cache_dir/pi"|"$cache_dir/pi/pi") ;;
+		*) _gpkg_log_error "Not replacing unmanaged $bin_path" ;;
+		esac
+	fi
+
+	stage_dir="$(mktemp -d "$GPKG_BUILD_DIR/$GPKG_PKG_NAME.XXXXXXXX")" || _gpkg_log_error "Failed to create pi install directory"
+	trap 'rm -rf "$stage_dir"' 0
+	printf '{"private":true}\n' > "$stage_dir/package.json"
+	(cd "$stage_dir" && bun add --exact --ignore-scripts "@earendil-works/pi-coding-agent@$version") || _gpkg_log_error "Failed to install pi with bun"
+	[ -f "$stage_dir/$cli_path" ] || _gpkg_log_error "pi CLI not found after install"
+	cp "$GPKG_PKG_DIR/$GPKG_PKG_NAME/pi" "$stage_dir/pi" || _gpkg_log_error "Failed to copy pi launcher"
+	chmod +x "$stage_dir/pi" || _gpkg_log_error "Failed to make pi launcher executable"
+
+	_gpkg_uninstall
+	mv "$stage_dir" "$cache_dir" || _gpkg_log_error "Failed to move pi into place"
+	trap - 0
+	mkdir -p "$HOME/.local/bin" || _gpkg_log_error "Failed to create bin directory"
+	ln -s "$cache_dir/pi" "$bin_path" || _gpkg_log_error "Failed to link pi"
+}
+
+_gpkg_uninstall() {
+	if [ -L "$bin_path" ]; then
+		case "$(readlink "$bin_path")" in
+		"$cache_dir/pi"|"$cache_dir/pi/pi") rm "$bin_path" ;;
+		esac
+	fi
+	rm -rf "$cache_dir"
+}

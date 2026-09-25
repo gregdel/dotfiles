@@ -5,10 +5,13 @@ ARG GID
 ARG USER
 ARG HOME
 
+ARG BUN_VERSION=1.4.2
+ARG BUN_SHA256=4835eca59d6da70f4674f5642f6e459dcadab773695b2ed9922d131057989742
+
 RUN apk add --no-cache \
         nodejs npm \
         bash ca-certificates git \
-        curl jq ripgrep fd \
+        curl jq ripgrep fd unzip \
         shellcheck shfmt \
         go gopls golangci-lint \
         neovim fzf \
@@ -18,6 +21,12 @@ RUN apk add --no-cache \
     && addgroup -g "$GID" "$USER" \
     && adduser -D -u "$UID" -G "$USER" -s /bin/sh -h "$HOME" "$USER" \
     && HOME=/root npm install -g --ignore-scripts @earendil-works/pi-coding-agent yaml@2.9.0
+
+RUN curl -fsSL "https://github.com/oven-sh/bun/releases/download/bun-v${BUN_VERSION}/bun-linux-x64-musl.zip" -o /tmp/bun.zip \
+    && echo "${BUN_SHA256}  /tmp/bun.zip" | sha256sum -c - \
+    && unzip -q /tmp/bun.zip -d /opt \
+    && ln -s /opt/bun-linux-x64-musl/bun /usr/local/bin/bun \
+    && rm /tmp/bun.zip
 
 USER "$USER"
 ENV HOME="$HOME"

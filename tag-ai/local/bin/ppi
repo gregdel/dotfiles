@@ -5,7 +5,6 @@ container_image="${PPI_IMAGE:-localhost/pi-coding-agent:alpine}"
 dockerfile="$HOME/.config/ppi/Dockerfile-base"
 
 config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/pi"
-state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/ppi/pi-agent"
 dotfiles_dir="$HOME/.dotfiles"
 
 uid="$(id -u)"
@@ -34,9 +33,9 @@ usage() {
 Usage: ppi [ro] [podman run options...] [-- [pi args...]]
 
 Run the pi coding agent in a container. The current working directory is
-mounted as the workspace. Arguments before -- are passed to podman run;
-arguments after -- are passed to pi. If -- is omitted, all arguments are
-passed to podman run.
+mounted as the workspace. The host Pi agent directory is mounted writable.
+Arguments before -- are passed to podman run; arguments after -- are passed
+to pi. If -- is omitted, all arguments are passed to podman run.
 
 Commands:
   setup                Build the container image from the Dockerfile
@@ -79,7 +78,10 @@ run() {
 	workspace_name="$(basename "$workspace" | sed 's/[^A-Za-z0-9_.-]/-/g')"
 	container_name="pi-dev-${workspace_name}-$$"
 
-	mkdir -p "$config_dir" "$state_dir"
+	[ -d "$config_dir/agent" ] || {
+		echo "error: Pi agent directory not found at $config_dir/agent" >&2
+		exit 1
+	}
 
 	workspace_mount="$workspace:$workspace:z"
 	if [ "$ro_mode" -eq 1 ]; then
@@ -122,13 +124,7 @@ run() {
 		-e LC_ALL=C.UTF-8 \
 		-e "TERM=${TERM:-xterm-256color}" \
 		-e "COLORTERM=${COLORTERM:-truecolor}" \
-		-v "$state_dir:$home/.pi/agent:z" \
-		-v "$config_dir:$home/.config/pi:ro,z" \
-		-v "$config_dir/agent/settings.json:$home/.pi/agent/settings.json:ro,z" \
-		-v "$config_dir/agent/models.json:$home/.pi/agent/models.json:ro,z" \
-		-v "$config_dir/agent/AGENTS.md:$home/.pi/agent/AGENTS.md:ro,z" \
-		-v "$config_dir/agent/prompts:$home/.pi/agent/prompts:ro,z" \
-		-v "$config_dir/agent/extensions:$home/.pi/agent/extensions:ro,z" \
+		-v "$config_dir/agent:$home/.pi/agent:z" \
 		-v "$HOME/.config/nvim:$home/.config/nvim:ro,z" \
 		-v "$HOME/dev/go/pkg/:$home/dev/go/pkg:z" \
 		-v "${XDG_DATA_HOME:-$HOME/.local/share}/nvim:$home/.local/share/nvim:z" \

@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+
+pi_dir="$(dirname "$(realpath "$0")")"
+exec bun --bun run "$pi_dir/node_modules/@earendil-works/pi-coding-agent/dist/bundle/cli.js" "$@"

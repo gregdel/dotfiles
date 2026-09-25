@@ -1,6 +1,7 @@
 {
   "defaultProjectTrust": "ask",
   "enableInstallTelemetry": false,
+  "npmCommand": ["bun"],
   "defaultProvider": "llama.cpp",
   "defaultModel": "qwen3.6-35b-a3b",
   "defaultThinkingLevel": "high",
@@ -9,5 +10,7 @@
     "npm:pi-web-access",
     "npm:@upstash/context7-pi",
     "npm:pi-keep-going"
-  ]
+  ],
+  "lastChangelogVersion": "0.87.1",
+  "theme": "dark"
 }

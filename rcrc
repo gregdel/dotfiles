@@ -2,7 +2,7 @@
 # shellcheck disable=2034
 
 EXCLUDES="README.md install.sh"
-SYMLINK_DIRS="vim nvim oh-my-zsh mutt awesome urxvt tmux gpkg.d"
+SYMLINK_DIRS="vim nvim oh-my-zsh mutt awesome urxvt tmux gpkg.d prompts"
 TAGS="gpkg"
 
 read -r hostname < /etc/hostname

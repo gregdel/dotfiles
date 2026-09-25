@@ -1,58 +1,28 @@
 ---
-description: Review all current Git changes and write .pi/review.md
+description: Review staged changes or a requested Git change
+argument-hint: "[what to review]"
 ---
 
-Review all task-relevant changes in the current Git working tree and write the
-result to `.pi/review.md`.
+Review only. Do not modify files, the Git index, or history.
 
-The only permitted repository change is creating or overwriting
-`.pi/review.md`. Do not modify implementation, test, configuration,
-documentation, `.pi/plan.md`, staging state, or Git history.
+Requested scope: $ARGUMENTS
 
-First read the project's `AGENTS.md` files and verify that the working directory
-is a Git repository with a valid `HEAD`. Then inspect:
+If a scope is requested, review it instead of staged changes. Interpret plain
+language using the repository: "the last commit" means `git show HEAD`, and
+"the diff from master" means `git diff master...HEAD` (changes on the current
+branch since the common ancestor). Ask if the target or direction is unclear.
 
-- `git status --short`;
-- all staged and unstaged tracked changes versus `HEAD`;
-- every relevant untracked file;
-- the surrounding implementation, interfaces, and tests needed to validate the
-  changed behavior.
+Without a request, review `git diff --cached`. If it is empty, ask me what to
+review instead: the last commit, the diff from master, or another commit or
+branch comparison. In an interactive TUI, use `ask_question`; otherwise ask in
+plain text. Wait for my answer rather than guessing.
 
-Exclude `.pi/plan.md` and `.pi/review.md` from the review scope. Do not exclude a
-file merely because it is untracked. Avoid reviewing unrelated generated,
-vendored, ignored, or third-party content.
+Review only the selected changes. Inspect relevant surrounding code and tests
+as needed, but do not include unrelated unstaged or untracked changes. When
+reviewing staged changes, use the index version rather than newer working-tree
+edits to assess findings.
 
-Record only concrete, actionable defects introduced or exposed by the current
-changes, including correctness bugs, regressions, security problems, material
-error-handling gaps, and missing validation that materially affects behavior.
-Verify each finding against the repository. Omit style preferences, praise,
-speculation, and optional refactors.
-
-Create `.pi/` if necessary, then overwrite `.pi/review.md` using this format:
-
-```markdown
-# Review
-
-## Scope
-- Base: HEAD
-- Files: path/to/file, ...
-
-## Verdict
-clean | findings
-
-## Findings
-
-### P0 | P1 | P2 — Short title
-- Location: path/to/file:line
-- Problem: What is wrong and under what conditions.
-- Impact: Why it materially matters.
-- Recommended fix: The smallest correct remediation.
-```
-
-Use P0 for critical/blocking defects, P1 for serious defects, and P2 for other
-material defects. Order findings by priority. If there are no actionable
-findings, write `clean` as the verdict and `No actionable findings.` under
-`## Findings`.
-
-Finish with a concise confirmation that `.pi/review.md` was written and state
-the verdict. Do not duplicate the full review in the response.
+Report only concrete, actionable defects introduced by the selected changes,
+ordered by severity. Give each finding a file and line, its impact, and a
+concise fix. State the scope reviewed; if there are no actionable findings,
+say so. Do not write a review file.
