@@ -169,14 +169,14 @@ export default function subagents(pi: ExtensionAPI): void {
 	}
 
 	function flush(): void {
-		if (!alive || !parent?.isIdle()) return;
+		if (!alive || !parent) return;
 		for (const item of pendingResults.splice(0)) {
 			pi.sendMessage({
 				customType: "subagent-result",
 				content: `[${item.name}${item.profile ? ` · ${item.profile}` : ""} · ${item.model} · ${item.thinking} · run ${item.run}]\n\n${item.text}`,
 				display: true,
 				details: { name: item.name, ...(item.profile ? { profile: item.profile } : {}), model: item.model, thinking: item.thinking, run: item.run },
-			}, { triggerTurn: false });
+			}, { triggerTurn: true });
 		}
 	}
 
@@ -300,7 +300,6 @@ export default function subagents(pi: ExtensionAPI): void {
 		alive = true;
 		changed();
 	});
-	pi.on("agent_settled", () => { flush(); });
 	pi.on("session_shutdown", async (_event, ctx) => {
 		alive = false;
 		ctx.ui.setStatus("subagents", undefined);
