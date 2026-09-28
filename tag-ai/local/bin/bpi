@@ -15,12 +15,13 @@ sandbox_home="/home/$(id -un)"
 
 usage() {
 	cat <<EOF
-Usage: bpi [ro] [--] [pi args...]
+Usage: bpi [ro] [--mount /absolute/path:ro|rw ...] [--] [pi args...]
 
 Run gpkg-managed pi in a Bubblewrap sandbox. The current working directory is
-mounted at its original path. Pass ro to mount it read-only. The host
-~/.config/pi/agent is mounted writable at ~/.pi/agent. All remaining arguments
-are passed to pi; -- is optional.
+mounted at its original path. Pass ro to mount it read-only. Repeat --mount to
+expose additional directories at their original paths, read-only (:ro) or
+writable (:rw). The host ~/.config/pi/agent is mounted writable at ~/.pi/agent.
+All remaining arguments are passed to pi; -- is optional.
 EOF
 }
 
@@ -46,6 +47,24 @@ validate() {
 	bun_path="$(command -v bun)" || die "bun is required"
 	bun_path="$(realpath "$bun_path")" || die "unable to resolve bun"
 	[ -x "$bun_path" ] || die "bun is not executable: $bun_path"
+}
+
+add_mount() {
+	case "$1" in
+	/*:ro | /*:rw) ;;
+	*) die "mount must be an absolute directory followed by :ro or :rw: $1" ;;
+	esac
+
+	mount_path="${1%:*}"
+	[ -d "$mount_path" ] || die "mount directory does not exist: $mount_path"
+	mount_path="$(realpath "$mount_path")" || die "unable to resolve mount: $mount_path"
+	case "$mount_path" in
+	*'
+'*) die "mount path must not contain a newline" ;;
+	esac
+	# Store in reverse order; launch prepends each mount to the bwrap arguments.
+	extra_mounts="$mount_path:${1##*:}
+$extra_mounts"
 }
 
 prepare_mounts() {
@@ -86,6 +105,17 @@ launch() {
 		"$workspace_mount" "$workspace" "$workspace" \
 		--chdir "$workspace" \
 		-- /opt/pi/pi "$@"
+
+	while [ -n "$extra_mounts" ]; do
+		mount="${extra_mounts%%'
+'*}"
+		extra_mounts="${extra_mounts#*'
+'}"
+		mount_path="${mount%:*}"
+		mount_option=--bind
+		[ "${mount##*:}" != ro ] || mount_option=--ro-bind
+		set -- "$mount_option" "$mount_path" "$mount_path" "$@"
+	done
 
 	set -- \
 		--dir /opt \
@@ -164,13 +194,25 @@ launch() {
 
 run() {
 	ro_mode=0
+	extra_mounts=
 	if [ "${1:-}" = ro ]; then
 		ro_mode=1
 		shift
 	fi
-	if [ "${1:-}" = -- ]; then
-		shift
-	fi
+	while [ "$#" -gt 0 ]; do
+		case "$1" in
+		--mount)
+			[ "$#" -ge 2 ] || die "--mount requires /absolute/path:ro or :rw"
+			add_mount "$2"
+			shift 2
+			;;
+		--)
+			shift
+			break
+			;;
+		*) break ;;
+		esac
+	done
 
 	validate
 	prepare_mounts
