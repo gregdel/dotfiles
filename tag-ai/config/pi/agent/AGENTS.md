@@ -20,6 +20,13 @@
 - Do not perform unrelated cleanup, refactoring, formatting, or dependency upgrades. Do not modify generated, vendored, or third-party files unless the task explicitly requires it.
 - For scripts, prefer portable `sh` (use `local` only when the target shell supports it). Avoid Python or Bash unless the project, task, or existing tooling requires them.
 
+## Documentation
+
+- Treat README files as carefully curated, human-facing documents. Do not update them unless explicitly requested; adding a feature does not imply a documentation task.
+- Do not document features or implementation details merely for future agents. Agents should discover these by searching and reading the code.
+- Record durable, non-obvious knowledge that will materially help future agents in the nearest applicable repository-local `AGENTS.md`, not the README. Keep it concise and scoped to that directory.
+- Do not turn `AGENTS.md` into a feature inventory, changelog, task log, or duplicate of information readily discoverable in code.
+
 ## Git
 
 - Use Git primarily to inspect history, provenance, and the resulting diff. Do not discard or rewrite unrelated changes.

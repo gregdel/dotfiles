@@ -1,16 +1,20 @@
 {
   "defaultProjectTrust": "ask",
   "enableInstallTelemetry": false,
-  "npmCommand": ["bun"],
-  "defaultProvider": "llama.cpp",
-  "defaultModel": "qwen3.6-35b-a3b",
+  "npmCommand": [
+    "bun"
+  ],
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "high",
   "showCacheMissNotices": true,
   "packages": [
+    "~/dev/pi",
     "npm:pi-web-access",
     "npm:@upstash/context7-pi",
     "npm:pi-keep-going"
   ],
-  "lastChangelogVersion": "0.87.1",
-  "theme": "dark"
+  "lastChangelogVersion": "1.4.0",
+  "theme": "dark",
+  "tuiMode": "regular"
 }

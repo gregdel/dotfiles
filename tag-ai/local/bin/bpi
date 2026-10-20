@@ -9,6 +9,7 @@ nvim_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/nvim"
 go_pkg_dir="$HOME/dev/go/pkg"
 go_build_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/go-build"
 dotfiles_dir="$HOME/.dotfiles"
+pi_package_dir="$HOME/dev/pi"
 
 sandbox_runtime_dir="/run/user/$(id -u)"
 sandbox_home="/home/$(id -un)"
@@ -36,6 +37,7 @@ validate() {
 	workspace="$(realpath "${PWD:-.}")" || die "current working directory does not exist"
 	[ -d "$workspace" ] || die "'$workspace' is not a directory"
 	[ -d "$config_dir/agent" ] || die "Pi agent directory not found at $config_dir/agent"
+	[ -f "$pi_package_dir/package.json" ] || die "Pi package not found at $pi_package_dir"
 
 	pi_link="$HOME/.local/bin/pi"
 	[ -L "$pi_link" ] && [ "$(readlink "$pi_link")" = "$HOME/.cache/gpkg/pi/pi" ] ||
@@ -135,6 +137,7 @@ launch() {
 		--bind "$config_dir/agent" "$sandbox_home/.pi/agent" \
 		--ro-bind "$config_dir" "$sandbox_home/.config/pi" \
 		"$dotfiles_mount" "$dotfiles_dir" "$sandbox_home/.dotfiles" \
+		--ro-bind "$pi_package_dir" "$sandbox_home/dev/pi" \
 		--ro-bind "$HOME/.cache/gpkg" "$sandbox_home/.cache/gpkg" \
 		--ro-bind "$HOME/.config/nvim" "$sandbox_home/.config/nvim" \
 		--bind "$go_pkg_dir" "$sandbox_home/dev/go/pkg" \

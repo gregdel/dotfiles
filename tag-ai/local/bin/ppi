@@ -6,6 +6,7 @@ dockerfile="$HOME/.config/ppi/Dockerfile-base"
 
 config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/pi"
 dotfiles_dir="$HOME/.dotfiles"
+pi_package_dir="$HOME/dev/pi"
 
 uid="$(id -u)"
 gid="$(id -g)"
@@ -83,6 +84,12 @@ run() {
 		exit 1
 	}
 
+	[ -f "$pi_package_dir/package.json" ] || {
+		echo "error: Pi package not found at $pi_package_dir" >&2
+		exit 1
+	}
+	pi_package_workspace="$(realpath "$pi_package_dir")"
+
 	workspace_mount="$workspace:$workspace:z"
 	if [ "$ro_mode" -eq 1 ]; then
 		workspace_mount="$workspace:$workspace:ro,z"
@@ -103,7 +110,14 @@ run() {
 		shift
 	fi
 
+	set -- "$container_image" "$@"
 	# Extra Podman arguments are intentionally limited to simple shell words.
+	# shellcheck disable=SC2086
+	set -- -v "$workspace_mount" --workdir "$workspace" $podman_args "$@"
+	if [ "$workspace" != "$pi_package_workspace" ]; then
+		set -- -v "$pi_package_dir:$home/dev/pi:ro,z" "$@"
+	fi
+
 	# shellcheck disable=SC2086
 	exec podman run \
 		--interactive \
@@ -132,10 +146,6 @@ run() {
 		-v "${XDG_CACHE_HOME:-$HOME/.cache}/nvim:$home/.cache/nvim:z" \
 		-v "${XDG_CACHE_HOME:-$HOME/.cache}/go-build:$home/.cache/go-build:z" \
 		$dotfiles_args \
-		-v "$workspace_mount" \
-		--workdir "$workspace" \
-		$podman_args \
-		"$container_image" \
 		"$@"
 }
 

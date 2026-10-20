@@ -1,6 +1,6 @@
 # vim: ft=sh :
 
-version=0.87.1
+version=1.4.0
 cache_dir="$GPKG_BUILD_DIR/$GPKG_PKG_NAME"
 bin_path="$HOME/.local/bin/pi"
 cli_path="node_modules/@earendil-works/pi-coding-agent/dist/bundle/cli.js"

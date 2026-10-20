@@ -1,26 +1,3 @@
 {
-  "providers": {
-    "llama.cpp": {
-      "modelOverrides": {
-        "qwen3.8-27b": {
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "off": "none",
-            "minimal": null,
-            "low": "low",
-            "medium": "medium",
-            "high": "xhigh",
-            "xhigh": null,
-            "max": null
-          },
-          "contextWindow": 131072,
-          "maxTokens": 32768,
-          "compat": {
-            "supportsReasoningEffort": true,
-            "thinkingFormat": "reasoning_effort"
-          }
-        }
-      }
-    }
-  }
+  "providers": {}
 }
