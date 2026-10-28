@@ -1,0 +1,61 @@
+#!/bin/sh
+
+_die() {
+	printf 'steam-session-remote: %s\n' "$*" >&2
+	exit 1
+}
+
+case "$#:${1:-}" in
+	1:monitor|1:tv) ;;
+	1:--help)
+		echo "Usage: ${0##*/} {monitor|tv}"
+		echo "Start Steam on tty8 from SSH; run as your normal Steam user."
+		echo "Switches the physical display away from the current desktop."
+		echo "Logs: journalctl -u steam-session.service -f"
+		echo "Stop: sudo systemctl stop steam-session.service"
+		exit 0
+		;;
+	*)
+		echo "Usage: ${0##*/} {monitor|tv}" >&2
+		exit 2
+		;;
+esac
+
+[ "$(id -u)" -ne 0 ] || _die "Run as your normal Steam user, without sudo."
+for command in sudo systemd-run systemctl loginctl chvt; do
+	command -v "$command" >/dev/null 2>&1 || _die "Missing command: $command"
+done
+
+launcher="$HOME/.local/bin/steam-session"
+[ -x "$launcher" ] || _die "Missing executable: $launcher"
+
+# Reserve tty8 for this launcher; never take over an existing login session.
+sessions=$(loginctl show-seat seat0 --property=Sessions --value) ||
+	_die "Cannot query local seat sessions."
+for session in $sessions; do
+	tty=$(loginctl show-session "$session" --property=TTY --value) ||
+		_die "Cannot query session $session."
+	[ "$tty" != tty8 ] || _die "tty8 is occupied by session $session."
+done
+
+# PAM registers a local logind session and supplies XDG_RUNTIME_DIR.
+# A system service avoids inheriting SSH/desktop display variables and survives logout.
+sudo systemd-run --unit=steam-session --collect \
+	--uid="$(id -un)" \
+	--property=PAMName=login \
+	--property=TTYPath=/dev/tty8 \
+	--property=StandardInput=tty \
+	--property=StandardOutput=journal \
+	--property=StandardError=journal \
+	--working-directory="$HOME" \
+	--setenv=XDG_SESSION_TYPE=wayland \
+	"$launcher" "$1" || exit 1
+
+if ! sudo chvt 8; then
+	sudo systemctl stop steam-session.service
+	_die "Cannot activate tty8; requested Steam session shutdown."
+fi
+
+printf '%s\n' "Steam session launched on tty8; SSH can now disconnect." \
+	"Logs: journalctl -u steam-session.service -f" \
+	"Stop: sudo systemctl stop steam-session.service"

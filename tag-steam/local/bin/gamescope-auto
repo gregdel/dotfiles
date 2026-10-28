@@ -34,7 +34,7 @@ case "$capabilities" in
 		;;
 esac
 
-export ENABLE_GAMESCOPE_WSI=0
+export ENABLE_GAMESCOPE_WSI=1
 export GAMESCOPE_DISABLE_EXPLICIT_SYNC=1
 export MESA_VK_WSI_PRESENT_MODE=immediate
 
@@ -43,9 +43,6 @@ _notify "Starting gamescope with ${width}x${height}@${refresh}Hz"
 echo "w:$width h:$height r:$refresh cmd:$*" \
 	>> /tmp/gamescope-auto.log
 
-systemctl --user stop swayidle
-trap 'systemctl --user start swayidle' EXIT
-
 # Unset LD_PRELOAD for gamescope itself (Steam runtime libs break gamescope
 # rendering), then restore it for the game so Steam Input/overlay still work.
 # shellcheck disable=2153
@@ -53,6 +50,7 @@ ld_preload="$LD_PRELOAD"
 
 env -u LD_PRELOAD \
 gamemoderun gamescope \
+	--hdr-enabled \
 	--mangoapp \
 	--rt \
 	--xwayland-count 2 \
