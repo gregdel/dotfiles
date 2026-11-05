@@ -9,6 +9,14 @@ end
 
 require('lspconfig.ui.windows').default_options.border = border
 
+vim.lsp.config("zls", {
+  settings = {
+    zls = {
+      enable_build_on_save = true,
+    },
+  },
+})
+
 vim.lsp.enable({
   "clangd",
   "gopls",
