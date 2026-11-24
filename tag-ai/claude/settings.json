@@ -17,6 +17,9 @@
     "command": "$HOME/.claude/statusline.sh",
     "refreshInterval": 60
   },
+  "env": {
+    "DISABLE_ERROR_REPORTING": "1"
+  },
   "enabledPlugins": {
     "feature-dev@claude-plugins-official": true,
     "clangd-lsp@claude-plugins-official": true,
