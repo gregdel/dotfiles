@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Steam (Gamescope HDR)
+Comment=Run Steam Big Picture inside Gamescope on the focused output
+Icon=steam
+# Patched Gamescope (PR #2358) until HDR on Sway works upstream.
+Exec=sh -c "PATH=\\$HOME/dev/explore/gamescope/build/src:\\$PATH exec gamescope-steam --hdr"
+Terminal=false
+Categories=Game;
+Keywords=steam;gamescope;hdr;games;

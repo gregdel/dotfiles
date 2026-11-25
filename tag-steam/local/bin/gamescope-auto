@@ -15,24 +15,38 @@ _notify() {
 	notify-send -i sc-controller "gamescope-auto" "$@"
 }
 
-# Get the current width / height / refresh rate of the focused monitor.
-read -r width height refresh <<EOF
+# Get the current mode, name and HDR state of the focused monitor.
+read -r width height refresh output hdr <<EOF
 	$(swaymsg -t get_outputs |
-		jq -r '.[] | select(.focused) | .current_mode | "\(.width) \(.height) \(.refresh)"')
+		jq -r '.[] | select(.focused) |
+			"\(.current_mode.width) \(.current_mode.height) \(.current_mode.refresh) \(.name) \(.hdr)"')
 EOF
 refresh=$(( refresh / 1000 ))
 
+# Patched Gamescope (PR #2358) until HDR on Sway works upstream.
+gamescope_bin="$HOME/dev/explore/gamescope/build/src/gamescope"
+[ -x "$gamescope_bin" ] || gamescope_bin="$(command -v gamescope)"
+
 # To setup the --rt flag you need:
-# sudo setcap 'cap_sys_nice=eip' /usr/bin/gamescope
-gamescope_bin="$(which gamescope)"
+# sudo setcap 'cap_sys_nice=eip' "$gamescope_bin"
 capabilities="$(getcap "$gamescope_bin")"
 case "$capabilities" in
 	*cap_sys_nice=eip*) ;;
 	*)
-		_notify "Please set capabilities for gamescope"
+		_notify "Please set capabilities for $gamescope_bin"
 		exit 1
 		;;
 esac
+
+# Gamescope only exposes HDR when the parent output is in HDR mode. Enable it
+# for the game only (requires WLR_RENDERER=vulkan) and restore SDR on exit.
+restore_sdr=
+if [ "$hdr" != true ]; then
+	restore_sdr=1
+	swaymsg -q output "$output" hdr on || _notify "Could not enable HDR on $output"
+	trap 'swaymsg -q output "$output" hdr off' EXIT
+	trap 'exit 130' HUP INT TERM
+fi
 
 export ENABLE_GAMESCOPE_WSI=1
 export GAMESCOPE_DISABLE_EXPLICIT_SYNC=1
@@ -45,11 +59,13 @@ echo "w:$width h:$height r:$refresh cmd:$*" \
 
 # Unset LD_PRELOAD for gamescope itself (Steam runtime libs break gamescope
 # rendering), then restore it for the game so Steam Input/overlay still work.
+# Gamescope exports DXVK_HDR=0 before the nested window gets the HDR output's
+# description, so opt the game in explicitly.
 # shellcheck disable=2153
 ld_preload="$LD_PRELOAD"
 
-env -u LD_PRELOAD \
-gamemoderun gamescope \
+set -- env -u LD_PRELOAD \
+	gamemoderun "$gamescope_bin" \
 	--hdr-enabled \
 	--mangoapp \
 	--rt \
@@ -60,4 +76,20 @@ gamemoderun gamescope \
 	--output-height "$height" \
 	--nested-width "$width" \
 	--nested-height "$height" \
-	--fullscreen -- env LD_PRELOAD="$ld_preload" "$@"
+	--fullscreen -- env LD_PRELOAD="$ld_preload" DXVK_HDR=1 "$@"
+
+[ -n "$restore_sdr" ] || exec "$@"
+
+# Run Gamescope in the background so signals can be forwarded to it; a
+# foreground child would delay the traps until it exits on its own.
+"$@" &
+pid=$!
+trap 'kill "$pid" 2>/dev/null' HUP INT TERM
+wait "$pid"
+status=$?
+# A trapped signal interrupts wait; keep waiting until Gamescope has exited.
+while kill -0 "$pid" 2>/dev/null; do
+	wait "$pid"
+	status=$?
+done
+exit "$status"

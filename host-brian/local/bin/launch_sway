@@ -20,4 +20,7 @@ export XDG_CACHE_HOME="$HOME/.cache"
 # Electron/Chromium
 export OZONE_PLATFORM=wayland
 
+# Required for `output <name> hdr on` (used by gamescope-steam --hdr).
+export WLR_RENDERER=vulkan
+
 exec sway

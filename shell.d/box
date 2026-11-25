@@ -1,0 +1,6 @@
+# vim: ft=sh :
+
+[ -n "$ZSH_VERSION" ] || return 0
+_check_command box || return 0
+
+source <(box completion zsh)

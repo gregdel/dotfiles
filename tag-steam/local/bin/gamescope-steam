@@ -5,9 +5,10 @@ _die() {
 	exit 1
 }
 
+hdr=
 case "$#:${1:-}" in
 	0:) ;;
-	1:--hdr) set -- --hdr-enabled ;;
+	1:--hdr) hdr=1; set -- --hdr-enabled ;;
 	1:--help)
 		echo "Usage: ${0##*/} [--hdr]"
 		echo "Run Steam inside Gamescope on the focused Sway output."
@@ -39,9 +40,29 @@ mode=$(printf '%s\n' "$outputs" | jq -er '
 		.[0] | "\(.width) \(.height) \(.refresh / 1000 | floor)"
 	else error("No unique focused output with a valid mode") end
 ') || _die "Cannot determine the focused output mode."
+output=$(printf '%s\n' "$outputs" | jq -er '
+	[.[] | select(.active and .focused) | "\(.name) \(.hdr)"] |
+	if length == 1 then .[0] else error("No unique focused output") end
+') || _die "Cannot determine the focused output name."
 read -r width height refresh <<EOF
 $mode
 EOF
+read -r output output_hdr <<EOF
+$output
+EOF
+
+# Expose only the GPU driving the output to Vulkan clients, so games and
+# upscalers never pick an integrated GPU. Keep an explicit user choice.
+if [ -z "${MESA_VK_DEVICE_SELECT:-}" ]; then
+	for gpu in /sys/class/drm/card*-"$output"/device/device; do
+		[ -r "$gpu/vendor" ] && [ -r "$gpu/device" ] || continue
+		read -r vendor < "$gpu/vendor" && read -r device < "$gpu/device" &&
+			export MESA_VK_DEVICE_SELECT="${vendor#0x}:${device#0x}!"
+		break
+	done
+	[ -n "${MESA_VK_DEVICE_SELECT:-}" ] ||
+		printf 'gamescope-steam: cannot find the GPU driving %s\n' "$output" >&2
+fi
 
 state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/gamescope"
 mkdir -p "$state_dir" || _die "Cannot create $state_dir"
@@ -64,8 +85,9 @@ if command -v notify-send >/dev/null 2>&1; then
 	notify-send -i sc-controller gamescope-steam "Starting Steam at ${width}x${height}@${refresh} Hz" || :
 fi
 
-# The parent compositor controls physical HDR/VRR. Gamescope negotiates HDR
-# support and sets DXVK_HDR for its clients; never force support or use ITM.
+# The parent compositor controls physical HDR/VRR; never force support or use
+# ITM. Gamescope exports DXVK_HDR=0 at startup, before the nested window gets
+# the HDR output's description, so opt Steam's clients in explicitly.
 unset DXVK_HDR
 
 # Keep Sway's environment for Gamescope, but use Xwayland for Steam and its
@@ -87,10 +109,33 @@ set -- gamescope "$@" \
 		XDG_SESSION_DESKTOP=gamescope \
 		SDL_VIDEODRIVER=x11 SDL_VIDEO_DRIVER=x11 QT_QPA_PLATFORM=xcb \
 		ENABLE_GAMESCOPE_WSI=1 \
+		DXVK_HDR="${hdr:-0}" \
 		steam -gamepadui -steamos3 -steamdeck
 
 # GameMode is optional. Gamescope also falls back if realtime priority is unavailable.
 if command -v gamemoderun >/dev/null 2>&1; then
 	set -- gamemoderun "$@"
 fi
-exec "$@" >> "$log" 2>&1
+
+[ -n "$hdr" ] && [ "$output_hdr" != true ] || exec "$@" >> "$log" 2>&1
+
+# Gamescope only exposes HDR when the parent output is in HDR mode. Enable it
+# for the session only (requires WLR_RENDERER=vulkan) and restore SDR on exit.
+swaymsg -q output "$output" hdr on ||
+	printf 'gamescope-steam: could not enable HDR on %s\n' "$output" >&2
+trap 'swaymsg -q output "$output" hdr off' EXIT
+trap 'exit 130' HUP INT TERM
+
+# Run Gamescope in the background so signals can be forwarded to it; a
+# foreground child would delay the traps until it exits on its own.
+"$@" >> "$log" 2>&1 &
+pid=$!
+trap 'kill "$pid" 2>/dev/null' HUP INT TERM
+wait "$pid"
+status=$?
+# A trapped signal interrupts wait; keep waiting until Gamescope has exited.
+while kill -0 "$pid" 2>/dev/null; do
+	wait "$pid"
+	status=$?
+done
+exit "$status"
