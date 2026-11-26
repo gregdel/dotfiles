@@ -3,11 +3,10 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Bluetooth
 
-Item {
+BarSection {
     id: root
 
-    implicitWidth: btLabel.implicitWidth + 24
-    implicitHeight: Appearance.barHeight
+    clickable: true
 
     property var adapter: Bluetooth.defaultAdapter
     property bool btEnabled: adapter && adapter.enabled
@@ -22,140 +21,108 @@ Item {
         return count
     }
 
-    Text {
+    StatText {
         id: btLabel
-        anchors.centerIn: parent
         text: !root.btEnabled ? "󰂲" : (root.connectedCount > 0 ? "󰂱" : "󰂯")
-        color: root.connectedCount > 0 ? "#d0d0d0" : "#505050"
-        font.family: Appearance.barFontFamily
+        color: root.connectedCount > 0 ? Appearance.textColor : Appearance.inactiveColor
         font.pixelSize: Appearance.barFontSize
     }
 
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: btPopup.visible = !btPopup.visible
-    }
+    popup: BarPopup {
+        cardWidth: 220
+        spacing: 2
 
-    PopupWindow {
-        id: btPopup
-        visible: false
+        Item {
+            width: parent.width
+            implicitHeight: 32
 
-        anchor.item: root
-        anchor.edges: Edges.Bottom
-        anchor.gravity: Edges.Bottom
+            PopupHeading {
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width - toggle.width - 12
+                title: "Bluetooth"
+                detail: !root.btEnabled ? "off"
+                    : root.connectedCount > 0 ? root.connectedCount + " connected"
+                    : ""
+            }
 
-        implicitWidth: 220
-        implicitHeight: btCol.implicitHeight + 16
-        color: "transparent"
+            Rectangle {
+                id: toggle
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                width: 44
+                height: 24
+                radius: 12
+                color: root.btEnabled ? Appearance.accentColor : Appearance.inactiveColor
 
-        HoverHandler {
-            onHoveredChanged: if (!hovered) btPopup.visible = false
+                Rectangle {
+                    width: 20
+                    height: 20
+                    radius: 10
+                    color: Appearance.textColor
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: root.btEnabled ? parent.width - width - 2 : 2
+                    Behavior on x { NumberAnimation { duration: 150 } }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        if (root.adapter)
+                            root.adapter.enabled = !root.adapter.enabled
+                    }
+                }
+            }
         }
 
-        Rectangle {
-            anchors.fill: parent
-            color: Appearance.popupBackground
-            radius: Appearance.popupRadius
-            antialiasing: true
-            clip: true
-            border.width: 1
-            border.color: Appearance.popupBorder
+        Repeater {
+            model: root.adapter && root.adapter.devices ? root.adapter.devices : null
 
-            Column {
-                id: btCol
-                anchors {
-                    top: parent.top
-                    left: parent.left
-                    right: parent.right
-                    margins: 8
-                }
-                spacing: 4
+            Rectangle {
+                required property var modelData
+                required property int index
+
+                visible: modelData.paired || modelData.connected
+                width: parent.width
+                height: 38
+                color: deviceMouse.containsMouse ? Appearance.hoverBackground : "transparent"
+                Behavior on color { ColorAnimation { duration: Appearance.hoverDuration } }
+                radius: 6
 
                 RowLayout {
-                    width: parent.width
-                    height: 32
+                    anchors {
+                        fill: parent
+                        leftMargin: 10
+                        rightMargin: 10
+                    }
+                    spacing: 8
 
                     Text {
-                        text: "Bluetooth"
-                        color: "#d0d0d0"
-                        font.family: "monospace"
-                        font.pixelSize: 14
-                        font.bold: true
-                        Layout.fillWidth: true
+                        text: modelData.connected ? "●" : "○"
+                        color: modelData.connected ? Appearance.accentColor : Appearance.inactiveColor
+                        font.family: Appearance.fontFamily
+                        font.pixelSize: 12
+                        horizontalAlignment: Text.AlignHCenter
+                        Layout.preferredWidth: 14
                     }
 
-                    Rectangle {
-                        width: 44
-                        height: 24
-                        radius: 12
-                        color: root.btEnabled ? "#c4a000" : "#505050"
-
-                        Rectangle {
-                            width: 20
-                            height: 20
-                            radius: 10
-                            color: "#d0d0d0"
-                            anchors.verticalCenter: parent.verticalCenter
-                            x: root.btEnabled ? parent.width - width - 2 : 2
-                            Behavior on x { NumberAnimation { duration: 150 } }
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                if (root.adapter)
-                                    root.adapter.enabled = !root.adapter.enabled
-                            }
-                        }
+                    Text {
+                        text: modelData.name || modelData.deviceName
+                        color: modelData.connected ? Appearance.textColor : Appearance.textDim
+                        font.family: Appearance.fontFamily
+                        font.pixelSize: 13
+                        Layout.fillWidth: true
+                        elide: Text.ElideRight
                     }
                 }
 
-                Repeater {
-                    model: root.adapter && root.adapter.devices ? root.adapter.devices : null
-
-                    Rectangle {
-                        required property var modelData
-                        required property int index
-
-                        visible: modelData.paired || modelData.connected
-                        width: btCol.width
-                        height: visible ? 40 : 0
-                        color: deviceMouse.containsMouse ? "#282828" : "transparent"
-                        radius: 6
-
-                        RowLayout {
-                            anchors { fill: parent; margins: 6 }
-                            spacing: 8
-
-                            Text {
-                                text: modelData.connected ? "●" : "○"
-                                color: modelData.connected ? "#c4a000" : "#505050"
-                                font.family: "monospace"
-                                font.pixelSize: 12
-                                horizontalAlignment: Text.AlignHCenter
-                                Layout.preferredWidth: 14
-                            }
-
-                            Text {
-                                text: modelData.name || modelData.deviceName
-                                color: modelData.connected ? "#d0d0d0" : "#909090"
-                                font.family: "monospace"
-                                font.pixelSize: 13
-                                Layout.fillWidth: true
-                                elide: Text.ElideRight
-                            }
-                        }
-
-                        MouseArea {
-                            id: deviceMouse
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            hoverEnabled: true
-                            onClicked: modelData.connected = !modelData.connected
-                        }
-                    }
+                MouseArea {
+                    id: deviceMouse
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: modelData.connected = !modelData.connected
                 }
             }
         }

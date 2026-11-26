@@ -9,6 +9,7 @@ Item {
     property var iconCommand: []     // command and arguments to poll for icon text
     property string staticIcon: ""  // fixed icon (if iconCommand is empty)
     property int iconInterval: 5000
+    property bool polling: true      // e.g. bind to the popup's visibility
     property string label: ""
 
     signal activated
@@ -33,7 +34,7 @@ Item {
     Timer {
         interval: menuBtn.iconInterval
         repeat: true
-        running: menuBtn.iconCommand.length > 0
+        running: menuBtn.polling && menuBtn.iconCommand.length > 0
         triggeredOnStart: true
         onTriggered: {
             if (!iconPollProc.running)
@@ -44,7 +45,8 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: 6
-        color: rowMouse.containsMouse ? "#282828" : "transparent"
+        color: rowMouse.containsMouse ? Appearance.hoverBackground : "transparent"
+        Behavior on color { ColorAnimation { duration: Appearance.hoverDuration } }
 
         RowLayout {
             anchors {
@@ -56,8 +58,8 @@ Item {
 
             Text {
                 text: menuBtn.currentIcon
-                color: "#d0d0d0"
-                font.family: "monospace"
+                color: Appearance.textColor
+                font.family: Appearance.fontFamily
                 font.pixelSize: 14
                 horizontalAlignment: Text.AlignHCenter
                 Layout.preferredWidth: 22
@@ -65,8 +67,8 @@ Item {
 
             Text {
                 text: menuBtn.label
-                color: "#d0d0d0"
-                font.family: "monospace"
+                color: Appearance.textColor
+                font.family: Appearance.fontFamily
                 font.pixelSize: 13
                 Layout.fillWidth: true
             }

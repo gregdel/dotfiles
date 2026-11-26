@@ -1,3 +1,6 @@
+// Workspaces on one output. The bar's focus line already marks the focused
+// screen, so this stays quiet: hidden workspaces are faint, the one visible on
+// this output is bright with a short underline (accent on the focused output).
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -9,8 +12,7 @@ RowLayout {
     property var screen
     property string outputName: screen ? screen.name : ""
     property int itemHeight: Appearance.barHeight
-    property int pillHeight: Appearance.workspacePillHeight
-    property int minPillWidth: Appearance.workspaceMinPillWidth
+    property int minItemWidth: Appearance.workspaceMinWidth
     property int horizontalPadding: Appearance.workspaceHorizontalPadding
     property int fontPixelSize: Appearance.barFontSize
 
@@ -20,81 +22,73 @@ RowLayout {
         return outputName !== "" && workspaceOutput === outputName
     }
 
-    spacing: 5
+    spacing: 2
 
     Repeater {
         model: I3.workspaces
 
-        Rectangle {
-            required property var modelData
-            required property int index
+        Item {
+            id: workspace
 
-            property bool focused: I3.focusedWorkspace === modelData
-            property bool activeOnOutput: modelData.active
-            property bool urgent: modelData.urgent
-            property bool onOutput: root.isOnOutput(modelData)
-            property bool hovered: mouseArea.containsMouse
-            property color normalBackground: hovered ? "#1b1b1b" : "transparent"
-            property color activeBackground: focused ? "#2a2514" : "#1f1f1f"
-            property color urgentBackground: hovered ? "#4a2020" : "#361818"
-            property color normalBorder: hovered ? "#3a3a3a" : "transparent"
-            property color activeBorder: focused ? "#c4a000" : "#5f5525"
-            property color urgentBorder: "#cc6666"
+            required property var modelData
+
+            readonly property bool focused: I3.focusedWorkspace === modelData
+            readonly property bool visibleOnOutput: modelData.active
+            readonly property bool urgent: modelData.urgent
+            readonly property bool onOutput: root.isOnOutput(modelData)
+            readonly property bool hovered: mouseArea.containsMouse
+
+            readonly property color markColor: urgent ? Appearance.dangerColor
+                : focused ? Appearance.focusLineColor
+                : Appearance.textDim
 
             visible: onOutput
-            implicitWidth: onOutput ? Math.max(root.minPillWidth, label.implicitWidth + root.horizontalPadding * 2) : 0
+            implicitWidth: onOutput ? Math.max(root.minItemWidth, label.implicitWidth + root.horizontalPadding * 2) : 0
             implicitHeight: onOutput ? root.itemHeight : 0
-            color: "transparent"
 
             Rectangle {
-                id: pill
+                anchors {
+                    fill: parent
+                    topMargin: 4
+                    bottomMargin: 4
+                }
+                radius: 6
+                color: workspace.hovered ? Appearance.hoverBackground : "transparent"
+
+                Behavior on color { ColorAnimation { duration: Appearance.hoverDuration } }
+            }
+
+            Text {
+                id: label
 
                 anchors.centerIn: parent
-                width: parent.implicitWidth
-                height: root.pillHeight
-                radius: 9
-                color: urgent ? parent.urgentBackground
-                    : activeOnOutput ? parent.activeBackground
-                    : parent.normalBackground
-                border.width: urgent || activeOnOutput || parent.hovered ? 1 : 0
-                border.color: urgent ? parent.urgentBorder
-                    : activeOnOutput ? parent.activeBorder
-                    : parent.normalBorder
+                text: workspace.modelData.name
+                color: workspace.urgent ? Appearance.dangerColor
+                    : workspace.visibleOnOutput ? Appearance.textBright
+                    : workspace.hovered ? Appearance.textDim
+                    : Appearance.textFaint
+                font.family: Appearance.barFontFamily
+                font.pixelSize: root.fontPixelSize
 
-                Behavior on color {
-                    ColorAnimation {
-                        duration: 140
-                        easing.type: Easing.OutCubic
-                    }
-                }
+                Behavior on color { ColorAnimation { duration: 140; easing.type: Easing.OutCubic } }
+            }
 
-                Behavior on border.color {
-                    ColorAnimation {
-                        duration: 140
-                        easing.type: Easing.OutCubic
-                    }
-                }
+            // Underline: grows in when the workspace becomes visible here.
+            Rectangle {
+                readonly property bool shown: workspace.visibleOnOutput || workspace.urgent
 
-                Text {
-                    id: label
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: label.bottom
+                anchors.topMargin: 1
+                width: shown ? Math.max(10, label.implicitWidth) : 0
+                height: 2
+                radius: 1
+                color: workspace.markColor
+                opacity: shown ? 1 : 0
 
-                    anchors.centerIn: parent
-                    text: modelData.name
-                    color: urgent ? "#f0d0d0"
-                        : focused ? "#f2d36b"
-                        : activeOnOutput ? "#d0d0d0"
-                        : parent.parent.hovered ? "#b8b8b8" : "#808080"
-                    font.family: Appearance.barFontFamily
-                    font.pixelSize: root.fontPixelSize
-                    font.bold: focused || urgent
-
-                    Behavior on color {
-                        ColorAnimation {
-                            duration: 140
-                            easing.type: Easing.OutCubic
-                        }
-                    }
-                }
+                Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                Behavior on opacity { NumberAnimation { duration: 140 } }
+                Behavior on color { ColorAnimation { duration: 140; easing.type: Easing.OutCubic } }
             }
 
             MouseArea {
@@ -102,7 +96,7 @@ RowLayout {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
-                onClicked: modelData.activate()
+                onClicked: workspace.modelData.activate()
             }
         }
     }

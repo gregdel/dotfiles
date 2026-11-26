@@ -1,18 +1,16 @@
 import QtQuick
+import Quickshell
 
 Text {
-    color: "#d0d0d0"
+    color: Appearance.textColor
     font.family: Appearance.barFontFamily
     font.pixelSize: Appearance.barFontSize
     font.bold: true
 
-    text: Qt.formatDateTime(new Date(), "ddd dd MMM  hh:mm")
+    text: Qt.formatDateTime(clock.date, "ddd dd MMM  hh:mm")
 
-    Timer {
-        interval: 10000
-        repeat: true
-        running: true
-        triggeredOnStart: true
-        onTriggered: parent.text = Qt.formatDateTime(new Date(), "ddd dd MMM  hh:mm")
+    SystemClock {
+        id: clock
+        precision: SystemClock.Minutes
     }
 }

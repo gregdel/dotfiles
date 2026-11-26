@@ -1,8 +1,34 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.I3
 
 ShellRoot {
+    SystemdServiceGroup {
+        id: llamaCpp
+        title: "llama.cpp"
+        servicePattern: "llama-cpp@*.service"
+        serviceOptions: [
+            {
+                "name": "llama-cpp@rocm.service",
+                "label": "ROCm"
+            },
+            {
+                "name": "llama-cpp@vulkan.service",
+                "label": "Vulkan"
+            }
+        ]
+    }
+
+    Connections {
+        target: I3
+
+        function onRawEvent(event) {
+            if (event.type === "output")
+                I3.refreshMonitors()
+        }
+    }
+
     Variants {
         model: Quickshell.screens
 
@@ -11,6 +37,9 @@ ShellRoot {
 
             required property var modelData
             property bool portrait: modelData.height > modelData.width
+            // Read by BarPopup to continue the focus line around popups.
+            readonly property bool outputFocused: !!I3.focusedMonitor
+                && I3.focusedMonitor.name === modelData.name
 
             screen: modelData
 
@@ -22,87 +51,108 @@ ShellRoot {
             implicitHeight: Appearance.barHeight
             exclusiveZone: implicitHeight
 
-            color: "#101010"
+            color: Appearance.barBackground
 
-            Item {
+            // Loaders so the hidden layout's pollers are not instantiated.
+            Loader {
                 anchors.fill: parent
-                visible: !bar.portrait
+                active: !bar.portrait
+                sourceComponent: Item {
+                    RowLayout {
+                        id: leftRow
+                        anchors {
+                            left: parent.left
+                            top: parent.top
+                            bottom: parent.bottom
+                        }
+                        spacing: 0
 
-                RowLayout {
-                    id: leftRow
-                    anchors {
-                        left: parent.left
-                        top: parent.top
-                        bottom: parent.bottom
-                    }
-                    spacing: 0
-
-                    Workspaces { screen: bar.screen }
-                    Music { Layout.maximumWidth: bar.width / 3 }
-                }
-
-                Item {
-                    anchors {
-                        left: leftRow.right
-                        right: rightRow.left
-                        top: parent.top
-                        bottom: parent.bottom
+                        Workspaces { screen: bar.screen }
                     }
 
-                    Clock { anchors.centerIn: parent }
-                }
+                    Item {
+                        anchors {
+                            left: leftRow.right
+                            right: rightRow.left
+                            top: parent.top
+                            bottom: parent.bottom
+                        }
 
-                RowLayout {
-                    id: rightRow
-                    anchors {
-                        right: parent.right
-                        top: parent.top
-                        bottom: parent.bottom
+                        Clock { anchors.centerIn: parent }
                     }
-                    spacing: 0
 
-                    SystemdServiceIndicator {
-                        serviceName: "llama-cpp@rocm.service"
-                        servicePattern: "llama-cpp@*.service"
-                        serviceOptions: [
-                            {
-                                "name": "llama-cpp@rocm.service",
-                                "label": "ROCm"
-                            },
-                            {
-                                "name": "llama-cpp@vulkan.service",
-                                "label": "Vulkan"
-                            }
-                        ]
-                        icon: ""
+                    RowLayout {
+                        id: rightRow
+                        anchors {
+                            right: parent.right
+                            top: parent.top
+                            bottom: parent.bottom
+                        }
+                        spacing: 0
+
+                        Music { maxTextWidth: bar.width / 3 - 20 }
+                        SystemdServiceIndicator {
+                            group: llamaCpp
+                            icon: ""
+                        }
+                        Volume {}
+                        Gaming {}
+                        Bluetooth {}
+                        ActionMenu {}
+                        PowerMenu {}
                     }
-                    Volume {}
-                    Gaming {}
-                    Bluetooth {}
-                    ActionMenu {}
-                    PowerMenu {}
                 }
             }
 
-            Item {
+            Loader {
                 anchors.fill: parent
-                visible: bar.portrait
+                active: bar.portrait
+                sourceComponent: Item {
+                    RowLayout {
+                        anchors {
+                            left: parent.left
+                            top: parent.top
+                            bottom: parent.bottom
+                        }
+                        spacing: 0
 
-                RowLayout {
-                    anchors {
-                        left: parent.left
-                        top: parent.top
-                        bottom: parent.bottom
+                        SysInfo {}
                     }
-                    spacing: 0
 
-                    SysInfo {}
-                }
+                    Workspaces {
+                        anchors.centerIn: parent
+                        screen: bar.screen
+                    }
 
-                Workspaces {
-                    anchors.centerIn: parent
-                    screen: bar.screen
+                    RowLayout {
+                        anchors {
+                            right: parent.right
+                            top: parent.top
+                            bottom: parent.bottom
+                        }
+                        spacing: 0
+
+                        LlamaStatus {
+                            visible: llamaCpp.active
+                            group: llamaCpp
+                        }
+                        NetStatus {
+                            visible: !llamaCpp.active
+                        }
+                    }
                 }
+            }
+
+            // Focus line along the edge facing the screen's windows.
+            Rectangle {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                y: bar.portrait ? 0 : parent.height - height
+                height: Appearance.focusLineWidth
+                color: Appearance.focusLineColor
+                opacity: bar.outputFocused ? 1 : 0
+
+                Behavior on opacity { NumberAnimation { duration: Appearance.hoverDuration * 2 } }
             }
         }
     }

@@ -1,8 +1,20 @@
 #!/bin/sh
 # shellcheck disable=3043
-# Output CPU and GPU telemetry for the quickshell bar as a single JSON line:
-#   {"cpu":<°C>,"edge":<°C>,"junc":<°C>,"mem":<°C>,"fan":<%>,"vram":<MB>,"vram_total":<MB>}
-# Unavailable sensors are null.
+# Output system telemetry for the quickshell bar as a single JSON line:
+#   {"cpu":<°C>,"edge":<°C>,"junc":<°C>,"mem":<°C>,"fan":<%>,"vram":<MB>,"vram_total":<MB>,
+#    "gpu_busy":<%>,"power":<W>,"power_cap":<W>,"sclk":<MHz>,"mclk":<MHz>,"fan_rpm":<rpm>,
+#    "cpu_stat":[[total,idle],...],"meminfo":{"MemTotal":<MB>,...},
+#    "net_iface":<name>,"net_rx":<bytes>,"net_tx":<bytes>}
+# cpu_stat holds cumulative jiffies (aggregate first, then per CPU) and net_*
+# cumulative byte counters; the consumer derives rates. Unavailable values are null.
+
+# print $1 if it is a non-negative integer
+_num() {
+    case "$1" in
+        ''|*[!0-9]*) ;;
+        *) printf '%s' "$1" ;;
+    esac
+}
 
 # read a hwmon temperature in °C by driver name and label; empty if unavailable
 _read_temp() {
@@ -107,6 +119,46 @@ case "$vram_used_bytes" in
     ;;
 esac
 
+# GPU load, power (uW), clocks (Hz) and fan speed
+gpu_busy="" power="" power_cap="" sclk="" mclk=""
+if [ -n "$gpu_device" ]; then
+    gpu_busy=$(_num "$(cat "$gpu_device/gpu_busy_percent" 2>/dev/null)")
+    for hwmon in "$gpu_device"/hwmon/hwmon*; do
+        [ -d "$hwmon" ] || continue
+        power=$(_num "$(cat "$hwmon/power1_average" 2>/dev/null || cat "$hwmon/power1_input" 2>/dev/null)")
+        power_cap=$(_num "$(cat "$hwmon/power1_cap" 2>/dev/null)")
+        sclk=$(_num "$(cat "$hwmon/freq1_input" 2>/dev/null)")
+        mclk=$(_num "$(cat "$hwmon/freq2_input" 2>/dev/null)")
+        break
+    done
+fi
+fan_rpm=$(_num "$fan_input")
+
+# cumulative CPU jiffies: [total, idle + iowait] for "cpu", then each "cpuN"
+cpu_stat=$(awk '/^cpu/ {
+    t = 0
+    for (i = 2; i <= 9; i++) t += $i
+    printf "%s[%.0f,%.0f]", sep, t, $5 + $6
+    sep = ","
+}' /proc/stat)
+
+# memory in MB, as JSON object members
+meminfo=$(awk '/^(MemTotal|MemAvailable|SwapTotal|SwapFree):/ {
+    sub(":", "", $1)
+    printf "%s\"%s\":%d", sep, $1, $2 / 1024
+    sep = ","
+}' /proc/meminfo)
+
+# cumulative byte counters of the default route interface
+net_iface=$(ip -o route show default 2>/dev/null | awk '{
+    for (i = 1; i < NF; i++) if ($i == "dev") { print $(i + 1); exit }
+}')
+net_rx="" net_tx=""
+if [ -n "$net_iface" ]; then
+    net_rx=$(_num "$(cat "/sys/class/net/$net_iface/statistics/rx_bytes" 2>/dev/null)")
+    net_tx=$(_num "$(cat "/sys/class/net/$net_iface/statistics/tx_bytes" 2>/dev/null)")
+fi
+
 # collect as strings, let jq turn each into a JSON number or null
 jq -cn \
     --arg cpu "$cpu" \
@@ -116,6 +168,25 @@ jq -cn \
     --arg fan "$fan" \
     --arg vram "$vram" \
     --arg vram_total "$vram_total" \
+    --arg gpu_busy "$gpu_busy" \
+    --arg power "$power" \
+    --arg power_cap "$power_cap" \
+    --arg sclk "$sclk" \
+    --arg mclk "$mclk" \
+    --arg fan_rpm "$fan_rpm" \
+    --argjson cpu_stat "[$cpu_stat]" \
+    --argjson meminfo "{$meminfo}" \
+    --arg net_iface "$net_iface" \
+    --arg net_rx "$net_rx" \
+    --arg net_tx "$net_tx" \
     'def n: if . == "" then null else tonumber end;
+     def scaled(d): n | if . == null then null else . / d end;
      {cpu: ($cpu | n), edge: ($edge | n), junc: ($junc | n), mem: ($mem | n),
-      fan: ($fan | n), vram: ($vram | n), vram_total: ($vram_total | n)}'
+      fan: ($fan | n), vram: ($vram | n), vram_total: ($vram_total | n),
+      gpu_busy: ($gpu_busy | n),
+      power: ($power | scaled(1000000)), power_cap: ($power_cap | scaled(1000000)),
+      sclk: ($sclk | scaled(1000000)), mclk: ($mclk | scaled(1000000)),
+      fan_rpm: ($fan_rpm | n),
+      cpu_stat: $cpu_stat, meminfo: $meminfo,
+      net_iface: (if $net_iface == "" then null else $net_iface end),
+      net_rx: ($net_rx | n), net_tx: ($net_tx | n)}'

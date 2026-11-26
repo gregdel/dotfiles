@@ -34,7 +34,3 @@ Exec=--host 0.0.0.0 \
 [Service]
 TimeoutStartSec=900
 ExecStopPost=/usr/bin/rm -f /var/lib/node_exporter/llama.prom
-
-[Install]
-DefaultInstance=rocm
-WantedBy=default.target

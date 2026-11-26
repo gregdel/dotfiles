@@ -1,117 +1,69 @@
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
-import Quickshell.Io
 
-Item {
+BarSection {
     id: root
 
-    implicitWidth: 36
-    implicitHeight: Appearance.barHeight
+    // Label of the destructive action awaiting a second click.
+    property string armed: ""
 
-    Process {
-        id: actionProc
-        stderr: StdioCollector {
-            onStreamFinished: {
-                const message = text.trim()
-                if (message.length > 0)
-                    console.warn("Power action failed:", message)
-            }
-        }
+    clickable: true
+
+    CommandRunner {
+        id: runner
+        name: "Power action"
     }
 
-    function runCommand(command) {
-        if (actionProc.running)
-            return
-
-        actionProc.command = command
-        actionProc.running = true
-    }
-
-    Text {
-        anchors.centerIn: parent
+    StatText {
         text: "⏻"
-        color: btnMouse.containsMouse ? "#c4a000" : "#d0d0d0"
-        font.family: Appearance.barFontFamily
         font.pixelSize: Appearance.barFontSize
     }
 
-    MouseArea {
-        id: btnMouse
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        hoverEnabled: true
-        onClicked: powerPopup.visible = !powerPopup.visible
-    }
+    popup: BarPopup {
+        id: menu
+        cardWidth: 140
+        onVisibleChanged: if (!visible) root.armed = ""
 
-    PopupWindow {
-        id: powerPopup
-        visible: false
+        Repeater {
+            model: [
+                { label: "Suspend",  confirm: false, command: ["systemctl", "suspend"] },
+                { label: "Reboot",   confirm: true,  command: ["systemctl", "reboot"] },
+                { label: "Shutdown", confirm: true,  command: ["systemctl", "poweroff"] }
+            ]
 
-        anchor.item: root
-        anchor.edges: Edges.Bottom
-        anchor.gravity: Edges.Bottom
+            Rectangle {
+                required property var modelData
+                property bool isArmed: root.armed === modelData.label
 
-        implicitWidth: 140
-        implicitHeight: powerCol.implicitHeight + 16
-        color: "transparent"
+                width: parent.width
+                height: 36
+                radius: 6
+                color: itemMouse.containsMouse ? Appearance.hoverBackground : "transparent"
+                Behavior on color { ColorAnimation { duration: Appearance.hoverDuration } }
 
-        HoverHandler {
-            onHoveredChanged: if (!hovered) powerPopup.visible = false
-        }
+                Text {
+                    anchors.centerIn: parent
+                    text: parent.isArmed ? modelData.label + "?" : modelData.label
+                    color: parent.isArmed ? Appearance.dangerColor : Appearance.textColor
+                    font.family: Appearance.fontFamily
+                    font.pixelSize: 13
 
-        Rectangle {
-            anchors.fill: parent
-            color: Appearance.popupBackground
-            radius: Appearance.popupRadius
-            antialiasing: true
-            clip: true
-            border.width: 1
-            border.color: Appearance.popupBorder
-
-            Column {
-                id: powerCol
-                anchors {
-                    top: parent.top
-                    left: parent.left
-                    right: parent.right
-                    margins: 8
+                    Behavior on color { ColorAnimation { duration: Appearance.hoverDuration } }
                 }
-                spacing: 4
 
-                Repeater {
-                    model: [
-                        { label: "Suspend",  command: ["systemctl", "suspend"] },
-                        { label: "Reboot",   command: ["reboot"] },
-                        { label: "Shutdown", command: ["shutdown", "now"] }
-                    ]
-
-                    Rectangle {
-                        required property var modelData
-                        width: parent.width
-                        height: 36
-                        radius: 6
-                        color: itemMouse.containsMouse ? "#282828" : "transparent"
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: modelData.label
-                            color: itemMouse.containsMouse ? "#c4a000" : "#d0d0d0"
-                            font.family: "monospace"
-                            font.pixelSize: 13
+                MouseArea {
+                    id: itemMouse
+                    cursorShape: Qt.PointingHandCursor
+                    acceptedButtons: Qt.LeftButton
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onClicked: {
+                        if (modelData.confirm && !parent.isArmed) {
+                            root.armed = modelData.label
+                            return
                         }
-
-                        MouseArea {
-                            id: itemMouse
-                            cursorShape: Qt.PointingHandCursor
-                            acceptedButtons: Qt.LeftButton
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onClicked: {
-                                powerPopup.visible = false
-                                root.runCommand(modelData.command)
-                            }
-                        }
+                        menu.close()
+                        runner.run(modelData.command)
                     }
                 }
             }

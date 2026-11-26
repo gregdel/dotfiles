@@ -1,12 +1,14 @@
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Mpris
 
-Item {
+BarSection {
     id: root
 
-    implicitWidth: musicText.implicitWidth + 20
-    implicitHeight: Appearance.barHeight
+    property real maxTextWidth: 400
+
+    clickable: true
 
     // Find first playing player, fall back to first paused
     property var currentPlayer: {
@@ -21,7 +23,7 @@ Item {
         var name = currentPlayer.identity
         if (name == "Spotify") return "󰓇"
         if (name == "mpv")     return ""
-        return name
+        return "󰝚"
     }
 
     property bool playing: {
@@ -41,27 +43,15 @@ Item {
 
     visible: !!currentPlayer
 
-    Text {
-        id: musicText
-        anchors.centerIn: parent
-        width: Math.max(0, root.width - 20)
-        text: trackText
+    StatText {
+        Layout.maximumWidth: root.maxTextWidth
+        text: root.trackText
         elide: Text.ElideRight
-        color: playing ? "#d0d0d0" : "#909090"
-        font.family: Appearance.barFontFamily
+        color: root.playing ? Appearance.textColor : Appearance.textDim
         font.pixelSize: Appearance.barFontSize
     }
 
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        enabled: !!currentPlayer
-        onClicked: musicPopup.visible = !musicPopup.visible
-    }
-
-    MusicPopup {
-        id: musicPopup
-        player: currentPlayer
-        anchorItem: root
+    popup: MusicPopup {
+        player: root.currentPlayer
     }
 }

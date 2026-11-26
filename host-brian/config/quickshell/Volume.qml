@@ -2,11 +2,23 @@ import QtQuick
 import Quickshell
 import Quickshell.Services.Pipewire
 
-Item {
+BarSection {
     id: root
 
-    implicitWidth: volumeRow.implicitWidth + 22
-    implicitHeight: Appearance.barHeight
+    clickable: true
+    spacing: 6
+
+    onClicked: {
+        if (root.hasSink)
+            sink.audio.muted = !sink.audio.muted
+    }
+
+    onScrolled: wheel => {
+        if (!root.hasSink)
+            return
+        var delta = wheel.angleDelta.y > 0 ? 0.05 : -0.05
+        sink.audio.volume = Math.max(0.0, Math.min(1.3, sink.audio.volume + delta))
+    }
 
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
@@ -22,8 +34,6 @@ Item {
     property int pct: Math.round(volume * 100)
 
     property string outputIcon: {
-        if (sinkName.indexOf("bluez_output.AC_BF_71_E7_B2_55.1") >= 0)
-            return "󰋋"
         if (sinkName.indexOf("hdmi-stereo-extra4") >= 0)
             return ""
         if (sinkName.indexOf("hdmi-stereo-extra2") >= 0)
@@ -45,54 +55,16 @@ Item {
         return ""
     }
 
-    Rectangle {
-        anchors {
-            fill: parent
-            topMargin: 4
-            bottomMargin: 4
-            leftMargin: 3
-            rightMargin: 3
-        }
-        radius: 6
-        color: volMouse.containsMouse ? "#202020" : "transparent"
+    StatText {
+        text: root.outputIcon
+        color: root.muted || !root.hasSink ? Appearance.inactiveColor : Appearance.textDim
+        font.pixelSize: Appearance.barFontSize
     }
 
-    Row {
-        id: volumeRow
-        anchors.centerIn: parent
-        spacing: 6
-
-        Text {
-            text: root.outputIcon
-            color: root.muted || !root.hasSink ? "#505050" : "#909090"
-            font.family: Appearance.barFontFamily
-            font.pixelSize: Appearance.barFontSize
-        }
-
-        Text {
-            id: volText
-            text: root.volumeIcon + " " + root.pct + "%"
-            color: root.muted || !root.hasSink
-                ? "#505050"
-                : (volMouse.containsMouse ? "#c4a000" : "#d0d0d0")
-            font.family: Appearance.barFontFamily
-            font.pixelSize: Appearance.barFontSize
-        }
-    }
-
-    MouseArea {
-        id: volMouse
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        hoverEnabled: true
-        onWheel: event => {
-            if (!root.hasSink) return
-            var delta = event.angleDelta.y > 0 ? 0.05 : -0.05
-            sink.audio.volume = Math.max(0.0, Math.min(1.3, sink.audio.volume + delta))
-        }
-        onClicked: {
-            if (root.hasSink)
-                sink.audio.muted = !sink.audio.muted
-        }
+    StatText {
+        // Padded so the bar doesn't shift between 5% and 100%.
+        text: root.volumeIcon + " " + String(root.pct).padStart(3, " ") + "%"
+        color: root.muted || !root.hasSink ? Appearance.inactiveColor : Appearance.textColor
+        font.pixelSize: Appearance.barFontSize
     }
 }
