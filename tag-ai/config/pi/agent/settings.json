@@ -4,20 +4,25 @@
   "npmCommand": [
     "bun"
   ],
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-6.1-sol",
-  "defaultThinkingLevel": "high",
-  "showCacheMissNotices": true,
+  "defaultProvider": "ovh",
+  "defaultModel": "DeepSeek-V4.1-Flash-1017",
+  "defaultThinkingLevel": "xhigh",
   "packages": [
     "~/dev/pi",
     "npm:pi-web-access",
     "npm:@upstash/context7-pi",
     "npm:pi-keep-going"
   ],
-  "lastChangelogVersion": "1.5.0",
+  "lastChangelogVersion": "1.6.1",
   "theme": "dark",
   "tuiMode": "regular",
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-web-access\",\"scope\":\"user\"}": "0.33.0"
+  },
+  "notices": {
+    "cacheMisses": true,
+    "cacheWarming": true,
+    "compactionCosts": true,
+    "reasoningDrops": true
   }
 }

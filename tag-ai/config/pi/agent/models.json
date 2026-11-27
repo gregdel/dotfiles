@@ -1,3 +1,45 @@
 {
-  "providers": {}
+  "$schema": "https://pi.dev/schemas/models.schema.json",
+  "providers": {
+    "ovh": {
+      "name": "OVHcloud AI Endpoints",
+      "baseUrl": "https://oai.endpoints.kepler.ai.cloud.ovh.net/v1",
+      "api": "openai-completions",
+      "apiKey": "$OVH_AI_ENDPOINTS_ACCESS_TOKEN",
+      "compat": {
+        "supportsStore": false,
+        "supportsDeveloperRole": false,
+        "maxTokensField": "max_tokens"
+      },
+      "models": [
+        {
+          "id": "DeepSeek-V4.1-Flash-1017",
+          "name": "DeepSeek V4.1 Flash (OVH)",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": "none",
+            "minimal": null,
+            "low": "low",
+            "medium": null,
+            "high": "high",
+            "xhigh": "xhigh",
+            "max": "max"
+          },
+          "input": ["text"],
+          "cost": {
+            "input": 0.31,
+            "output": 1.25,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 1048576,
+          "maxTokens": 262144,
+          "compat": {
+            "thinkingFormat": "openai",
+            "supportsReasoningEffort": true
+          }
+        }
+      ]
+    }
+  }
 }

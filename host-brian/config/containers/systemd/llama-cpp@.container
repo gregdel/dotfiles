@@ -18,6 +18,10 @@ GroupAdd=keep-groups
 SeccompProfile=unconfined
 AddCapability=SYS_PTRACE
 Environment=HSA_OVERRIDE_GFX_VERSION=10.3.0
+# The override also exposes the Raphael iGPU; keep llama.cpp on the RX 6700 XT.
+Environment=HIP_VISIBLE_DEVICES=0
+# The desktop runs on the same GPU: leave more VRAM free than fit's 1 GiB default.
+Environment=LLAMA_ARG_FIT_TARGET=2048
 Environment=HF_HUB_CACHE=/models
 Environment=HF_HOME=/models
 Volume=%h/.dotfiles:%h/.dotfiles:ro
